@@ -1,12 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DGT4D663Z0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DGT4D663Z0');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Hub - Developer Utilities</title>
+    <title>DevTools Hub - URL Encoder, Base64 Encoder, JWT Decoder Online Tools</title>
+    <meta name="description" content="Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing. Essential utilities for web developers and programmers.">
+    <meta name="keywords" content="URL encoder, URL decoder, Base64 encoder, Base64 decoder, JWT decoder, JWT verifier, OIDC tester, developer tools, online tools, web developer utilities, encode decode tools">
+    <meta name="author" content="DevTools Hub">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://devhub.sbs/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devhub.sbs/">
+    <meta property="og:title" content="DevTools Hub - URL Encoder, Base64 Encoder, JWT Decoder Tools">
+    <meta property="og:description" content="Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing.">
+    <meta property="og:image" content="https://devhub.sbs/favicon-192x192.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://devhub.sbs/">
+    <meta property="twitter:title" content="DevTools Hub - URL Encoder, Base64 Encoder, JWT Decoder Tools">
+    <meta property="twitter:description" content="Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing.">
+    <meta property="twitter:image" content="https://devhub.sbs/favicon-192x192.png">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DevTools Hub",
+      "url": "https://devhub.sbs",
+      "description": "Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "DevTools Hub"
+      },
+      "featureList": [
+        "URL Encoder and Decoder",
+        "Base64 Encoder and Decoder", 
+        "JWT Token Decoder and Verifier",
+        "OpenID Connect (OIDC) Workflow Tester"
+      ],
+      "keywords": "URL encoder, URL decoder, Base64 encoder, Base64 decoder, JWT decoder, JWT verifier, OIDC tester, developer tools"
+    }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -16,7 +83,7 @@
                     <i class="fas fa-code"></i>
                     DevTools Hub
                 </h1>
-                <p class="subtitle">Essential utilities for developers</p>
+                <p class="subtitle">Free Online Developer Tools - URL Encoder, Base64 Encoder, JWT Decoder</p>
             </div>
         </header>
 
@@ -44,7 +111,7 @@
             <div id="url-encoder" class="tab-content active">
                 <div class="tool-card">
                     <h2><i class="fas fa-link"></i> URL Encoder/Decoder</h2>
-                    <p>Encode or decode URLs and query parameters</p>
+                    <p>Free online URL encoder and decoder tool. Encode special characters in URLs, decode percent-encoded URLs, and handle query parameters safely. Perfect for web developers working with HTTP requests, APIs, and web forms.</p>
                     
                     <div class="input-group">
                         <label for="url-input">Input Text:</label>
@@ -77,7 +144,7 @@
             <div id="base64" class="tab-content">
                 <div class="tool-card">
                     <h2><i class="fas fa-file-code"></i> Base64 Encoder/Decoder</h2>
-                    <p>Encode text to Base64 or decode Base64 to text</p>
+                    <p>Online Base64 encoder and decoder tool. Convert text to Base64 encoding or decode Base64 strings back to plain text. Essential for data transmission, API authentication, and encoding binary data for web applications.</p>
                     
                     <div class="input-group">
                         <label for="base64-input">Input Text:</label>
@@ -109,8 +176,8 @@
             <!-- JWT Verifier Tab -->
             <div id="jwt" class="tab-content">
                 <div class="tool-card">
-                    <h2><i class="fas fa-key"></i> JWT Token Verifier</h2>
-                    <p>Decode and verify JWT tokens</p>
+                    <h2><i class="fas fa-key"></i> JWT Token Decoder & Verifier</h2>
+                    <p>JWT token decoder and verifier tool. Decode JSON Web Tokens (JWT) to view header, payload, and signature information. Perfect for debugging authentication issues, testing JWT implementations, and understanding token structure.</p>
                     
                     <div class="input-group">
                         <label for="jwt-input">JWT Token:</label>
@@ -148,8 +215,8 @@
             <!-- OIDC Workflow Tab -->
             <div id="oidc" class="tab-content">
                 <div class="tool-card">
-                    <h2><i class="fas fa-shield-alt"></i> OpenID Connect Workflow Tester</h2>
-                    <p>Test OIDC authentication flows and discovery endpoints</p>
+                    <h2><i class="fas fa-shield-alt"></i> OpenID Connect (OIDC) Workflow Tester</h2>
+                    <p>OIDC authentication flow tester and endpoint discovery tool. Test OpenID Connect configurations, generate authorization URLs, and verify OIDC discovery endpoints. Essential for OAuth 2.0 and OIDC implementation testing.</p>
                     
                     <div class="oidc-config">
                         <div class="input-group">
