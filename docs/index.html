@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTools Hub - Developer Utilities</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-code"></i>
+                    DevTools Hub
+                </h1>
+                <p class="subtitle">Essential utilities for developers</p>
+            </div>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="url-encoder">
+                <i class="fas fa-link"></i>
+                URL Encoder/Decoder
+            </button>
+            <button class="tab-btn" data-tab="base64">
+                <i class="fas fa-file-code"></i>
+                Base64 Encoder/Decoder
+            </button>
+            <button class="tab-btn" data-tab="jwt">
+                <i class="fas fa-key"></i>
+                JWT Verifier
+            </button>
+            <button class="tab-btn" data-tab="oidc">
+                <i class="fas fa-shield-alt"></i>
+                OIDC Workflow
+            </button>
+        </nav>
+
+        <main class="main-content">
+            <!-- URL Encoder/Decoder Tab -->
+            <div id="url-encoder" class="tab-content active">
+                <div class="tool-card">
+                    <h2><i class="fas fa-link"></i> URL Encoder/Decoder</h2>
+                    <p>Encode or decode URLs and query parameters</p>
+                    
+                    <div class="input-group">
+                        <label for="url-input">Input Text:</label>
+                        <textarea id="url-input" placeholder="Enter text to encode or decode..."></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="url-encode" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Encode
+                        </button>
+                        <button id="url-decode" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Decode
+                        </button>
+                        <button id="url-clear" class="btn btn-outline">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div class="output-group">
+                        <label for="url-output">Result:</label>
+                        <textarea id="url-output" readonly placeholder="Result will appear here..."></textarea>
+                        <button id="url-copy" class="btn btn-outline copy-btn">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Base64 Encoder/Decoder Tab -->
+            <div id="base64" class="tab-content">
+                <div class="tool-card">
+                    <h2><i class="fas fa-file-code"></i> Base64 Encoder/Decoder</h2>
+                    <p>Encode text to Base64 or decode Base64 to text</p>
+                    
+                    <div class="input-group">
+                        <label for="base64-input">Input Text:</label>
+                        <textarea id="base64-input" placeholder="Enter text to encode or Base64 to decode..."></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="base64-encode" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Encode to Base64
+                        </button>
+                        <button id="base64-decode" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Decode from Base64
+                        </button>
+                        <button id="base64-clear" class="btn btn-outline">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div class="output-group">
+                        <label for="base64-output">Result:</label>
+                        <textarea id="base64-output" readonly placeholder="Result will appear here..."></textarea>
+                        <button id="base64-copy" class="btn btn-outline copy-btn">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JWT Verifier Tab -->
+            <div id="jwt" class="tab-content">
+                <div class="tool-card">
+                    <h2><i class="fas fa-key"></i> JWT Token Verifier</h2>
+                    <p>Decode and verify JWT tokens</p>
+                    
+                    <div class="input-group">
+                        <label for="jwt-input">JWT Token:</label>
+                        <textarea id="jwt-input" placeholder="Paste your JWT token here..."></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="jwt-decode" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> Decode Token
+                        </button>
+                        <button id="jwt-clear" class="btn btn-outline">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div class="jwt-results">
+                        <div class="jwt-section">
+                            <h3>Header</h3>
+                            <pre id="jwt-header" class="jwt-output"></pre>
+                        </div>
+                        
+                        <div class="jwt-section">
+                            <h3>Payload</h3>
+                            <pre id="jwt-payload" class="jwt-output"></pre>
+                        </div>
+                        
+                        <div class="jwt-section">
+                            <h3>Signature Verification</h3>
+                            <div id="jwt-signature" class="jwt-signature-info"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OIDC Workflow Tab -->
+            <div id="oidc" class="tab-content">
+                <div class="tool-card">
+                    <h2><i class="fas fa-shield-alt"></i> OpenID Connect Workflow Tester</h2>
+                    <p>Test OIDC authentication flows and discovery endpoints</p>
+                    
+                    <div class="oidc-config">
+                        <div class="input-group">
+                            <label for="oidc-discovery">Discovery Endpoint:</label>
+                            <input type="url" id="oidc-discovery" placeholder="https://your-domain/.well-known/openid_configuration">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="oidc-client-id">Client ID:</label>
+                            <input type="text" id="oidc-client-id" placeholder="Your OIDC client ID">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="oidc-redirect-uri">Redirect URI:</label>
+                            <input type="url" id="oidc-redirect-uri" placeholder="https://your-app/callback">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="oidc-scope">Scope:</label>
+                            <input type="text" id="oidc-scope" value="openid profile email" placeholder="openid profile email">
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="oidc-discover" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Discover Endpoints
+                        </button>
+                        <button id="oidc-generate-auth-url" class="btn btn-secondary">
+                            <i class="fas fa-external-link-alt"></i> Generate Auth URL
+                        </button>
+                        <button id="oidc-clear" class="btn btn-outline">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div class="oidc-results">
+                        <div class="oidc-section">
+                            <h3>Discovery Results</h3>
+                            <pre id="oidc-discovery-results" class="oidc-output"></pre>
+                        </div>
+                        
+                        <div class="oidc-section">
+                            <h3>Generated Authorization URL</h3>
+                            <div class="auth-url-container">
+                                <input type="text" id="oidc-auth-url" readonly class="auth-url-input">
+                                <button id="oidc-copy-url" class="btn btn-outline copy-btn">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="oidc-section">
+                            <h3>Workflow Steps</h3>
+                            <div class="workflow-steps">
+                                <div class="step">
+                                    <span class="step-number">1</span>
+                                    <span class="step-text">User clicks the authorization URL</span>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">2</span>
+                                    <span class="step-text">User authenticates with the identity provider</span>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">3</span>
+                                    <span class="step-text">User is redirected back with authorization code</span>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">4</span>
+                                    <span class="step-text">Exchange authorization code for tokens</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 DevTools Hub. Built with ❤️ for developers.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

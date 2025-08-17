@@ -1,0 +1,26 @@
+{
+  "name": "devtools-hub",
+  "version": "1.0.0",
+  "description": "A comprehensive developer tools website with URL encoding, Base64 encoding, JWT verification, and OIDC workflow testing",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev": "npx live-server --port=3000 --open=/index.html",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "developer-tools",
+    "url-encoding",
+    "base64",
+    "jwt",
+    "oidc",
+    "openid-connect",
+    "utilities"
+  ],
+  "author": "DevTools Hub",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  }
+}
