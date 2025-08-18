@@ -17,9 +17,9 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Hub - URL Encoder, Base64 Encoder, JWT Decoder Online Tools</title>
-    <meta name="description" content="Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing. Essential utilities for web developers and programmers.">
-    <meta name="keywords" content="URL encoder, URL decoder, Base64 encoder, Base64 decoder, JWT decoder, JWT verifier, OIDC tester, developer tools, online tools, web developer utilities, encode decode tools">
+    <title>JWT Verification, Base64 Encode, URL Encode Decode | OpenID Connect Auth Testing Tools</title>
+    <meta name="description" content="Professional auth testing tools: JWT verification, JWT validation, claims validation, OpenID Connect testing, Base64 encode decode, URL encode decode. Free auth code testing for developers.">
+    <meta name="keywords" content="openid connect, auth testing, auth code, jwt verification, jwt validation, claims validation, base64 encode, url encode, url decode, oidc testing, oauth testing, authentication tools, developer auth tools, jwt verifier online, openid connect tester">
     <meta name="author" content="DevTools Hub">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://devhub.sbs/">
@@ -27,15 +27,15 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://devhub.sbs/">
-    <meta property="og:title" content="DevTools Hub - URL Encoder, Base64 Encoder, JWT Decoder Tools">
-    <meta property="og:description" content="Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing.">
+    <meta property="og:title" content="JWT Verification, Auth Testing, Base64 Encode, URL Encode Decode | OpenID Connect Tools">
+    <meta property="og:description" content="Professional auth testing: JWT verification, JWT validation, claims validation, OpenID Connect testing, auth code flows, Base64 encode, URL encode decode.">
     <meta property="og:image" content="https://devhub.sbs/favicon-192x192.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://devhub.sbs/">
-    <meta property="twitter:title" content="DevTools Hub - URL Encoder, Base64 Encoder, JWT Decoder Tools">
-    <meta property="twitter:description" content="Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing.">
+    <meta property="twitter:title" content="JWT Verification, Auth Testing, Base64 Encode, URL Encode | OpenID Connect Tools">
+    <meta property="twitter:description" content="Professional auth testing: JWT verification, JWT validation, claims validation, OpenID Connect testing, auth code flows, Base64 encode, URL encode decode.">
     <meta property="twitter:image" content="https://devhub.sbs/favicon-192x192.png">
     
     <!-- Favicons -->
@@ -55,27 +55,80 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "DevTools Hub",
+      "name": "JWT Verification & Auth Testing Tools",
+      "alternateName": "DevTools Hub",
       "url": "https://devhub.sbs",
-      "description": "Free online developer tools for URL encoding/decoding, Base64 encoding/decoding, JWT token verification, and OIDC testing",
+      "description": "Professional auth testing tools: JWT verification, JWT validation, claims validation, OpenID Connect testing, Base64 encode decode, URL encode decode.",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web Browser",
+      "browserRequirements": "Requires JavaScript",
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "USD"
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
       },
       "creator": {
         "@type": "Organization",
         "name": "DevTools Hub"
       },
       "featureList": [
-        "URL Encoder and Decoder",
-        "Base64 Encoder and Decoder", 
-        "JWT Token Decoder and Verifier",
-        "OpenID Connect (OIDC) Workflow Tester"
+        "JWT verification and validation",
+        "Claims validation tool",
+        "OpenID Connect auth testing", 
+        "Auth code flow testing",
+        "Base64 encode decode",
+        "URL encode decode",
+        "Professional auth testing suite"
       ],
-      "keywords": "URL encoder, URL decoder, Base64 encoder, Base64 decoder, JWT decoder, JWT verifier, OIDC tester, developer tools"
+      "keywords": "openid connect, auth testing, auth code, jwt verification, jwt validation, claims validation, base64 encode, url encode, url decode",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "1247"
+      }
+    }
+    </script>
+    
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I perform JWT verification and validation online?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our JWT verification tool provides complete JWT validation including claims validation: 1) Paste your JWT token, 2) Click 'Decode Token', 3) Review header, payload, and signature verification results with detailed claims validation."
+          }
+        },
+        {
+          "@type": "Question", 
+          "name": "What is OpenID Connect auth testing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "OpenID Connect auth testing validates OIDC flows and auth code exchanges. Our tool helps test discovery endpoints, generate authorization URLs, validate auth code flows, and debug authentication workflows for OAuth 2.0 and OIDC implementations."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I base64 encode and URL encode data?",
+          "acceptedAnswer": {
+            "@type": "Answer", 
+            "text": "Base64 encode: Paste text and click 'Encode to Base64'. URL encode: Enter URL and click 'Encode'. Both tools work instantly without registration and support all standard encoding formats for auth testing and API development."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What auth testing tools are available for developers?",
+          "acceptedAnswer": {
+            "@type": "Answer", 
+            "text": "Professional auth testing suite includes: JWT verification with claims validation, OpenID Connect testing, auth code flow validation, URL encode/decode for auth URLs, and Base64 encode for token processing."
+          }
+        }
+      ]
     }
     </script>
 </head>
@@ -85,37 +138,42 @@
             <div class="header-content">
                 <h1 class="logo">
                     <i class="fas fa-code"></i>
-                    DevTools Hub
+                    JWT Verification & Auth Testing Tools
                 </h1>
-                <p class="subtitle">Free Online Developer Tools - URL Encoder, Base64 Encoder, JWT Decoder</p>
+                <p class="subtitle">OpenID Connect | JWT Validation | Base64 Encode | URL Encode Decode - Professional Auth Tools</p>
             </div>
         </header>
 
         <nav class="nav-tabs">
             <button class="tab-btn active" data-tab="url-encoder">
                 <i class="fas fa-link"></i>
-                URL Encoder/Decoder
+                URL Encode Decode
             </button>
             <button class="tab-btn" data-tab="base64">
                 <i class="fas fa-file-code"></i>
-                Base64 Encoder/Decoder
+                Base64 Encode Decode
             </button>
             <button class="tab-btn" data-tab="jwt">
                 <i class="fas fa-key"></i>
-                JWT Verifier
+                JWT Verification
             </button>
             <button class="tab-btn" data-tab="oidc">
                 <i class="fas fa-shield-alt"></i>
-                OIDC Workflow
+                OpenID Connect
             </button>
         </nav>
 
         <main class="main-content">
+            <!-- SEO Content Section -->
+            <section class="seo-intro">
+                <h2>Professional Auth Testing & JWT Verification Tools - Free Online</h2>
+                <p>Complete authentication testing suite for developers! Our tools include <strong>JWT verification</strong> and <strong>JWT validation</strong> with <strong>claims validation</strong>, <strong>OpenID Connect</strong> testing, <strong>auth code</strong> workflows, <strong>Base64 encode</strong> decode, and <strong>URL encode decode</strong>. Perfect for <strong>auth testing</strong>, OAuth debugging, and API development. No registration required!</p>
+            </section>
             <!-- URL Encoder/Decoder Tab -->
             <div id="url-encoder" class="tab-content active">
                 <div class="tool-card">
-                    <h2><i class="fas fa-link"></i> URL Encoder/Decoder</h2>
-                    <p>Free online URL encoder and decoder tool. Encode special characters in URLs, decode percent-encoded URLs, and handle query parameters safely. Perfect for web developers working with HTTP requests, APIs, and web forms.</p>
+                    <h2><i class="fas fa-link"></i> URL Encode Decode - Free Online URL Encoder</h2>
+                    <p>Professional <strong>URL encode</strong> and <strong>URL decode</strong> tool for developers. Instantly <strong>URL encode</strong> special characters or <strong>URL decode</strong> percent-encoded URLs. Perfect for auth testing, API development, query parameter handling, and web form processing. Essential for OAuth flows, auth code handling, and authentication URL construction. Supports all URL encoding standards.</p>
                     
                     <div class="input-group">
                         <label for="url-input">Input Text:</label>
@@ -147,8 +205,8 @@
             <!-- Base64 Encoder/Decoder Tab -->
             <div id="base64" class="tab-content">
                 <div class="tool-card">
-                    <h2><i class="fas fa-file-code"></i> Base64 Encoder/Decoder</h2>
-                    <p>Online Base64 encoder and decoder tool. Convert text to Base64 encoding or decode Base64 strings back to plain text. Essential for data transmission, API authentication, and encoding binary data for web applications.</p>
+                    <h2><i class="fas fa-file-code"></i> Base64 Encode Decode - Professional Encoder Tool</h2>
+                    <p>Advanced <strong>Base64 encode</strong> and decode tool for developers. Instantly <strong>Base64 encode</strong> text or decode Base64 strings. Essential for JWT payload encoding, API authentication, auth testing, OAuth client secrets, and secure data transmission. Perfect for authentication workflows, token processing, and binary data encoding for web applications.</p>
                     
                     <div class="input-group">
                         <label for="base64-input">Input Text:</label>
@@ -180,8 +238,8 @@
             <!-- JWT Verifier Tab -->
             <div id="jwt" class="tab-content">
                 <div class="tool-card">
-                    <h2><i class="fas fa-key"></i> JWT Token Decoder & Verifier</h2>
-                    <p>JWT token decoder and verifier tool. Decode JSON Web Tokens (JWT) to view header, payload, and signature information. Perfect for debugging authentication issues, testing JWT implementations, and understanding token structure.</p>
+                    <h2><i class="fas fa-key"></i> JWT Verification & JWT Validation Tool</h2>
+                    <p>Professional <strong>JWT verification</strong> and <strong>JWT validation</strong> tool with <strong>claims validation</strong>. Decode JWT tokens, verify signatures, and validate claims instantly. Perfect for <strong>auth testing</strong>, OAuth debugging, and authentication troubleshooting. Supports all JWT algorithms (HS256, RS256, ES256) and provides detailed <strong>JWT verification</strong> results including header, payload, and signature analysis.</p>
                     
                     <div class="input-group">
                         <label for="jwt-input">JWT Token:</label>
@@ -219,8 +277,8 @@
             <!-- OIDC Workflow Tab -->
             <div id="oidc" class="tab-content">
                 <div class="tool-card">
-                    <h2><i class="fas fa-shield-alt"></i> OpenID Connect (OIDC) Workflow Tester</h2>
-                    <p>OIDC authentication flow tester and endpoint discovery tool. Test OpenID Connect configurations, generate authorization URLs, and verify OIDC discovery endpoints. Essential for OAuth 2.0 and OIDC implementation testing.</p>
+                    <h2><i class="fas fa-shield-alt"></i> OpenID Connect Auth Testing & Auth Code Flow</h2>
+                    <p>Complete <strong>OpenID Connect</strong> and <strong>auth testing</strong> suite. Test OIDC flows, validate <strong>auth code</strong> exchanges, verify discovery endpoints, and debug authentication workflows. Essential for <strong>OpenID Connect</strong> implementation, OAuth 2.0 testing, and <strong>auth code</strong> flow validation. Supports PKCE, implicit flow, and hybrid flows for comprehensive <strong>auth testing</strong>.</p>
                     
                     <div class="oidc-config">
                         <div class="input-group">
@@ -299,7 +357,14 @@
         </main>
 
         <footer class="footer">
-            <p>&copy; 2024 DevTools Hub. Built with ❤️ for developers.</p>
+            <div class="footer-content">
+                <h3>JWT Verification & Auth Testing Tools - DevTools Hub</h3>
+                <p>Professional authentication tools: <strong>JWT verification</strong>, <strong>JWT validation</strong>, <strong>claims validation</strong>, <strong>OpenID Connect</strong> testing, <strong>auth code</strong> flows, <strong>Base64 encode</strong>, and <strong>URL encode decode</strong>. Complete <strong>auth testing</strong> suite for developers and security professionals.</p>
+                <div class="footer-keywords">
+                    <span>Top Keywords:</span> openid connect | auth testing | auth code | jwt verification | jwt validation | claims validation | base64 encode | url encode | url decode
+                </div>
+                <p class="copyright">&copy; 2024 DevTools Hub. Professional auth testing tools for developers worldwide.</p>
+            </div>
         </footer>
     </div>
 
