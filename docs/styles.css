@@ -572,13 +572,19 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+[data-theme="dark"] .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.85);
 }
 
 .modal-content {
     position: relative;
     background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     max-width: 800px;
@@ -587,6 +593,11 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+[data-theme="dark"] .modal-content {
+    border: 1px solid var(--border-hover);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .modal-header {
@@ -830,6 +841,252 @@ body {
 
 .slide-in {
     animation: slideIn 0.4s ease-out;
+}
+
+/* ===== TOOL INTERFACE STYLES ===== */
+.tool-interface {
+    max-width: 100%;
+}
+
+.input-group {
+    margin-bottom: var(--space-lg);
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: var(--space-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-family: var(--font-mono);
+    transition: all 0.2s ease;
+    resize: vertical;
+}
+
+.input-group textarea[readonly] {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+[data-theme="dark"] .input-group textarea[readonly] {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+}
+
+/* Base64 and URL Encoder specific output styling */
+#base64-output,
+#url-output {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border: 1px solid var(--border-color);
+    min-height: 120px;
+}
+
+[data-theme="dark"] #base64-output,
+[data-theme="dark"] #url-output {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-light);
+    background-color: var(--bg-primary);
+}
+
+.input-group textarea {
+    min-height: 120px;
+    line-height: 1.5;
+}
+
+.button-group {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.output-group {
+    position: relative;
+    margin-bottom: var(--space-lg);
+}
+
+.output-group .copy-btn {
+    position: absolute;
+    top: 2rem;
+    right: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.75rem;
+    z-index: 10;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+}
+
+.output-group .copy-btn:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-hover);
+}
+
+/* ===== JWT TOOL STYLES ===== */
+.jwt-results {
+    margin-top: var(--space-lg);
+}
+
+.result-section {
+    margin-bottom: var(--space-lg);
+}
+
+.result-section h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.result-output {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 80px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.signature-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* ===== OIDC TOOL STYLES ===== */
+.oidc-config {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.oidc-results {
+    margin-top: var(--space-lg);
+}
+
+.auth-url-container {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: flex-start;
+}
+
+.auth-url-input {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    word-break: break-all;
+}
+
+/* ===== NOTIFICATION STYLES ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    animation: slideInNotification 0.3s ease;
+    box-shadow: var(--shadow-lg);
+}
+
+.notification-success { 
+    background-color: var(--success); 
+}
+
+.notification-error { 
+    background-color: var(--error); 
+}
+
+.notification-info { 
+    background-color: var(--accent-primary); 
+}
+
+@keyframes slideInNotification {
+    from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+/* ===== TOOL INTERFACE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .oidc-config {
+        grid-template-columns: 1fr;
+    }
+    
+    .auth-url-container {
+        flex-direction: column;
+    }
+    
+    .output-group .copy-btn {
+        position: static;
+        margin-top: var(--space-sm);
+        width: 100%;
+    }
+    
+    .tool-interface {
+        padding: 0;
+    }
+    
+    .result-output {
+        font-size: 0.75rem;
+        max-height: 200px;
+    }
 }
 
 /* ===== UTILITY CLASSES ===== */
