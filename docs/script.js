@@ -625,27 +625,45 @@ function initializeApp() {
 // ===== EVENT LISTENERS =====
 function setupEventListeners() {
     // Category filters
-    categoryButtons.forEach(btn => {
-        btn.addEventListener('click', () => handleCategoryChange(btn.dataset.category));
-    });
+    if (categoryButtons && categoryButtons.length > 0) {
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Category clicked:', btn.dataset.category);
+                handleCategoryChange(btn.dataset.category);
+            });
+        });
+    }
     
     // Search
-    searchInput.addEventListener('input', handleSearch);
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+    }
     
     // Load more
-    loadMoreBtn.addEventListener('click', loadMoreTools);
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', loadMoreTools);
+    }
     
     // Modal
-    modalClose.addEventListener('click', closeModal);
-    modalBackdrop.addEventListener('click', closeModal);
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+    if (modalBackdrop) {
+        modalBackdrop.addEventListener('click', closeModal);
+    }
     
     // Theme toggle
-    themeToggle.addEventListener('click', toggleTheme);
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
     
     // Quick tools
-    quickTools.forEach(tool => {
-        tool.addEventListener('click', () => openInternalTool(tool.dataset.tool));
-    });
+    if (quickTools && quickTools.length > 0) {
+        quickTools.forEach(tool => {
+            tool.addEventListener('click', () => openInternalTool(tool.dataset.tool));
+        });
+    }
     
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboard);
@@ -712,14 +730,19 @@ function updateCategoryDisplay(category) {
     };
     
     const info = categoryInfo[category];
-    collectionTitle.textContent = info.title;
-    collectionSubtitle.textContent = info.subtitle;
+    if (collectionTitle && info) {
+        collectionTitle.textContent = info.title;
+    }
+    if (collectionSubtitle && info) {
+        collectionSubtitle.textContent = info.subtitle;
+    }
 }
 
 // ===== SEARCH FUNCTIONALITY =====
 function handleSearch(e) {
     searchQuery = e.target.value.toLowerCase();
     currentPage = 1;
+    console.log('Search query:', searchQuery);
     renderTools();
 }
 
@@ -750,8 +773,10 @@ function renderFeaturedTools() {
         .filter(tool => tool.featured)
         .slice(0, 6);
     
-    featuredGrid.innerHTML = featured.map(tool => createResourceCard(tool)).join('');
-    addCardEventListeners(featuredGrid);
+    if (featuredGrid) {
+        featuredGrid.innerHTML = featured.map(tool => createResourceCard(tool)).join('');
+        addCardEventListeners(featuredGrid);
+    }
 }
 
 function renderTools() {
@@ -760,11 +785,22 @@ function renderTools() {
     const endIndex = currentPage * itemsPerPage;
     const toolsToShow = filteredTools.slice(startIndex, endIndex);
     
-    toolsGrid.innerHTML = toolsToShow.map(tool => createResourceCard(tool)).join('');
-    addCardEventListeners(toolsGrid);
+    console.log('Rendering tools:', {
+        category: currentCategory,
+        searchQuery: searchQuery,
+        totalFiltered: filteredTools.length,
+        showing: toolsToShow.length
+    });
+    
+    if (toolsGrid) {
+        toolsGrid.innerHTML = toolsToShow.map(tool => createResourceCard(tool)).join('');
+        addCardEventListeners(toolsGrid);
+    }
     
     // Update load more button
-    loadMoreBtn.style.display = endIndex >= filteredTools.length ? 'none' : 'block';
+    if (loadMoreBtn) {
+        loadMoreBtn.style.display = endIndex >= filteredTools.length ? 'none' : 'block';
+    }
 }
 
 function loadMoreTools() {
