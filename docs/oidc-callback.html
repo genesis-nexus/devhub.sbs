@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DGT4D663Z0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DGT4D663Z0');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OIDC Callback Handler | DevHub</title>
+    <meta name="description" content="OIDC OAuth callback handler for testing authentication flows and token exchange">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="callback-container">
+        <div class="callback-content">
+            <div class="callback-header">
+                <h1><i class="fas fa-shield-alt"></i> OIDC Callback Handler</h1>
+                <p>Processing your OAuth authentication response...</p>
+            </div>
+            
+            <div class="callback-status" id="callback-status">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Processing callback...</span>
+                </div>
+            </div>
+            
+            <div class="callback-results" id="callback-results" style="display: none;">
+                <!-- Authorization Code Results -->
+                <div class="result-section">
+                    <h3><i class="fas fa-code"></i> Authorization Response</h3>
+                    <div class="auth-response" id="auth-response">
+                        <div class="response-item">
+                            <label>Authorization Code:</label>
+                            <div class="code-container">
+                                <input type="text" id="auth-code" readonly class="code-input">
+                                <button class="copy-btn" onclick="copyToClipboard('auth-code')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="response-item">
+                            <label>State Parameter:</label>
+                            <div class="code-container">
+                                <input type="text" id="state-param" readonly class="code-input">
+                                <button class="copy-btn" onclick="copyToClipboard('state-param')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="response-item" id="scope-container" style="display: none;">
+                            <label>Scope:</label>
+                            <input type="text" id="scope-param" readonly class="code-input">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Token Exchange Section -->
+                <div class="result-section">
+                    <h3><i class="fas fa-exchange-alt"></i> Token Exchange</h3>
+                    <div class="token-exchange">
+                        <div class="exchange-config">
+                            <div class="input-group">
+                                <label for="token-endpoint">Token Endpoint:</label>
+                                <input type="url" id="token-endpoint" placeholder="https://your-domain/oauth/token">
+                            </div>
+                            <div class="input-group">
+                                <label for="client-id-token">Client ID:</label>
+                                <input type="text" id="client-id-token" placeholder="Your client ID">
+                            </div>
+                            <div class="input-group">
+                                <label for="client-secret">Client Secret (optional):</label>
+                                <input type="password" id="client-secret" placeholder="Your client secret (for confidential clients)">
+                            </div>
+                            <div class="input-group">
+                                <label for="redirect-uri-token">Redirect URI:</label>
+                                <input type="url" id="redirect-uri-token" placeholder="https://devhub.sbs/oidc-callback.html">
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button id="exchange-token" class="btn btn-primary">
+                                <i class="fas fa-exchange-alt"></i> Exchange for Tokens
+                            </button>
+                            <button id="decode-tokens" class="btn btn-outline" style="display: none;">
+                                <i class="fas fa-key"></i> Decode Tokens
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Token Results -->
+                <div class="result-section" id="token-results" style="display: none;">
+                    <h3><i class="fas fa-key"></i> Token Response</h3>
+                    <div class="token-display">
+                        <div class="token-item">
+                            <h4>Access Token</h4>
+                            <div class="token-container">
+                                <textarea id="access-token" readonly class="token-textarea"></textarea>
+                                <button class="copy-btn" onclick="copyToClipboard('access-token')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="token-item" id="id-token-container" style="display: none;">
+                            <h4>ID Token</h4>
+                            <div class="token-container">
+                                <textarea id="id-token" readonly class="token-textarea"></textarea>
+                                <button class="copy-btn" onclick="copyToClipboard('id-token')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="token-item" id="refresh-token-container" style="display: none;">
+                            <h4>Refresh Token</h4>
+                            <div class="token-container">
+                                <textarea id="refresh-token" readonly class="token-textarea"></textarea>
+                                <button class="copy-btn" onclick="copyToClipboard('refresh-token')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Decoded Token Claims -->
+                <div class="result-section" id="claims-results" style="display: none;">
+                    <h3><i class="fas fa-list"></i> Decoded Token Claims</h3>
+                    <div class="claims-display">
+                        <div class="claims-item" id="access-claims-container" style="display: none;">
+                            <h4>Access Token Claims</h4>
+                            <pre id="access-claims" class="claims-output"></pre>
+                        </div>
+                        <div class="claims-item" id="id-claims-container" style="display: none;">
+                            <h4>ID Token Claims</h4>
+                            <pre id="id-claims" class="claims-output"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="callback-actions">
+                <button class="btn btn-outline" onclick="window.close()">
+                    <i class="fas fa-times"></i> Close Window
+                </button>
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Back to DevHub
+                </a>
+            </div>
+            
+            <div class="callback-error" id="callback-error" style="display: none;">
+                <div class="error-content">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Authentication Error</h3>
+                    <div id="error-details"></div>
+                    <div class="error-actions">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to DevHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Process the OAuth callback
+        document.addEventListener('DOMContentLoaded', function() {
+            processOAuthCallback();
+        });
+        
+        function processOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            // Check for error parameters
+            const error = urlParams.get('error') || hashParams.get('error');
+            const errorDescription = urlParams.get('error_description') || hashParams.get('error_description');
+            
+            if (error) {
+                showError(error, errorDescription);
+                return;
+            }
+            
+            // Extract authorization response parameters
+            const authCode = urlParams.get('code') || hashParams.get('code');
+            const state = urlParams.get('state') || hashParams.get('state');
+            const scope = urlParams.get('scope') || hashParams.get('scope');
+            
+            // For implicit flow (access_token in fragment)
+            const accessToken = hashParams.get('access_token');
+            const tokenType = hashParams.get('token_type');
+            const idToken = hashParams.get('id_token');
+            
+            if (!authCode && !accessToken) {
+                showError('missing_parameters', 'No authorization code or access token found in the response');
+                return;
+            }
+            
+            // Hide loading and show results
+            document.getElementById('callback-status').style.display = 'none';
+            document.getElementById('callback-results').style.display = 'block';
+            
+            if (authCode) {
+                // Authorization Code Flow
+                document.getElementById('auth-code').value = authCode;
+                document.getElementById('state-param').value = state || 'N/A';
+                
+                if (scope) {
+                    document.getElementById('scope-param').value = scope;
+                    document.getElementById('scope-container').style.display = 'block';
+                }
+                
+                // Pre-fill redirect URI
+                document.getElementById('redirect-uri-token').value = window.location.origin + window.location.pathname;
+                
+                // Try to get stored OIDC config from sessionStorage
+                const storedConfig = sessionStorage.getItem('oidc_config');
+                if (storedConfig) {
+                    try {
+                        const config = JSON.parse(storedConfig);
+                        if (config.token_endpoint) {
+                            document.getElementById('token-endpoint').value = config.token_endpoint;
+                        }
+                        if (config.client_id) {
+                            document.getElementById('client-id-token').value = config.client_id;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing stored OIDC config:', e);
+                    }
+                }
+                
+            } else if (accessToken) {
+                // Implicit Flow - tokens already available
+                document.getElementById('token-results').style.display = 'block';
+                document.getElementById('access-token').value = accessToken;
+                
+                if (idToken) {
+                    document.getElementById('id-token').value = idToken;
+                    document.getElementById('id-token-container').style.display = 'block';
+                }
+                
+                // Auto-decode tokens
+                setTimeout(() => {
+                    decodeAvailableTokens();
+                }, 100);
+            }
+        }
+        
+        function showError(error, description) {
+            document.getElementById('callback-status').style.display = 'none';
+            document.getElementById('callback-results').style.display = 'none';
+            document.getElementById('callback-error').style.display = 'block';
+            
+            const errorDetails = document.getElementById('error-details');
+            errorDetails.innerHTML = `
+                <div class="error-item">
+                    <strong>Error:</strong> ${error}
+                </div>
+                ${description ? `<div class="error-item"><strong>Description:</strong> ${description}</div>` : ''}
+            `;
+        }
+        
+        // Token exchange functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const exchangeBtn = document.getElementById('exchange-token');
+            const decodeBtn = document.getElementById('decode-tokens');
+            
+            if (exchangeBtn) {
+                exchangeBtn.addEventListener('click', exchangeAuthCodeForTokens);
+            }
+            
+            if (decodeBtn) {
+                decodeBtn.addEventListener('click', decodeAvailableTokens);
+            }
+        });
+        
+        async function exchangeAuthCodeForTokens() {
+            const authCode = document.getElementById('auth-code').value;
+            const tokenEndpoint = document.getElementById('token-endpoint').value;
+            const clientId = document.getElementById('client-id-token').value;
+            const clientSecret = document.getElementById('client-secret').value;
+            const redirectUri = document.getElementById('redirect-uri-token').value;
+            
+            if (!authCode || !tokenEndpoint || !clientId || !redirectUri) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const exchangeBtn = document.getElementById('exchange-token');
+            exchangeBtn.disabled = true;
+            exchangeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exchanging...';
+            
+            try {
+                const tokenData = new URLSearchParams({
+                    grant_type: 'authorization_code',
+                    code: authCode,
+                    redirect_uri: redirectUri,
+                    client_id: clientId
+                });
+                
+                if (clientSecret) {
+                    tokenData.append('client_secret', clientSecret);
+                }
+                
+                const response = await fetch(tokenEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: tokenData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Token exchange failed: ${response.status} ${response.statusText}`);
+                }
+                
+                const tokens = await response.json();
+                
+                // Display tokens
+                displayTokens(tokens);
+                showNotification('Tokens exchanged successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Token exchange error:', error);
+                showNotification(`Token exchange failed: ${error.message}`, 'error');
+            } finally {
+                exchangeBtn.disabled = false;
+                exchangeBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Exchange for Tokens';
+            }
+        }
+        
+        function displayTokens(tokens) {
+            const tokenResults = document.getElementById('token-results');
+            const decodeBtn = document.getElementById('decode-tokens');
+            
+            tokenResults.style.display = 'block';
+            decodeBtn.style.display = 'inline-block';
+            
+            if (tokens.access_token) {
+                document.getElementById('access-token').value = tokens.access_token;
+            }
+            
+            if (tokens.id_token) {
+                document.getElementById('id-token').value = tokens.id_token;
+                document.getElementById('id-token-container').style.display = 'block';
+            }
+            
+            if (tokens.refresh_token) {
+                document.getElementById('refresh-token').value = tokens.refresh_token;
+                document.getElementById('refresh-token-container').style.display = 'block';
+            }
+        }
+        
+        function decodeAvailableTokens() {
+            const claimsResults = document.getElementById('claims-results');
+            claimsResults.style.display = 'block';
+            
+            const accessToken = document.getElementById('access-token').value;
+            const idToken = document.getElementById('id-token').value;
+            
+            if (accessToken) {
+                try {
+                    const accessClaims = decodeJWT(accessToken);
+                    document.getElementById('access-claims').textContent = JSON.stringify(accessClaims, null, 2);
+                    document.getElementById('access-claims-container').style.display = 'block';
+                } catch (error) {
+                    console.error('Error decoding access token:', error);
+                }
+            }
+            
+            if (idToken) {
+                try {
+                    const idClaims = decodeJWT(idToken);
+                    document.getElementById('id-claims').textContent = JSON.stringify(idClaims, null, 2);
+                    document.getElementById('id-claims-container').style.display = 'block';
+                } catch (error) {
+                    console.error('Error decoding ID token:', error);
+                }
+            }
+            
+            showNotification('Tokens decoded successfully!', 'success');
+        }
+        
+        function decodeJWT(token) {
+            const parts = token.split('.');
+            if (parts.length !== 3) {
+                throw new Error('Invalid JWT format');
+            }
+            
+            const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+            const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+            
+            return {
+                header: header,
+                payload: payload,
+                signature: parts[2]
+            };
+        }
+        
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            element.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(element.value).then(() => {
+                showNotification('Copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy', 'error');
+            });
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

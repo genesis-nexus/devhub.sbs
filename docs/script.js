@@ -982,18 +982,33 @@ function createOIDCToolInterface() {
                 <div class="input-group">
                     <label for="oidc-discovery">Discovery Endpoint:</label>
                     <input type="url" id="oidc-discovery" placeholder="https://your-domain/.well-known/openid_configuration">
+                    <small class="help-text">The OIDC discovery endpoint (/.well-known/openid_configuration)</small>
                 </div>
                 <div class="input-group">
                     <label for="oidc-client-id">Client ID:</label>
                     <input type="text" id="oidc-client-id" placeholder="Your OIDC client ID">
+                    <small class="help-text">The client ID registered with your OIDC provider</small>
                 </div>
                 <div class="input-group">
                     <label for="oidc-redirect-uri">Redirect URI:</label>
-                    <input type="url" id="oidc-redirect-uri" placeholder="https://your-app/callback">
+                    <input type="url" id="oidc-redirect-uri" value="https://devhub.sbs/oidc-callback.html" readonly>
+                    <small class="help-text">Configure this URL in your OIDC provider (click to copy)</small>
                 </div>
                 <div class="input-group">
                     <label for="oidc-scope">Scope:</label>
                     <input type="text" id="oidc-scope" value="openid profile email" placeholder="openid profile email">
+                    <small class="help-text">Space-separated list of requested scopes</small>
+                </div>
+                <div class="input-group">
+                    <label for="oidc-response-type">Response Type:</label>
+                    <select id="oidc-response-type">
+                        <option value="code">Authorization Code (code)</option>
+                        <option value="token">Implicit (token)</option>
+                        <option value="id_token">ID Token (id_token)</option>
+                        <option value="code token">Hybrid (code token)</option>
+                        <option value="code id_token">Hybrid (code id_token)</option>
+                    </select>
+                    <small class="help-text">OAuth 2.0 / OIDC response type</small>
                 </div>
             </div>
             <div class="button-group">
@@ -1002,6 +1017,9 @@ function createOIDCToolInterface() {
                 </button>
                 <button id="oidc-generate-auth-url" class="btn btn-primary">
                     <i class="fas fa-external-link-alt"></i> Generate Auth URL
+                </button>
+                <button id="oidc-test-flow" class="btn btn-success" style="display: none;">
+                    <i class="fas fa-play"></i> Test Full Flow
                 </button>
                 <button id="oidc-clear" class="btn btn-outline">
                     <i class="fas fa-trash"></i> Clear
@@ -1019,11 +1037,43 @@ function createOIDCToolInterface() {
                         <button id="oidc-copy-url" class="btn btn-outline copy-btn">
                             <i class="fas fa-copy"></i> Copy
                         </button>
+                        <button id="oidc-open-url" class="btn btn-primary copy-btn" style="display: none;">
+                            <i class="fas fa-external-link-alt"></i> Open
+                        </button>
+                    </div>
+                </div>
+                <div class="result-section">
+                    <h4>Testing Instructions</h4>
+                    <div class="instructions">
+                        <ol>
+                            <li><strong>Configure your OIDC provider:</strong> Add <code>https://devhub.sbs/oidc-callback.html</code> as a redirect URI</li>
+                            <li><strong>Fill in the configuration above</strong> with your OIDC provider details</li>
+                            <li><strong>Click "Discover Endpoints"</strong> to fetch provider configuration</li>
+                            <li><strong>Click "Generate Auth URL"</strong> to create the authorization URL</li>
+                            <li><strong>Click "Test Full Flow"</strong> to open the auth URL and complete the OAuth flow</li>
+                        </ol>
+                        <div class="popular-providers">
+                            <h5>Popular OIDC Providers:</h5>
+                            <div class="provider-buttons">
+                                <button class="provider-btn" data-provider="auth0">
+                                    🔐 Auth0
+                                </button>
+                                <button class="provider-btn" data-provider="google">
+                                    🔍 Google
+                                </button>
+                                <button class="provider-btn" data-provider="microsoft">
+                                    🔷 Microsoft
+                                </button>
+                                <button class="provider-btn" data-provider="okta">
+                                    🏢 Okta
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    `;
+    `;}
 }
 
 // ===== TOOL FUNCTIONALITY =====
@@ -1181,8 +1231,25 @@ function initializeURLTool() {
 function initializeOIDCTool() {
     const oidcDiscover = document.getElementById('oidc-discover');
     const oidcGenerateAuthUrl = document.getElementById('oidc-generate-auth-url');
+    const oidcTestFlow = document.getElementById('oidc-test-flow');
     const oidcClear = document.getElementById('oidc-clear');
     const oidcCopyUrl = document.getElementById('oidc-copy-url');
+    const oidcOpenUrl = document.getElementById('oidc-open-url');
+    const redirectUriInput = document.getElementById('oidc-redirect-uri');
+    
+    // Make redirect URI clickable to copy
+    redirectUriInput.addEventListener('click', () => {
+        copyToClipboard('oidc-redirect-uri');
+        showNotification('Redirect URI copied! Configure this in your OIDC provider.', 'success');
+    });
+    
+    // Provider preset buttons
+    document.querySelectorAll('.provider-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const provider = btn.dataset.provider;
+            loadProviderPreset(provider);
+        });
+    });
     
     oidcDiscover.addEventListener('click', async () => {
         const discoveryUrl = document.getElementById('oidc-discovery').value;
@@ -1191,13 +1258,36 @@ function initializeOIDCTool() {
             return;
         }
         
+        oidcDiscover.disabled = true;
+        oidcDiscover.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Discovering...';
+        
         try {
             const response = await fetch(discoveryUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const data = await response.json();
             document.getElementById('oidc-discovery-results').textContent = JSON.stringify(data, null, 2);
-            showNotification('Discovery successful', 'success');
+            
+            // Store the discovery data for the callback page
+            const configToStore = {
+                discovery_url: discoveryUrl,
+                authorization_endpoint: data.authorization_endpoint,
+                token_endpoint: data.token_endpoint,
+                userinfo_endpoint: data.userinfo_endpoint,
+                issuer: data.issuer,
+                client_id: document.getElementById('oidc-client-id').value
+            };
+            sessionStorage.setItem('oidc_config', JSON.stringify(configToStore));
+            
+            showNotification('Discovery successful! Provider configuration loaded.', 'success');
         } catch (error) {
-            showNotification('Discovery failed', 'error');
+            console.error('Discovery error:', error);
+            showNotification(`Discovery failed: ${error.message}`, 'error');
+        } finally {
+            oidcDiscover.disabled = false;
+            oidcDiscover.innerHTML = '<i class="fas fa-search"></i> Discover Endpoints';
         }
     });
     
@@ -1205,38 +1295,141 @@ function initializeOIDCTool() {
         const clientId = document.getElementById('oidc-client-id').value;
         const redirectUri = document.getElementById('oidc-redirect-uri').value;
         const scope = document.getElementById('oidc-scope').value;
-        const discoveryUrl = document.getElementById('oidc-discovery').value;
+        const responseType = document.getElementById('oidc-response-type').value;
+        const discoveryResults = document.getElementById('oidc-discovery-results').textContent;
         
-        if (!clientId || !redirectUri || !discoveryUrl) {
-            showNotification('Please fill in required fields', 'error');
+        if (!clientId || !redirectUri) {
+            showNotification('Please fill in Client ID and Redirect URI', 'error');
             return;
         }
         
-        const baseUrl = new URL(discoveryUrl).origin;
-        const authUrl = new URL(`${baseUrl}/oauth/authorize`);
+        let authorizationEndpoint;
+        
+        // Try to get authorization endpoint from discovery results
+        if (discoveryResults) {
+            try {
+                const discoveryData = JSON.parse(discoveryResults);
+                authorizationEndpoint = discoveryData.authorization_endpoint;
+            } catch (e) {
+                console.error('Error parsing discovery results:', e);
+            }
+        }
+        
+        // Fallback to manual construction if no discovery endpoint found
+        if (!authorizationEndpoint) {
+            const discoveryUrl = document.getElementById('oidc-discovery').value;
+            if (!discoveryUrl) {
+                showNotification('Please run discovery first or enter a discovery endpoint', 'error');
+                return;
+            }
+            const baseUrl = new URL(discoveryUrl).origin;
+            authorizationEndpoint = `${baseUrl}/oauth/authorize`;
+        }
+        
+        const authUrl = new URL(authorizationEndpoint);
         authUrl.searchParams.set('client_id', clientId);
         authUrl.searchParams.set('redirect_uri', redirectUri);
         authUrl.searchParams.set('scope', scope || 'openid profile email');
-        authUrl.searchParams.set('response_type', 'code');
-        authUrl.searchParams.set('state', generateRandomState());
+        authUrl.searchParams.set('response_type', responseType);
         
-        document.getElementById('oidc-auth-url').value = authUrl.toString();
-        showNotification('Authorization URL generated', 'success');
+        const state = generateRandomState();
+        authUrl.searchParams.set('state', state);
+        
+        // Store state for validation
+        sessionStorage.setItem('oidc_state', state);
+        
+        const authUrlString = authUrl.toString();
+        document.getElementById('oidc-auth-url').value = authUrlString;
+        
+        // Show additional buttons
+        oidcOpenUrl.style.display = 'inline-block';
+        oidcTestFlow.style.display = 'inline-block';
+        
+        showNotification('Authorization URL generated successfully!', 'success');
+    });
+    
+    oidcTestFlow.addEventListener('click', () => {
+        const authUrl = document.getElementById('oidc-auth-url').value;
+        if (!authUrl) {
+            showNotification('Please generate an authorization URL first', 'error');
+            return;
+        }
+        
+        // Open the auth URL in a new window/tab
+        window.open(authUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
+        showNotification('Opened authorization URL in new window. Complete the login flow!', 'info');
+    });
+    
+    oidcOpenUrl.addEventListener('click', () => {
+        const authUrl = document.getElementById('oidc-auth-url').value;
+        if (authUrl) {
+            window.open(authUrl, '_blank');
+        }
     });
     
     oidcClear.addEventListener('click', () => {
         document.getElementById('oidc-discovery').value = '';
         document.getElementById('oidc-client-id').value = '';
-        document.getElementById('oidc-redirect-uri').value = '';
+        document.getElementById('oidc-redirect-uri').value = 'https://devhub.sbs/oidc-callback.html';
         document.getElementById('oidc-scope').value = 'openid profile email';
+        document.getElementById('oidc-response-type').value = 'code';
         document.getElementById('oidc-discovery-results').textContent = '';
         document.getElementById('oidc-auth-url').value = '';
+        
+        // Hide additional buttons
+        oidcOpenUrl.style.display = 'none';
+        oidcTestFlow.style.display = 'none';
+        
+        // Clear session storage
+        sessionStorage.removeItem('oidc_config');
+        sessionStorage.removeItem('oidc_state');
+        
+        showNotification('OIDC configuration cleared', 'success');
     });
     
     oidcCopyUrl.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
-        copyToClipboard(authUrl);
+        if (authUrl) {
+            navigator.clipboard.writeText(authUrl).then(() => {
+                showNotification('Authorization URL copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy URL', 'error');
+            });
+        } else {
+            showNotification('No URL to copy', 'error');
+        }
     });
+}
+
+function loadProviderPreset(provider) {
+    const discoveryInput = document.getElementById('oidc-discovery');
+    const clientIdInput = document.getElementById('oidc-client-id');
+    
+    const presets = {
+        auth0: {
+            discovery: 'https://YOUR_DOMAIN.auth0.com/.well-known/openid_configuration',
+            placeholder: 'Replace YOUR_DOMAIN with your Auth0 domain'
+        },
+        google: {
+            discovery: 'https://accounts.google.com/.well-known/openid_configuration',
+            placeholder: 'Get your client ID from Google Cloud Console'
+        },
+        microsoft: {
+            discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid_configuration',
+            placeholder: 'Get your client ID from Azure Portal'
+        },
+        okta: {
+            discovery: 'https://YOUR_DOMAIN.okta.com/.well-known/openid_configuration',
+            placeholder: 'Replace YOUR_DOMAIN with your Okta domain'
+        }
+    };
+    
+    const preset = presets[provider];
+    if (preset) {
+        discoveryInput.value = preset.discovery;
+        clientIdInput.placeholder = preset.placeholder;
+        showNotification(`${provider.charAt(0).toUpperCase() + provider.slice(1)} preset loaded!`, 'success');
+    }
 }
 
 // ===== MODAL HANDLING =====
@@ -1284,6 +1477,20 @@ function copyToClipboard(text) {
 
 function generateRandomState() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.select();
+        element.setSelectionRange(0, 99999);
+        
+        navigator.clipboard.writeText(element.value).then(() => {
+            // Success handled by caller
+        }).catch(() => {
+            // Error handled by caller
+        });
+    }
 }
 
 function showNotification(message, type = 'info') {
