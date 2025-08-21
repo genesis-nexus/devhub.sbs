@@ -1073,7 +1073,7 @@ function createOIDCToolInterface() {
                 </div>
             </div>
         </div>
-    `;}
+    `;
 }
 
 // ===== TOOL FUNCTIONALITY =====
@@ -1467,14 +1467,6 @@ function updateThemeIcon(theme) {
 }
 
 // ===== UTILITY FUNCTIONS =====
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        showNotification('Copied to clipboard', 'success');
-    }).catch(() => {
-        showNotification('Failed to copy', 'error');
-    });
-}
-
 function generateRandomState() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
