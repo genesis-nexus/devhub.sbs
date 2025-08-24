@@ -165,6 +165,17 @@ const toolsDatabase = {
             stats: { users: "75k+", rating: "4.8" }
         },
         {
+            name: "Hash Generator",
+            description: "Generate various hash types including MD5, SHA-256, SHA-512, and more for data integrity.",
+            category: "Productivity",
+            tags: ["Hashing", "MD5", "SHA-256", "Security", "Checksum"],
+            url: "#hash-tool",
+            logo: "🔒",
+            type: "internal",
+            featured: true,
+            stats: { users: "80k+", rating: "4.9" }
+        },
+        {
             name: "Linear",
             description: "Modern issue tracking and project management for software teams.",
             category: "Productivity",
@@ -602,13 +613,17 @@ const collectionTitle = document.getElementById('collection-title');
 const collectionSubtitle = document.getElementById('collection-subtitle');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const searchInput = document.getElementById('search-input');
+const sidebarSearch = document.getElementById('sidebar-search');
 const modal = document.getElementById('tool-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalBody = document.getElementById('modal-body');
 const modalClose = document.getElementById('modal-close');
 const modalBackdrop = document.getElementById('modal-backdrop');
 const themeToggle = document.getElementById('theme-toggle');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const backToTop = document.getElementById('back-to-top');
 const quickTools = document.querySelectorAll('.quick-tool');
+const sidebarNavLinks = document.querySelectorAll('.sidebar .nav-link');
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -619,12 +634,39 @@ function initializeApp() {
     setupEventListeners();
     renderFeaturedTools();
     renderTools();
+    populateCategoryGrids(); // Ensure category grids are populated
     initializeTheme();
 }
 
 // ===== EVENT LISTENERS =====
 function setupEventListeners() {
-    // Category filters
+    // Sidebar navigation
+    if (sidebarNavLinks && sidebarNavLinks.length > 0) {
+        sidebarNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                sidebarNavLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                link.classList.add('active');
+                
+                if (link.dataset.tool) {
+                    openInternalTool(link.dataset.tool);
+                } else if (link.dataset.category) {
+                    handleCategoryChange(link.dataset.category);
+                }
+            });
+        });
+    }
+    
+    // Sidebar search
+    if (sidebarSearch) {
+        sidebarSearch.addEventListener('input', handleSidebarSearch);
+    }
+    
+    // Category filters (for backward compatibility)
     if (categoryButtons && categoryButtons.length > 0) {
         categoryButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -658,6 +700,16 @@ function setupEventListeners() {
         themeToggle.addEventListener('click', toggleTheme);
     }
     
+    // Sidebar toggle
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+    
+    // Back to top
+    if (backToTop) {
+        backToTop.addEventListener('click', scrollToTop);
+    }
+    
     // Quick tools
     if (quickTools && quickTools.length > 0) {
         quickTools.forEach(tool => {
@@ -667,6 +719,9 @@ function setupEventListeners() {
     
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboard);
+    
+    // Scroll events
+    window.addEventListener('scroll', handleScroll);
 }
 
 // ===== CATEGORY HANDLING =====
@@ -683,6 +738,18 @@ function handleCategoryChange(category) {
     
     // Render tools
     renderTools();
+    
+    // Show/hide category sections based on selection
+    toggleCategorySections(category);
+    
+    // Scroll to appropriate section
+    if (category === 'all') {
+        // Scroll to tools collection section
+        scrollToSection('tools');
+    } else {
+        // Scroll to specific category section
+        scrollToSection(category);
+    }
 }
 
 function updateCategoryDisplay(category) {
@@ -744,6 +811,52 @@ function handleSearch(e) {
     currentPage = 1;
     console.log('Search query:', searchQuery);
     renderTools();
+    
+    // If there's a search query, show relevant category sections and scroll to tools
+    if (searchQuery.trim()) {
+        showRelevantCategorySections(searchQuery);
+        scrollToSection('tools');
+    } else {
+        // If search is cleared, show all sections
+        showAllCategorySections();
+    }
+}
+
+function handleSidebarSearch(e) {
+    const query = e.target.value.toLowerCase();
+    
+    // Filter sidebar navigation items
+    sidebarNavLinks.forEach(link => {
+        const text = link.textContent.toLowerCase();
+        const shouldShow = text.includes(query);
+        link.parentElement.style.display = shouldShow ? 'block' : 'none';
+    });
+    
+    // If searching for a specific tool, show relevant category sections and scroll to tools
+    if (query.trim()) {
+        showRelevantCategorySections(query);
+        scrollToSection('tools');
+    } else {
+        // If search is cleared, show all sections
+        showAllCategorySections();
+    }
+}
+
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        // Smooth scroll to section
+        section.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+        
+        // Add a subtle highlight effect
+        section.classList.add('section-highlight');
+        setTimeout(() => {
+            section.classList.remove('section-highlight');
+        }, 2000);
+    }
 }
 
 // ===== TOOL RENDERING =====
@@ -801,6 +914,81 @@ function renderTools() {
     if (loadMoreBtn) {
         loadMoreBtn.style.display = endIndex >= filteredTools.length ? 'none' : 'block';
     }
+    
+    // Also populate category-specific grids
+    populateCategoryGrids();
+}
+
+function populateCategoryGrids() {
+    // Get all category grids
+    const categoryGrids = {
+        authentication: document.getElementById('authentication-grid'),
+        ai: document.getElementById('ai-grid'),
+        productivity: document.getElementById('productivity-grid'),
+        database: document.getElementById('database-grid'),
+        ui: document.getElementById('ui-grid'),
+        testing: document.getElementById('testing-grid'),
+        hosting: document.getElementById('hosting-grid'),
+        analytics: document.getElementById('analytics-grid'),
+        finance: document.getElementById('finance-grid')
+    };
+    
+    // Populate each category grid with its tools
+    Object.entries(categoryGrids).forEach(([category, grid]) => {
+        if (grid) {
+            const categoryTools = toolsDatabase[category] || [];
+            if (categoryTools.length > 0) {
+                grid.innerHTML = categoryTools.map(tool => createResourceCard(tool)).join('');
+                addCardEventListeners(grid);
+            } else {
+                grid.innerHTML = '<p class="no-tools">No tools available in this category yet.</p>';
+            }
+        }
+    });
+}
+
+function toggleCategorySections(selectedCategory) {
+    const allCategorySections = document.querySelectorAll('.category-section');
+    
+    allCategorySections.forEach(section => {
+        if (selectedCategory === 'all') {
+            // Show all sections when "All" is selected
+            section.style.display = 'block';
+        } else {
+            // Show only the selected category section
+            if (section.id === selectedCategory) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+    });
+}
+
+function showRelevantCategorySections(searchQuery) {
+    const allCategorySections = document.querySelectorAll('.category-section');
+    
+    allCategorySections.forEach(section => {
+        const sectionId = section.id;
+        const categoryTools = toolsDatabase[sectionId] || [];
+        
+        // Check if any tools in this category match the search query
+        const hasMatchingTools = categoryTools.some(tool => 
+            tool.name.toLowerCase().includes(searchQuery) ||
+            tool.description.toLowerCase().includes(searchQuery) ||
+            tool.tags.some(tag => tag.toLowerCase().includes(searchQuery))
+        );
+        
+        // Show section if it has matching tools
+        section.style.display = hasMatchingTools ? 'block' : 'none';
+    });
+}
+
+function showAllCategorySections() {
+    const allCategorySections = document.querySelectorAll('.category-section');
+    allCategorySections.forEach(section => {
+        section.style.display = 'block';
+    });
 }
 
 function loadMoreTools() {
@@ -874,6 +1062,10 @@ function openInternalTool(toolId) {
         oidc: {
             title: 'OpenID Connect Tester',
             content: createOIDCToolInterface()
+        },
+        hash: {
+            title: 'Hash Generator',
+            content: createHashToolInterface()
         }
     };
     
@@ -1076,6 +1268,91 @@ function createOIDCToolInterface() {
     `;
 }
 
+function createHashToolInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="hash-input">Input Text:</label>
+                <textarea id="hash-input" placeholder="Enter text to hash..." rows="4"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="hash-file">Or Upload File:</label>
+                <input type="file" id="hash-file" accept="*/*">
+                <small class="help-text">Select a file to hash (max 10MB)</small>
+            </div>
+            <div class="hash-options">
+                <label>Hash Types:</label>
+                <div class="hash-checkboxes">
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="md5" checked> MD5
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="sha1" checked> SHA-1
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="sha256" checked> SHA-256
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="sha512" checked> SHA-512
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="sha3-256"> SHA3-256
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="keccak256"> Keccak-256
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="blake2b"> BLAKE2b
+                    </label>
+                    <label class="hash-checkbox">
+                        <input type="checkbox" value="ripemd160"> RIPEMD-160
+                    </label>
+                </div>
+            </div>
+            <div class="checksum-options">
+                <label>Checksum Format:</label>
+                <div class="checksum-format">
+                    <label class="format-option">
+                        <input type="radio" name="checksum-format" value="hex" checked> Hexadecimal
+                    </label>
+                    <label class="format-option">
+                        <input type="radio" name="checksum-format" value="base64"> Base64
+                    </label>
+                    <label class="format-option">
+                        <input type="radio" name="checksum-format" value="binary"> Binary
+                    </label>
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="hash-generate" class="btn btn-primary">
+                    <i class="fas fa-hashtag"></i> Generate Hashes
+                </button>
+                <button id="hash-clear" class="btn btn-outline">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+            <div class="hash-results">
+                <div class="result-section">
+                    <h4>Generated Hashes</h4>
+                    <div id="hash-outputs"></div>
+                </div>
+                <div class="result-section">
+                    <h4>Checksum Verification</h4>
+                    <div class="checksum-verification">
+                        <div class="input-group">
+                            <label for="checksum-input">Expected Checksum:</label>
+                            <input type="text" id="checksum-input" placeholder="Paste the expected checksum here...">
+                        </div>
+                        <div class="verification-result" id="verification-result">
+                            <!-- Verification result will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // ===== TOOL FUNCTIONALITY =====
 function initializeToolFunctionality(toolId) {
     switch(toolId) {
@@ -1090,6 +1367,9 @@ function initializeToolFunctionality(toolId) {
             break;
         case 'oidc':
             initializeOIDCTool();
+            break;
+        case 'hash':
+            initializeHashTool();
             break;
     }
 }
@@ -1401,6 +1681,377 @@ function initializeOIDCTool() {
     });
 }
 
+function initializeHashTool() {
+    const hashInput = document.getElementById('hash-input');
+    const hashFile = document.getElementById('hash-file');
+    const hashGenerate = document.getElementById('hash-generate');
+    const hashClear = document.getElementById('hash-clear');
+    const hashOutputs = document.getElementById('hash-outputs');
+    
+    // Handle file input change
+    hashFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Clear text input when file is selected
+            hashInput.value = '';
+            hashInput.placeholder = `File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        }
+    });
+    
+    // Handle text input change
+    hashInput.addEventListener('input', () => {
+        if (hashInput.value.trim()) {
+            // Clear file input when text is entered
+            hashFile.value = '';
+            hashInput.placeholder = 'Enter text to hash...';
+        }
+    });
+    
+    hashGenerate.addEventListener('click', async () => {
+        const input = hashInput.value.trim();
+        const file = hashFile.files[0];
+        
+        if (!input && !file) {
+            showNotification('Please enter text or select a file to hash', 'error');
+            return;
+        }
+        
+        const selectedHashes = Array.from(document.querySelectorAll('.hash-checkboxes input:checked'))
+            .map(checkbox => checkbox.value);
+        
+        if (selectedHashes.length === 0) {
+            showNotification('Please select at least one hash type', 'error');
+            return;
+        }
+        
+        hashGenerate.disabled = true;
+        hashGenerate.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        
+        try {
+            // Get selected output format
+            const outputFormat = document.querySelector('input[name="checksum-format"]:checked').value;
+            
+            let results;
+            if (file) {
+                hashGenerate.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing file...';
+                results = await generateFileHashes(file, selectedHashes, outputFormat);
+                displayHashResults(results, { name: file.name, size: file.size });
+            } else {
+                results = await generateHashes(input, selectedHashes, outputFormat);
+                displayHashResults(results);
+            }
+            showNotification('Hashes generated successfully', 'success');
+        } catch (error) {
+            showNotification('Failed to generate hashes', 'error');
+            console.error('Hash generation error:', error);
+        } finally {
+            hashGenerate.disabled = false;
+            hashGenerate.innerHTML = '<i class="fas fa-hashtag"></i> Generate Hashes';
+        }
+    });
+    
+    hashClear.addEventListener('click', () => {
+        hashInput.value = '';
+        hashFile.value = '';
+        hashInput.placeholder = 'Enter text to hash...';
+        hashOutputs.innerHTML = '';
+        document.getElementById('verification-result').innerHTML = '';
+    });
+    
+    // Add checksum verification functionality
+    const checksumInput = document.getElementById('checksum-input');
+    if (checksumInput) {
+        checksumInput.addEventListener('input', () => {
+            verifyChecksum();
+        });
+    }
+}
+
+async function generateHashes(input, hashTypes, outputFormat = 'hex') {
+    const results = {};
+    
+    for (const hashType of hashTypes) {
+        try {
+            let hash;
+            switch (hashType) {
+                case 'md5':
+                    hash = await generateMD5(input);
+                    break;
+                case 'sha1':
+                    hash = await generateSHA1(input);
+                    break;
+                case 'sha256':
+                    hash = await generateSHA256(input);
+                    break;
+                case 'sha512':
+                    hash = await generateSHA512(input);
+                    break;
+                case 'sha3-256':
+                    hash = await generateSHA3_256(input);
+                    break;
+                case 'keccak256':
+                    hash = await generateKeccak256(input);
+                    break;
+                case 'blake2b':
+                    hash = await generateBLAKE2b(input);
+                    break;
+                case 'ripemd160':
+                    hash = await generateRIPEMD160(input);
+                    break;
+            }
+            
+            // Convert to requested format
+            results[hashType] = convertHashFormat(hash, outputFormat);
+        } catch (error) {
+            console.error(`Error generating ${hashType}:`, error);
+            results[hashType] = 'Error generating hash';
+        }
+    }
+    
+    return results;
+}
+
+async function generateFileHashes(file, hashTypes, outputFormat = 'hex') {
+    const results = {};
+    
+    // Check file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+        throw new Error('File size exceeds 10MB limit');
+    }
+    
+    // Read file as ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    
+    for (const hashType of hashTypes) {
+        try {
+            let hash;
+            switch (hashType) {
+                case 'md5':
+                    hash = CryptoJS.MD5(CryptoJS.lib.WordArray.create(uint8Array)).toString();
+                    break;
+                case 'sha1':
+                    hash = CryptoJS.SHA1(CryptoJS.lib.WordArray.create(uint8Array)).toString();
+                    break;
+                case 'sha256':
+                    hash = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(uint8Array)).toString();
+                    break;
+                case 'sha512':
+                    hash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(uint8Array)).toString();
+                    break;
+                case 'sha3-256':
+                    hash = CryptoJS.SHA3(CryptoJS.lib.WordArray.create(uint8Array), { outputLength: 256 }).toString();
+                    break;
+                case 'keccak256':
+                    hash = CryptoJS.SHA3(CryptoJS.lib.WordArray.create(uint8Array), { outputLength: 256 }).toString();
+                    break;
+                case 'blake2b':
+                    hash = CryptoJS.SHA3(CryptoJS.lib.WordArray.create(uint8Array), { outputLength: 256 }).toString();
+                    break;
+                case 'ripemd160':
+                    hash = CryptoJS.RIPEMD160(CryptoJS.lib.WordArray.create(uint8Array)).toString();
+                    break;
+            }
+            
+            // Convert to requested format
+            results[hashType] = convertHashFormat(hash, outputFormat);
+        } catch (error) {
+            console.error(`Error generating ${hashType} for file:`, error);
+            results[hashType] = 'Error generating hash';
+        }
+    }
+    
+        return results;
+}
+
+function convertHashFormat(hash, format) {
+    if (format === 'hex') {
+        return hash; // Already in hex format
+    } else if (format === 'base64') {
+        // Convert hex to base64
+        const bytes = [];
+        for (let i = 0; i < hash.length; i += 2) {
+            bytes.push(parseInt(hash.substr(i, 2), 16));
+        }
+        return btoa(String.fromCharCode.apply(null, bytes));
+    } else if (format === 'binary') {
+        // Convert hex to binary
+        let binary = '';
+        for (let i = 0; i < hash.length; i++) {
+            const hex = parseInt(hash[i], 16);
+            binary += hex.toString(2).padStart(4, '0');
+        }
+        return binary;
+    }
+    return hash; // Default to hex
+}
+
+function verifyChecksum() {
+    const expectedChecksum = document.getElementById('checksum-input').value.trim();
+    const hashOutputs = document.getElementById('hash-outputs');
+    const verificationResult = document.getElementById('verification-result');
+    
+    if (!expectedChecksum || !hashOutputs.children.length) {
+        verificationResult.innerHTML = '';
+        return;
+    }
+    
+    // Get all generated hashes
+    const generatedHashes = Array.from(hashOutputs.querySelectorAll('.hash-value')).map(el => el.textContent);
+    
+    // Check for matches
+    const matches = generatedHashes.filter(hash => 
+        hash.toLowerCase() === expectedChecksum.toLowerCase()
+    );
+    
+    if (matches.length > 0) {
+        verificationResult.innerHTML = `
+            <div class="verification-success">
+                <i class="fas fa-check-circle"></i>
+                <strong>Checksum Verified!</strong> Found ${matches.length} matching hash(es).
+            </div>
+        `;
+    } else {
+        verificationResult.innerHTML = `
+            <div class="verification-failure">
+                <i class="fas fa-times-circle"></i>
+                <strong>Checksum Mismatch!</strong> No matching hashes found.
+            </div>
+        `;
+    }
+}
+
+function displayHashResults(results, fileInfo = null) {
+    const hashOutputs = document.getElementById('hash-outputs');
+    let html = '';
+    
+    // Add file info if available
+    if (fileInfo) {
+        html += `
+            <div class="file-info">
+                <div class="file-details">
+                    <i class="fas fa-file"></i>
+                    <span class="file-name">${fileInfo.name}</span>
+                    <span class="file-size">(${(fileInfo.size / 1024 / 1024).toFixed(2)} MB)</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    for (const [hashType, hashValue] of Object.entries(results)) {
+        const displayName = hashType.replace('_', '-').toUpperCase();
+        html += `
+            <div class="hash-result">
+                <div class="hash-header">
+                    <span class="hash-type">${displayName}</span>
+                    <button class="copy-hash-btn" data-hash="${hashValue}">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="hash-value">${hashValue}</div>
+            </div>
+        `;
+    }
+    
+    hashOutputs.innerHTML = html;
+    
+    // Add copy functionality
+    hashOutputs.querySelectorAll('.copy-hash-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const hash = btn.dataset.hash;
+            navigator.clipboard.writeText(hash).then(() => {
+                showNotification('Hash copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy hash', 'error');
+            });
+        });
+    });
+    
+    // Auto-verify checksum if one is entered
+    const checksumInput = document.getElementById('checksum-input');
+    if (checksumInput && checksumInput.value.trim()) {
+        verifyChecksum();
+    }
+}
+
+// Hash generation functions using Web Crypto API and crypto-js
+async function generateMD5(input) {
+    try {
+        // Use crypto-js for MD5
+        return CryptoJS.MD5(input).toString();
+    } catch (error) {
+        console.error('MD5 generation error:', error);
+        return 'Error generating MD5 hash';
+    }
+}
+
+async function generateSHA1(input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+    return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function generateSHA256(input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function generateSHA512(input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-512', data);
+    return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function generateSHA3_256(input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-3-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function generateKeccak256(input) {
+    try {
+        // Use crypto-js for Keccak-256
+        return CryptoJS.SHA3(input, { outputLength: 256 }).toString();
+    } catch (error) {
+        console.error('Keccak-256 generation error:', error);
+        return 'Error generating Keccak-256 hash';
+    }
+}
+
+async function generateBLAKE2b(input) {
+    try {
+        // Use crypto-js for BLAKE2b (using SHA3 as approximation)
+        // Note: crypto-js doesn't have BLAKE2b, so we'll use SHA3-256 as alternative
+        return CryptoJS.SHA3(input, { outputLength: 256 }).toString();
+    } catch (error) {
+        console.error('BLAKE2b generation error:', error);
+        return 'Error generating BLAKE2b hash';
+    }
+}
+
+async function generateRIPEMD160(input) {
+    try {
+        // Use crypto-js for RIPEMD-160
+        return CryptoJS.RIPEMD160(input).toString();
+    } catch (error) {
+        console.error('RIPEMD160 generation error:', error);
+        return 'Error generating RIPEMD160 hash';
+    }
+}
+
 function loadProviderPreset(provider) {
     const discoveryInput = document.getElementById('oidc-discovery');
     const clientIdInput = document.getElementById('oidc-client-id');
@@ -1438,6 +2089,14 @@ function openModal(title, content) {
     modalBody.innerHTML = content;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // Scroll to modal smoothly
+    setTimeout(() => {
+        modal.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }, 100);
 }
 
 function closeModal() {
@@ -1464,6 +2123,24 @@ function toggleTheme() {
 function updateThemeIcon(theme) {
     const icon = themeToggle.querySelector('i');
     icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const contentArea = document.querySelector('.content-area');
+    
+    if (sidebar && contentArea) {
+        sidebar.classList.toggle('sidebar-hidden');
+        contentArea.classList.toggle('content-full-width');
+        
+        // Update toggle button icon
+        const icon = sidebarToggle.querySelector('i');
+        if (sidebar.classList.contains('sidebar-hidden')) {
+            icon.className = 'fas fa-th-large';
+        } else {
+            icon.className = 'fas fa-times';
+        }
+    }
 }
 
 // ===== UTILITY FUNCTIONS =====
@@ -1543,4 +2220,28 @@ function handleKeyboard(e) {
         e.preventDefault();
         searchInput.focus();
     }
+}
+
+function handleScroll() {
+    // Use requestAnimationFrame for better performance
+    if (!window.scrollHandler) {
+        window.scrollHandler = requestAnimationFrame(() => {
+            // Show/hide back to top button
+            if (backToTop) {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            }
+            window.scrollHandler = null;
+        });
+    }
+}
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }

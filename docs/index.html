@@ -55,6 +55,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Crypto-js library for additional hash algorithms -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
     <link rel="stylesheet" href="styles.css">
     
     <!-- JSON-LD Structured Data -->
@@ -174,61 +177,161 @@
             <button class="mobile-menu-toggle" id="mobile-menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
+            <button class="sidebar-toggle" id="sidebar-toggle">
+                <i class="fas fa-th-large"></i>
+            </button>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <h1 class="hero-title">Base64 Encode/Decode, URL Encode/Decode, OIDC Testing | Free Dev Tools Portal</h1>
-                <p class="hero-subtitle">Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JWT verification, and 60+ developer tools. No signup required!</p>
-                
-                <!-- Quick Access Tools -->
-                <div class="quick-tools">
-                    <div class="tool-card quick-tool" data-tool="jwt">
-                        <div class="tool-icon">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Tools</h3>
+                <div class="sidebar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="sidebar-search" placeholder="Search tools...">
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h4>Quick Tools</h4>
+                    <ul class="nav-list">
+                        <li><a href="#" class="nav-link" data-tool="jwt">
                             <i class="fas fa-key"></i>
-                        </div>
-                        <div class="tool-info">
-                            <h3>JWT Verification Tool</h3>
-                            <p>Free JWT verification, decode & validate JSON Web Tokens online</p>
-                        </div>
-                    </div>
-                    
-                    <div class="tool-card quick-tool" data-tool="base64">
-                        <div class="tool-icon">
+                            <span>JWT Verifier</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="base64">
                             <i class="fas fa-code"></i>
-                        </div>
-                        <div class="tool-info">
-                            <h3>Base64 Encode Decode Tool</h3>
-                            <p>Free online Base64 encode and Base64 decode tool - convert text to Base64 and vice versa instantly</p>
-                        </div>
-                    </div>
-                    
-                    <div class="tool-card quick-tool" data-tool="url">
-                        <div class="tool-icon">
+                            <span>Base64 Encoder</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="url">
                             <i class="fas fa-link"></i>
-                        </div>
-                        <div class="tool-info">
-                            <h3>URL Encode Decode Tool</h3>
-                            <p>Free online URL encode and URL decode tool - encode URLs and special characters instantly</p>
-                        </div>
-                    </div>
-                    
-                    <div class="tool-card quick-tool" data-tool="oidc">
-                        <div class="tool-icon">
+                            <span>URL Encoder</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="oidc">
                             <i class="fas fa-shield-alt"></i>
+                            <span>OIDC Tester</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="hash">
+                            <i class="fas fa-lock"></i>
+                            <span>Hash Generator</span>
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h4>Categories</h4>
+                    <ul class="nav-list">
+                        <li><a href="#" class="nav-link" data-category="all">
+                            <i class="fas fa-th-large"></i>
+                            <span>All Tools</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="authentication">
+                            <i class="fas fa-lock"></i>
+                            <span>Authentication</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="ai">
+                            <i class="fas fa-robot"></i>
+                            <span>AI & ML</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="productivity">
+                            <i class="fas fa-rocket"></i>
+                            <span>Productivity</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="database">
+                            <i class="fas fa-database"></i>
+                            <span>Database</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="ui">
+                            <i class="fas fa-palette"></i>
+                            <span>UI/UX</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="testing">
+                            <i class="fas fa-vial"></i>
+                            <span>Testing</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="hosting">
+                            <i class="fas fa-server"></i>
+                            <span>Hosting</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="analytics">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Analytics</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="finance">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Finance</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <h1 class="hero-title">Base64 Encode/Decode, URL Encode/Decode, OIDC Testing | Free Dev Tools Portal</h1>
+                    <p class="hero-subtitle">Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JWT verification, and 60+ developer tools. No signup required!</p>
+                    
+                    <!-- Quick Access Tools -->
+                    <div class="quick-tools">
+                        <div class="tool-card quick-tool" data-tool="jwt">
+                            <div class="tool-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>JWT Verification Tool</h3>
+                                <p>Free JWT verification, decode & validate JSON Web Tokens online</p>
+                            </div>
                         </div>
-                        <div class="tool-info">
-                            <h3>OIDC Playground & Testing Tool</h3>
-                            <p>Free OIDC playground for testing authentication flows, endpoints, and OIDC testing scenarios</p>
+                        
+                        <div class="tool-card quick-tool" data-tool="base64">
+                            <div class="tool-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Base64 Encode Decode Tool</h3>
+                                <p>Free online Base64 encode and Base64 decode tool - convert text to Base64 and vice versa instantly</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tool-card quick-tool" data-tool="url">
+                            <div class="tool-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>URL Encode Decode Tool</h3>
+                                <p>Free online URL encode and URL decode tool - encode URLs and special characters instantly</p>
+                        </div>
+                        </div>
+                        
+                        <div class="tool-card quick-tool" data-tool="oidc">
+                            <div class="tool-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>OIDC Playground & Testing Tool</h3>
+                                <p>Free OIDC playground for testing authentication flows, endpoints, and OIDC testing scenarios</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tool-card quick-tool" data-tool="hash">
+                            <div class="tool-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Hash Generator Tool</h3>
+                                <p>Generate MD5, SHA-256, SHA-512 hashes and more for data integrity and security</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
         <!-- SEO Content Section -->
         <section class="seo-content">
@@ -252,58 +355,7 @@
             </div>
         </section>
 
-        <!-- Categories Navigation -->
-        <section class="categories">
-            <div class="container">
-                <div class="categories-header">
-                    <h2>Browse Dev Tools by Category - Your Complete Dev Portal</h2>
-                    <p>Discover the best <strong>dev tools</strong> for <strong>Base64 encode/decode</strong>, <strong>URL encode/decode</strong>, <strong>OIDC testing</strong>, authentication, AI, productivity, databases, and more</p>
-                </div>
-                
-                <div class="category-filters">
-                    <button class="category-btn active" data-category="all">
-                        <i class="fas fa-th-large"></i>
-                        All
-                    </button>
-                    <button class="category-btn" data-category="authentication">
-                        <i class="fas fa-lock"></i>
-                        Authentication
-                    </button>
-                    <button class="category-btn" data-category="ai">
-                        <i class="fas fa-robot"></i>
-                        AI & ML
-                    </button>
-                    <button class="category-btn" data-category="productivity">
-                        <i class="fas fa-rocket"></i>
-                        Productivity
-                    </button>
-                    <button class="category-btn" data-category="database">
-                        <i class="fas fa-database"></i>
-                        Database
-                    </button>
-                    <button class="category-btn" data-category="ui">
-                        <i class="fas fa-palette"></i>
-                        UI/UX
-                    </button>
-                    <button class="category-btn" data-category="testing">
-                        <i class="fas fa-vial"></i>
-                        Testing
-                    </button>
-                    <button class="category-btn" data-category="hosting">
-                        <i class="fas fa-server"></i>
-                        Hosting
-                    </button>
-                    <button class="category-btn" data-category="analytics">
-                        <i class="fas fa-chart-line"></i>
-                        Analytics
-                    </button>
-                    <button class="category-btn" data-category="finance">
-                        <i class="fas fa-dollar-sign"></i>
-                        Finance
-                    </button>
-                </div>
-            </div>
-        </section>
+
 
         <!-- Featured Tools -->
         <section class="featured" id="featured">
@@ -337,6 +389,115 @@
             </div>
         </section>
 
+        <!-- Category Sections for Navigation -->
+        <section id="authentication" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Authentication Tools</h2>
+                    <p>JWT verification, OAuth, SSO, and security tools</p>
+                </div>
+                <div class="tools-grid" id="authentication-grid">
+                    <!-- Authentication tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="ai" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>AI & Machine Learning</h2>
+                    <p>Language models, ML frameworks, and AI APIs</p>
+                </div>
+                <div class="tools-grid" id="ai-grid">
+                    <!-- AI & ML tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="productivity" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Productivity Tools</h2>
+                    <p>Boost your development workflow and efficiency</p>
+                </div>
+                <div class="tools-grid" id="productivity-grid">
+                    <!-- Productivity tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="database" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Database Solutions</h2>
+                    <p>Modern databases, ORMs, and data management</p>
+                </div>
+                <div class="tools-grid" id="database-grid">
+                    <!-- Database tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="ui" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>UI/UX Tools</h2>
+                    <p>Design systems, component libraries, and animations</p>
+                </div>
+                <div class="tools-grid" id="ui-grid">
+                    <!-- UI/UX tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="testing" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Testing Frameworks</h2>
+                    <p>Unit testing, E2E testing, and quality assurance</p>
+                </div>
+                <div class="tools-grid" id="testing-grid">
+                    <!-- Testing tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="hosting" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Hosting Platforms</h2>
+                    <p>Deploy and scale your applications globally</p>
+                </div>
+                <div class="tools-grid" id="hosting-grid">
+                    <!-- Hosting tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Analytics Platforms</h2>
+                    <p>Track user behavior and application performance</p>
+                </div>
+                <div class="tools-grid" id="analytics-grid">
+                    <!-- Analytics tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="finance" class="category-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Financial Services</h2>
+                    <p>Payment processing, banking APIs, and FinTech</p>
+                </div>
+                <div class="tools-grid" id="finance-grid">
+                    <!-- Finance tools will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
         <!-- Interactive Tools Modal -->
         <div class="modal" id="tool-modal">
             <div class="modal-backdrop" id="modal-backdrop"></div>
@@ -351,6 +512,7 @@
                     <!-- Tool interface will be loaded here -->
                 </div>
             </div>
+        </div>
         </div>
     </main>
 
@@ -395,8 +557,19 @@
                     </div>
                     
                     <div class="seo-card">
+                        <h3><i class="fas fa-lock"></i> Hash Generator Tools</h3>
+                        <p>Professional <strong>hash generator</strong> tools for data integrity and security. Our <strong>hash generator</strong> supports multiple hash algorithms including <strong>MD5</strong>, <strong>SHA-256</strong>, <strong>SHA-512</strong>, SHA3-256, and Keccak-256. Generate secure hashes for passwords, file verification, and cryptographic applications.</p>
+                        <ul>
+                            <li><strong>Hash Generator:</strong> Generate multiple hash types simultaneously</li>
+                            <li><strong>MD5 Support:</strong> Generate MD5 hashes for legacy compatibility</li>
+                            <li><strong>SHA-256 & SHA-512:</strong> Industry-standard secure hash algorithms</li>
+                            <li><strong>Multiple Formats:</strong> Support for SHA3 and Keccak variants</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="seo-card">
                         <h3><i class="fas fa-tools"></i> Complete Dev Tools Portal</h3>
-                        <p>DevHub is your comprehensive <strong>dev portal</strong> offering 60+ essential <strong>dev tools</strong> for modern software development. From <strong>Base64 encode/decode</strong> and <strong>URL encode/decode</strong> to advanced <strong>OIDC testing</strong> and JWT verification, our <strong>dev tools</strong> portal provides everything developers need in one professional platform.</p>
+                        <p>DevHub is your comprehensive <strong>dev portal</strong> offering 60+ essential <strong>dev tools</strong> for modern software development. From <strong>Base64 encode/decode</strong> and <strong>URL encode/decode</strong> to advanced <strong>OIDC testing</strong>, <strong>hash generator</strong> tools, and JWT verification, our <strong>dev tools</strong> portal provides everything developers need in one professional platform.</p>
                         <ul>
                             <li><strong>Dev Portal:</strong> Centralized platform for all development tools</li>
                             <li><strong>Dev Tools:</strong> 60+ curated tools across 10 categories</li>
@@ -467,6 +640,7 @@
                         <li><a href="#base64">Base64 Encoder</a></li>
                         <li><a href="#url">URL Encoder</a></li>
                         <li><a href="#oidc">OIDC Tester</a></li>
+                        <li><a href="#hash">Hash Generator</a></li>
                     </ul>
                 </div>
                 
@@ -484,11 +658,16 @@
             <div class="footer-bottom">
                 <p>&copy; 2025 DevHub. Built with ❤️ for developers worldwide.</p>
                 <div class="footer-meta">
-                    <span>Keywords: Base64 encode, Base64 decode, URL encode, URL decode, OIDC playground, OIDC testing, dev tools, dev portal, JWT verification, developer tools</span>
+                    <span>Keywords: Base64 encode, Base64 decode, URL encode, URL decode, OIDC playground, OIDC testing, hash generator, MD5, SHA-256, SHA-512, dev tools, dev portal, JWT verification, developer tools</span>
                 </div>
             </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script src="script.js"></script>
 </body>
