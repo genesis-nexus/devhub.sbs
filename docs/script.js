@@ -1,198 +1,3 @@
-// ===== ANALYTICS TRACKING SYSTEM =====
-const AnalyticsTracker = {
-    // Track tool interactions with detailed metadata
-    trackToolInteraction: function(toolId, action, details = {}) {
-        if (typeof gtag === 'undefined') {
-            console.warn('Google Analytics not loaded');
-            return;
-        }
-
-        const eventData = {
-            event_category: 'Tool Interaction',
-            event_label: toolId,
-            custom_parameters: {
-                tool_id: toolId,
-                tool_action: action,
-                tool_category: this.getToolCategory(toolId),
-                tool_type: this.getToolType(toolId),
-                ...details
-            }
-        };
-
-        // Send to Google Analytics 4
-        gtag('event', 'tool_interaction', {
-            event_category: eventData.event_category,
-            event_label: eventData.event_label,
-            tool_id: eventData.custom_parameters.tool_id,
-            tool_action: eventData.custom_parameters.tool_action,
-            tool_category: eventData.custom_parameters.tool_category,
-            tool_type: eventData.custom_parameters.tool_type,
-            ...details
-        });
-
-        // Also track as a custom event for backward compatibility
-        gtag('event', 'custom_tool_event', {
-            event_category: eventData.event_category,
-            event_label: eventData.event_label,
-            value: 1,
-            custom_map: {
-                'tool_id': 'custom_parameter_1',
-                'tool_action': 'custom_parameter_2',
-                'tool_category': 'custom_parameter_3',
-                'tool_type': 'custom_parameter_4'
-            }
-        });
-
-        console.log('Analytics Event:', eventData);
-    },
-
-    // Track tool usage with performance metrics
-    trackToolUsage: function(toolId, operation, inputSize = 0, processingTime = 0, success = true) {
-        this.trackToolInteraction(toolId, 'usage', {
-            operation: operation,
-            input_size: inputSize,
-            processing_time_ms: processingTime,
-            success: success,
-            timestamp: new Date().toISOString()
-        });
-    },
-
-    // Track tool errors
-    trackToolError: function(toolId, errorType, errorMessage, context = {}) {
-        this.trackToolInteraction(toolId, 'error', {
-            error_type: errorType,
-            error_message: errorMessage,
-            error_context: context,
-            timestamp: new Date().toISOString()
-        });
-    },
-
-    // Track tool discovery and navigation
-    trackToolNavigation: function(toolId, source, destination) {
-        this.trackToolInteraction(toolId, 'navigation', {
-            source: source,
-            destination: destination,
-            timestamp: new Date().toISOString()
-        });
-    },
-
-    // Track search and filtering
-    trackSearch: function(query, category, resultsCount) {
-        if (typeof gtag === 'undefined') return;
-
-        gtag('event', 'search', {
-            search_term: query,
-            event_category: 'Search',
-            event_label: category || 'all',
-            value: resultsCount
-        });
-    },
-
-    // Track category filtering
-    trackCategoryFilter: function(category) {
-        if (typeof gtag === 'undefined') return;
-
-        gtag('event', 'category_filter', {
-            event_category: 'Navigation',
-            event_label: category,
-            value: 1
-        });
-    },
-
-    // Track external tool clicks
-    trackExternalToolClick: function(toolName, toolUrl, category) {
-        if (typeof gtag === 'undefined') return;
-
-        gtag('event', 'external_tool_click', {
-            event_category: 'External Tool',
-            event_label: toolName,
-            tool_url: toolUrl,
-            tool_category: category,
-            value: 1
-        });
-    },
-
-    // Track internal tool modal interactions
-    trackModalInteraction: function(toolId, action) {
-        this.trackToolInteraction(toolId, 'modal_interaction', {
-            modal_action: action,
-            timestamp: new Date().toISOString()
-        });
-    },
-
-    // Track copy operations
-    trackCopyOperation: function(toolId, contentType, contentLength) {
-        this.trackToolInteraction(toolId, 'copy', {
-            content_type: contentType,
-            content_length: contentLength,
-            timestamp: new Date().toISOString()
-        });
-    },
-
-    // Track file operations
-    trackFileOperation: function(toolId, operation, fileSize, fileType) {
-        this.trackToolInteraction(toolId, 'file_operation', {
-            operation: operation,
-            file_size: fileSize,
-            file_type: fileType,
-            timestamp: new Date().toISOString()
-        });
-    },
-
-    // Get tool category for analytics
-    getToolCategory: function(toolId) {
-        const toolCategories = {
-            'jwt': 'Authentication',
-            'base64': 'Productivity',
-            'url': 'Productivity',
-            'oidc': 'Authentication',
-            'hash': 'Productivity'
-        };
-        return toolCategories[toolId] || 'Unknown';
-    },
-
-    // Get tool type for analytics
-    getToolType: function(toolId) {
-        return 'internal'; // All these are internal tools
-    },
-
-    // Track page views for tools
-    trackToolPageView: function(toolId) {
-        if (typeof gtag === 'undefined') return;
-
-        gtag('event', 'page_view', {
-            page_title: `${toolId.toUpperCase()} Tool - DevHub`,
-            page_location: window.location.href,
-            custom_parameters: {
-                tool_id: toolId,
-                tool_category: this.getToolCategory(toolId)
-            }
-        });
-    },
-
-    // Track user session start
-    trackSessionStart: function() {
-        if (typeof gtag === 'undefined') return;
-
-        gtag('event', 'session_start', {
-            event_category: 'User Session',
-            event_label: 'Session Start',
-            value: 1
-        });
-    },
-
-    // Track user engagement metrics
-    trackEngagement: function(metric, value) {
-        if (typeof gtag === 'undefined') return;
-
-        gtag('event', 'user_engagement', {
-            event_category: 'Engagement',
-            event_label: metric,
-            value: value
-        });
-    }
-};
-
 // ===== CURATED TOOL COLLECTIONS =====
 const toolsDatabase = {
     authentication: [
@@ -371,6 +176,17 @@ const toolsDatabase = {
             stats: { users: "80k+", rating: "4.9" }
         },
         {
+            name: "JSON Validator & Beautifier",
+            description: "Validate JSON syntax, format, and beautify JSON with proper indentation. Perfect for API development and data validation.",
+            category: "Productivity",
+            tags: ["JSON", "Validation", "Beautify", "Format", "API"],
+            url: "#json-tool",
+            logo: "📋",
+            type: "internal",
+            featured: true,
+            stats: { users: "120k+", rating: "4.9" }
+        },
+        {
             name: "Linear",
             description: "Modern issue tracking and project management for software teams.",
             category: "Productivity",
@@ -467,6 +283,42 @@ const toolsDatabase = {
         }
     ],
     
+    json: [
+        {
+            name: "JSON Validator & Beautifier",
+            description: "Professional JSON validation, beautification, and formatting tools for developers and API testing.",
+            category: "JSON Tools",
+            tags: ["JSON", "Validation", "Beautify", "Format", "API", "Developer Tool"],
+            url: "#json-tool",
+            logo: "📋",
+            type: "internal",
+            featured: true,
+            stats: { users: "120k+", rating: "4.9" }
+        },
+        {
+            name: "JSON Schema Validator",
+            description: "Validate JSON data against JSON Schema specifications with detailed error reporting.",
+            category: "JSON Tools",
+            tags: ["JSON Schema", "Validation", "API", "Data Quality"],
+            url: "#json-schema-tool",
+            logo: "🔍",
+            type: "internal",
+            featured: false,
+            stats: { users: "45k+", rating: "4.8" }
+        },
+        {
+            name: "JSON Path Tester",
+            description: "Test and debug JSONPath expressions with real-time evaluation and result preview.",
+            category: "JSON Tools",
+            tags: ["JSONPath", "Testing", "Debug", "Data Extraction"],
+            url: "#jsonpath-tool",
+            logo: "🛤️",
+            type: "internal",
+            featured: false,
+            stats: { users: "35k+", rating: "4.7" }
+        }
+    ],
+    
     ui: [
         {
             name: "Tailwind CSS",
@@ -485,7 +337,7 @@ const toolsDatabase = {
             category: "UI/UX",
             tags: ["Design", "Collaboration", "Prototyping", "Vector"],
             url: "https://figma.com",
-            logo: "��",
+            logo: "🎯",
             type: "external",
             featured: true,
             stats: { users: "4M+", files: "100M+" }
@@ -826,9 +678,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    // Track session start
-    AnalyticsTracker.trackSessionStart();
-    
     setupEventListeners();
     renderFeaturedTools();
     renderTools();
@@ -851,12 +700,8 @@ function setupEventListeners() {
                 link.classList.add('active');
                 
                 if (link.dataset.tool) {
-                    // Track tool navigation
-                    AnalyticsTracker.trackToolNavigation(link.dataset.tool, 'sidebar', 'tool_modal');
                     openInternalTool(link.dataset.tool);
                 } else if (link.dataset.category) {
-                    // Track category navigation
-                    AnalyticsTracker.trackCategoryFilter(link.dataset.category);
                     handleCategoryChange(link.dataset.category);
                 }
             });
@@ -915,11 +760,7 @@ function setupEventListeners() {
     // Quick tools
     if (quickTools && quickTools.length > 0) {
         quickTools.forEach(tool => {
-            tool.addEventListener('click', () => {
-                // Track quick tool access
-                AnalyticsTracker.trackToolNavigation(tool.dataset.tool, 'hero_section', 'tool_modal');
-                openInternalTool(tool.dataset.tool);
-            });
+            tool.addEventListener('click', () => openInternalTool(tool.dataset.tool));
         });
     }
     
@@ -934,9 +775,6 @@ function setupEventListeners() {
 function handleCategoryChange(category) {
     currentCategory = category;
     currentPage = 1;
-    
-    // Track category change
-    AnalyticsTracker.trackCategoryFilter(category);
     
     // Update active button
     categoryButtons.forEach(btn => btn.classList.remove('active'));
@@ -1002,6 +840,10 @@ function updateCategoryDisplay(category) {
         finance: {
             title: "Financial Services",
             subtitle: "Payment processing, banking APIs, and FinTech"
+        },
+        json: {
+            title: "JSON Tools",
+            subtitle: "Validate, beautify, and format JSON data with professional tools"
         }
     };
     
@@ -1019,13 +861,6 @@ function handleSearch(e) {
     searchQuery = e.target.value.toLowerCase();
     currentPage = 1;
     console.log('Search query:', searchQuery);
-    
-    // Track search with analytics
-    if (searchQuery.trim()) {
-        const resultsCount = getFilteredTools().length;
-        AnalyticsTracker.trackSearch(searchQuery, currentCategory, resultsCount);
-    }
-    
     renderTools();
     
     // If there's a search query, show relevant category sections and scroll to tools
@@ -1048,9 +883,8 @@ function handleSidebarSearch(e) {
         link.parentElement.style.display = shouldShow ? 'block' : 'none';
     });
     
-    // Track sidebar search
+    // If searching for a specific tool, show relevant category sections and scroll to tools
     if (query.trim()) {
-        AnalyticsTracker.trackSearch(query, 'sidebar', 1);
         showRelevantCategorySections(query);
         scrollToSection('tools');
     } else {
@@ -1147,7 +981,8 @@ function populateCategoryGrids() {
         testing: document.getElementById('testing-grid'),
         hosting: document.getElementById('hosting-grid'),
         analytics: document.getElementById('analytics-grid'),
-        finance: document.getElementById('finance-grid')
+        finance: document.getElementById('finance-grid'),
+        json: document.getElementById('json-grid')
     };
     
     // Populate each category grid with its tools
@@ -1210,10 +1045,6 @@ function showAllCategorySections() {
 
 function loadMoreTools() {
     currentPage++;
-    
-    // Track load more usage
-    AnalyticsTracker.trackEngagement('load_more_tools', currentPage);
-    
     renderTools();
 }
 
@@ -1257,13 +1088,8 @@ function addCardEventListeners(container) {
             
             if (toolType === 'internal') {
                 const toolId = toolUrl.replace('#', '').replace('-tool', '');
-                // Track internal tool access
-                AnalyticsTracker.trackToolNavigation(toolId, 'tool_grid', 'tool_modal');
                 openInternalTool(toolId);
             } else {
-                // Track external tool click
-                const category = card.querySelector('.resource-category')?.textContent || 'Unknown';
-                AnalyticsTracker.trackExternalToolClick(toolName, toolUrl, category);
                 window.open(toolUrl, '_blank', 'noopener');
             }
         });
@@ -1292,6 +1118,10 @@ function openInternalTool(toolId) {
         hash: {
             title: 'Hash Generator',
             content: createHashToolInterface()
+        },
+        json: {
+            title: 'JSON Validator & Beautifier',
+            content: createJSONToolInterface()
         }
     };
     
@@ -1579,6 +1409,65 @@ function createHashToolInterface() {
     `;
 }
 
+function createJSONToolInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="json-input-section">
+                <div class="input-group">
+                    <label for="json-input">Input JSON:</label>
+                    <textarea id="json-input" placeholder="Paste your JSON here..." rows="8"></textarea>
+                    <small class="help-text">Enter or paste JSON data to validate and beautify</small>
+                </div>
+                <div class="button-group">
+                    <button id="json-validate" class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Validate JSON
+                    </button>
+                    <button id="json-beautify" class="btn btn-success">
+                        <i class="fas fa-magic"></i> Beautify JSON
+                    </button>
+                    <button id="json-minify" class="btn btn-info">
+                        <i class="fas fa-compress-alt"></i> Minify JSON
+                    </button>
+                    <button id="json-clear" class="btn btn-outline">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+            
+            <div class="json-results">
+                <div class="result-section">
+                    <h4>Original JSON</h4>
+                    <div class="json-display">
+                        <pre id="json-original" class="json-output"></pre>
+                    </div>
+                </div>
+                
+                <div class="result-section">
+                    <h4>Processed JSON</h4>
+                    <div class="json-display">
+                        <pre id="json-processed" class="json-output"></pre>
+                        <div class="json-actions">
+                            <button id="json-copy" class="btn btn-outline copy-btn">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button id="json-download" class="btn btn-outline">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-section">
+                    <h4>Validation Results</h4>
+                    <div id="json-validation-results" class="validation-results">
+                        <!-- Validation results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // ===== TOOL FUNCTIONALITY =====
 function initializeToolFunctionality(toolId) {
     switch(toolId) {
@@ -1597,6 +1486,9 @@ function initializeToolFunctionality(toolId) {
         case 'hash':
             initializeHashTool();
             break;
+        case 'json':
+            initializeJSONTool();
+            break;
     }
 }
 
@@ -1609,12 +1501,9 @@ function initializeJWTTool() {
     const jwtSignature = document.getElementById('jwt-signature');
     
     jwtDecode.addEventListener('click', () => {
-        const startTime = performance.now();
         const token = jwtInput.value.trim();
-        
         if (!token) {
             showNotification('Please enter a JWT token', 'error');
-            AnalyticsTracker.trackToolError('jwt', 'validation_error', 'Empty token input');
             return;
         }
         
@@ -1631,25 +1520,13 @@ function initializeJWTTool() {
             jwtPayload.textContent = JSON.stringify(payload, null, 2);
             jwtSignature.innerHTML = '<div class="signature-info">⚠️ Signature verification requires the secret key</div>';
             
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('jwt', 'decode', token.length, processingTime, true);
-            
             showNotification('JWT token decoded successfully', 'success');
         } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('jwt', 'parsing_error', error.message, { token_length: token.length });
-            AnalyticsTracker.trackToolUsage('jwt', 'decode', token.length, processingTime, false);
             showNotification('Invalid JWT token format', 'error');
         }
     });
     
     jwtClear.addEventListener('click', () => {
-        // Track JWT clear action
-        AnalyticsTracker.trackToolInteraction('jwt', 'clear', {
-            action: 'clear_all_fields',
-            timestamp: new Date().toISOString()
-        });
-        
         jwtInput.value = '';
         jwtHeader.textContent = '';
         jwtPayload.textContent = '';
@@ -1666,68 +1543,42 @@ function initializeBase64Tool() {
     const base64Copy = document.getElementById('base64-copy');
     
     base64Encode.addEventListener('click', () => {
-        const startTime = performance.now();
         const input = base64Input.value;
-        
         if (!input) {
             showNotification('Please enter text to encode', 'error');
-            AnalyticsTracker.trackToolError('base64', 'validation_error', 'Empty input for encoding');
             return;
         }
         
         try {
             base64Output.value = btoa(unescape(encodeURIComponent(input)));
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('base64', 'encode', input.length, processingTime, true);
             showNotification('Text encoded to Base64', 'success');
         } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('base64', 'encoding_error', error.message, { input_length: input.length });
-            AnalyticsTracker.trackToolUsage('base64', 'encode', input.length, processingTime, false);
             showNotification('Encoding failed', 'error');
         }
     });
     
     base64Decode.addEventListener('click', () => {
-        const startTime = performance.now();
         const input = base64Input.value;
-        
         if (!input) {
             showNotification('Please enter Base64 to decode', 'error');
-            AnalyticsTracker.trackToolError('base64', 'validation_error', 'Empty input for decoding');
             return;
         }
         
         try {
             base64Output.value = decodeURIComponent(escape(atob(input)));
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('base64', 'decode', input.length, processingTime, true);
             showNotification('Base64 decoded successfully', 'success');
         } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('base64', 'decoding_error', error.message, { input_length: input.length });
-            AnalyticsTracker.trackToolUsage('base64', 'decode', input.length, processingTime, false);
             showNotification('Invalid Base64 format', 'error');
         }
     });
     
     base64Clear.addEventListener('click', () => {
-        // Track Base64 clear action
-        AnalyticsTracker.trackToolInteraction('base64', 'clear', {
-            action: 'clear_all_fields',
-            timestamp: new Date().toISOString()
-        });
-        
         base64Input.value = '';
         base64Output.value = '';
     });
     
     base64Copy.addEventListener('click', () => {
-        const content = base64Output.value;
-        if (content) {
-            AnalyticsTracker.trackCopyOperation('base64', 'base64_result', content.length);
-            copyToClipboard(base64Output.value);
-        }
+        copyToClipboard(base64Output.value);
     });
 }
 
@@ -1740,68 +1591,38 @@ function initializeURLTool() {
     const urlCopy = document.getElementById('url-copy');
     
     urlEncode.addEventListener('click', () => {
-        const startTime = performance.now();
         const input = urlInput.value;
-        
         if (!input) {
             showNotification('Please enter text to encode', 'error');
-            AnalyticsTracker.trackToolError('url', 'validation_error', 'Empty input for URL encoding');
             return;
         }
         
-        try {
-            urlOutput.value = encodeURIComponent(input);
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('url', 'encode', input.length, processingTime, true);
-            showNotification('Text URL encoded', 'success');
-        } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('url', 'encoding_error', error.message, { input_length: input.length });
-            AnalyticsTracker.trackToolUsage('url', 'encode', input.length, processingTime, false);
-            showNotification('URL encoding failed', 'error');
-        }
+        urlOutput.value = encodeURIComponent(input);
+        showNotification('Text URL encoded', 'success');
     });
     
     urlDecode.addEventListener('click', () => {
-        const startTime = performance.now();
         const input = urlInput.value;
-        
         if (!input) {
             showNotification('Please enter URL to decode', 'error');
-            AnalyticsTracker.trackToolError('url', 'validation_error', 'Empty input for URL decoding');
             return;
         }
         
         try {
             urlOutput.value = decodeURIComponent(input);
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('url', 'decode', input.length, processingTime, true);
             showNotification('URL decoded successfully', 'success');
         } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('url', 'decoding_error', error.message, { input_length: input.length });
-            AnalyticsTracker.trackToolUsage('url', 'decode', input.length, processingTime, false);
             showNotification('Invalid URL encoding', 'error');
         }
     });
     
     urlClear.addEventListener('click', () => {
-        // Track URL clear action
-        AnalyticsTracker.trackToolInteraction('url', 'clear', {
-            action: 'clear_all_fields',
-            timestamp: new Date().toISOString()
-        });
-        
         urlInput.value = '';
         urlOutput.value = '';
     });
     
     urlCopy.addEventListener('click', () => {
-        const content = urlOutput.value;
-        if (content) {
-            AnalyticsTracker.trackCopyOperation('url', 'url_result', content.length);
-            copyToClipboard(urlOutput.value);
-        }
+        copyToClipboard(urlOutput.value);
     });
 }
 
@@ -1816,7 +1637,6 @@ function initializeOIDCTool() {
     
     // Make redirect URI clickable to copy
     redirectUriInput.addEventListener('click', () => {
-        AnalyticsTracker.trackCopyOperation('oidc', 'redirect_uri', redirectUriInput.value.length);
         copyToClipboard('oidc-redirect-uri');
         showNotification('Redirect URI copied! Configure this in your OIDC provider.', 'success');
     });
@@ -1825,21 +1645,14 @@ function initializeOIDCTool() {
     document.querySelectorAll('.provider-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const provider = btn.dataset.provider;
-            AnalyticsTracker.trackToolInteraction('oidc', 'provider_preset', {
-                provider: provider,
-                preset_type: 'discovery_endpoint'
-            });
             loadProviderPreset(provider);
         });
     });
     
     oidcDiscover.addEventListener('click', async () => {
-        const startTime = performance.now();
         const discoveryUrl = document.getElementById('oidc-discovery').value;
-        
         if (!discoveryUrl) {
             showNotification('Please enter discovery endpoint', 'error');
-            AnalyticsTracker.trackToolError('oidc', 'validation_error', 'Empty discovery endpoint');
             return;
         }
         
@@ -1866,18 +1679,8 @@ function initializeOIDCTool() {
             };
             sessionStorage.setItem('oidc_config', JSON.stringify(configToStore));
             
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('oidc', 'discovery', discoveryUrl.length, processingTime, true);
-            
             showNotification('Discovery successful! Provider configuration loaded.', 'success');
         } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('oidc', 'discovery_error', error.message, { 
-                discovery_url: discoveryUrl,
-                error_type: error.name 
-            });
-            AnalyticsTracker.trackToolUsage('oidc', 'discovery', discoveryUrl.length, processingTime, false);
-            
             console.error('Discovery error:', error);
             showNotification(`Discovery failed: ${error.message}`, 'error');
         } finally {
@@ -1887,7 +1690,6 @@ function initializeOIDCTool() {
     });
     
     oidcGenerateAuthUrl.addEventListener('click', () => {
-        const startTime = performance.now();
         const clientId = document.getElementById('oidc-client-id').value;
         const redirectUri = document.getElementById('oidc-redirect-uri').value;
         const scope = document.getElementById('oidc-scope').value;
@@ -1896,7 +1698,6 @@ function initializeOIDCTool() {
         
         if (!clientId || !redirectUri) {
             showNotification('Please fill in Client ID and Redirect URI', 'error');
-            AnalyticsTracker.trackToolError('oidc', 'validation_error', 'Missing Client ID or Redirect URI');
             return;
         }
         
@@ -1917,62 +1718,40 @@ function initializeOIDCTool() {
             const discoveryUrl = document.getElementById('oidc-discovery').value;
             if (!discoveryUrl) {
                 showNotification('Please run discovery first or enter a discovery endpoint', 'error');
-                AnalyticsTracker.trackToolError('oidc', 'validation_error', 'No discovery endpoint available');
                 return;
             }
             const baseUrl = new URL(discoveryUrl).origin;
             authorizationEndpoint = `${baseUrl}/oauth/authorize`;
         }
         
-        try {
-            const authUrl = new URL(authorizationEndpoint);
-            authUrl.searchParams.set('client_id', clientId);
-            authUrl.searchParams.set('redirect_uri', redirectUri);
-            authUrl.searchParams.set('scope', scope || 'openid profile email');
-            authUrl.searchParams.set('response_type', responseType);
-            
-            const state = generateRandomState();
-            authUrl.searchParams.set('state', state);
-            
-            // Store state for validation
-            sessionStorage.setItem('oidc_state', state);
-            
-            const authUrlString = authUrl.toString();
-            document.getElementById('oidc-auth-url').value = authUrlString;
-            
-            // Show additional buttons
-            oidcOpenUrl.style.display = 'inline-block';
-            oidcTestFlow.style.display = 'inline-block';
-            
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolUsage('oidc', 'generate_auth_url', authUrlString.length, processingTime, true);
-            
-            showNotification('Authorization URL generated successfully!', 'success');
-        } catch (error) {
-            const processingTime = performance.now() - startTime;
-            AnalyticsTracker.trackToolError('oidc', 'auth_url_generation_error', error.message, {
-                client_id_length: clientId.length,
-                redirect_uri_length: redirectUri.length
-            });
-            AnalyticsTracker.trackToolUsage('oidc', 'generate_auth_url', 0, processingTime, false);
-            
-            showNotification('Failed to generate authorization URL', 'error');
-        }
+        const authUrl = new URL(authorizationEndpoint);
+        authUrl.searchParams.set('client_id', clientId);
+        authUrl.searchParams.set('redirect_uri', redirectUri);
+        authUrl.searchParams.set('scope', scope || 'openid profile email');
+        authUrl.searchParams.set('response_type', responseType);
+        
+        const state = generateRandomState();
+        authUrl.searchParams.set('state', state);
+        
+        // Store state for validation
+        sessionStorage.setItem('oidc_state', state);
+        
+        const authUrlString = authUrl.toString();
+        document.getElementById('oidc-auth-url').value = authUrlString;
+        
+        // Show additional buttons
+        oidcOpenUrl.style.display = 'inline-block';
+        oidcTestFlow.style.display = 'inline-block';
+        
+        showNotification('Authorization URL generated successfully!', 'success');
     });
     
     oidcTestFlow.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
         if (!authUrl) {
             showNotification('Please generate an authorization URL first', 'error');
-            AnalyticsTracker.trackToolError('oidc', 'validation_error', 'No authorization URL available for testing');
             return;
         }
-        
-        // Track OIDC flow testing
-        AnalyticsTracker.trackToolInteraction('oidc', 'test_flow', {
-            auth_url_length: authUrl.length,
-            flow_type: 'authorization_code'
-        });
         
         // Open the auth URL in a new window/tab
         window.open(authUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
@@ -1982,21 +1761,11 @@ function initializeOIDCTool() {
     oidcOpenUrl.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
         if (authUrl) {
-            AnalyticsTracker.trackToolInteraction('oidc', 'open_auth_url', {
-                auth_url_length: authUrl.length,
-                action: 'open_in_new_tab'
-            });
             window.open(authUrl, '_blank');
         }
     });
     
     oidcClear.addEventListener('click', () => {
-        // Track OIDC clear action
-        AnalyticsTracker.trackToolInteraction('oidc', 'clear_configuration', {
-            action: 'clear_all_fields',
-            timestamp: new Date().toISOString()
-        });
-        
         document.getElementById('oidc-discovery').value = '';
         document.getElementById('oidc-client-id').value = '';
         document.getElementById('oidc-redirect-uri').value = 'https://devhub.sbs/oidc-callback.html';
@@ -2019,7 +1788,6 @@ function initializeOIDCTool() {
     oidcCopyUrl.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
         if (authUrl) {
-            AnalyticsTracker.trackCopyOperation('oidc', 'auth_url', authUrl.length);
             navigator.clipboard.writeText(authUrl).then(() => {
                 showNotification('Authorization URL copied to clipboard!', 'success');
             }).catch(() => {
@@ -2042,9 +1810,6 @@ function initializeHashTool() {
     hashFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Track file selection
-            AnalyticsTracker.trackFileOperation('hash', 'file_selection', file.size, file.type);
-            
             // Clear text input when file is selected
             hashInput.value = '';
             hashInput.placeholder = `File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
@@ -2061,13 +1826,11 @@ function initializeHashTool() {
     });
     
     hashGenerate.addEventListener('click', async () => {
-        const startTime = performance.now();
         const input = hashInput.value.trim();
         const file = hashFile.files[0];
         
         if (!input && !file) {
             showNotification('Please enter text or select a file to hash', 'error');
-            AnalyticsTracker.trackToolError('hash', 'validation_error', 'No input text or file provided');
             return;
         }
         
@@ -2076,7 +1839,6 @@ function initializeHashTool() {
         
         if (selectedHashes.length === 0) {
             showNotification('Please select at least one hash type', 'error');
-            AnalyticsTracker.trackToolError('hash', 'validation_error', 'No hash types selected');
             return;
         }
         
@@ -2090,40 +1852,14 @@ function initializeHashTool() {
             let results;
             if (file) {
                 hashGenerate.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing file...';
-                
-                // Track file operation
-                AnalyticsTracker.trackFileOperation('hash', 'file_hash', file.size, file.type);
-                
                 results = await generateFileHashes(file, selectedHashes, outputFormat);
                 displayHashResults(results, { name: file.name, size: file.size });
             } else {
                 results = await generateHashes(input, selectedHashes, outputFormat);
                 displayHashResults(results);
             }
-            
-            const processingTime = performance.now() - startTime;
-            const inputSize = file ? file.size : input.length;
-            
-            AnalyticsTracker.trackToolUsage('hash', 'generate_hashes', inputSize, processingTime, true);
-            AnalyticsTracker.trackToolInteraction('hash', 'hash_generation', {
-                hash_types: selectedHashes,
-                hash_count: selectedHashes.length,
-                output_format: outputFormat,
-                input_type: file ? 'file' : 'text'
-            });
-            
             showNotification('Hashes generated successfully', 'success');
         } catch (error) {
-            const processingTime = performance.now() - startTime;
-            const inputSize = file ? file.size : input.length;
-            
-            AnalyticsTracker.trackToolError('hash', 'hash_generation_error', error.message, {
-                hash_types: selectedHashes,
-                input_type: file ? 'file' : 'text',
-                file_size: file ? file.size : 0
-            });
-            AnalyticsTracker.trackToolUsage('hash', 'generate_hashes', inputSize, processingTime, false);
-            
             showNotification('Failed to generate hashes', 'error');
             console.error('Hash generation error:', error);
         } finally {
@@ -2133,12 +1869,6 @@ function initializeHashTool() {
     });
     
     hashClear.addEventListener('click', () => {
-        // Track hash clear action
-        AnalyticsTracker.trackToolInteraction('hash', 'clear', {
-            action: 'clear_all_fields',
-            timestamp: new Date().toISOString()
-        });
-        
         hashInput.value = '';
         hashFile.value = '';
         hashInput.placeholder = 'Enter text to hash...';
@@ -2154,6 +1884,272 @@ function initializeHashTool() {
         });
     }
 }
+
+function initializeJSONTool() {
+    const jsonInput = document.getElementById('json-input');
+    const jsonValidate = document.getElementById('json-validate');
+    const jsonBeautify = document.getElementById('json-beautify');
+    const jsonMinify = document.getElementById('json-minify');
+    const jsonClear = document.getElementById('json-clear');
+    const jsonCopy = document.getElementById('json-copy');
+    const jsonDownload = document.getElementById('json-download');
+    const jsonOriginal = document.getElementById('json-original');
+    const jsonProcessed = document.getElementById('json-processed');
+    const jsonValidationResults = document.getElementById('json-validation-results');
+    
+    // Validate JSON
+    jsonValidate.addEventListener('click', () => {
+        const input = jsonInput.value.trim();
+        if (!input) {
+            showNotification('Please enter JSON to validate', 'error');
+            return;
+        }
+        
+        try {
+            const parsed = JSON.parse(input);
+            jsonOriginal.textContent = input;
+            jsonProcessed.textContent = beautifyJSON(parsed);
+            
+            jsonValidationResults.innerHTML = `
+                <div class="validation-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Valid JSON!</strong> The input is valid JSON format.
+                </div>
+                <div class="validation-details">
+                    <p><strong>Type:</strong> ${Array.isArray(parsed) ? 'Array' : 'Object'}</p>
+                    <p><strong>Size:</strong> ${input.length} characters</p>
+                    <p><strong>Keys:</strong> ${Object.keys(parsed).length}</p>
+                    <p><strong>Formatting:</strong> Automatically beautified for readability</p>
+                </div>
+            `;
+            
+            showNotification('JSON validation successful', 'success');
+        } catch (error) {
+            jsonOriginal.textContent = input;
+            jsonProcessed.textContent = '';
+            
+            // Try to provide more helpful error information
+            let errorDetails = error.message;
+            let lineNumber = getJSONErrorLine(input, error.message);
+            
+            // Common error patterns and suggestions
+            if (error.message.includes('Unexpected token')) {
+                errorDetails = `${error.message}. Check for missing quotes, commas, or brackets.`;
+            } else if (error.message.includes('Unexpected end')) {
+                errorDetails = `${error.message}. Check for missing closing brackets or quotes.`;
+            } else if (error.message.includes('Unexpected number')) {
+                errorDetails = `${error.message}. Check for invalid number format.`;
+            }
+            
+            jsonValidationResults.innerHTML = `
+                <div class="validation-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Invalid JSON!</strong> ${errorDetails}
+                </div>
+                <div class="validation-details">
+                    <p><strong>Error Type:</strong> ${error.name}</p>
+                    <p><strong>Line:</strong> ${lineNumber}</p>
+                    <p><strong>Tip:</strong> Use the "Beautify JSON" button only with valid JSON. Fix syntax errors first.</p>
+                </div>
+            `;
+            
+            showNotification('JSON validation failed', 'error');
+        }
+    });
+    
+    // Beautify JSON
+    jsonBeautify.addEventListener('click', () => {
+        const input = jsonInput.value.trim();
+        if (!input) {
+            showNotification('Please enter JSON to beautify', 'error');
+            return;
+        }
+        
+        try {
+            const parsed = JSON.parse(input);
+            const beautified = beautifyJSON(parsed);
+            
+            jsonOriginal.textContent = input;
+            jsonProcessed.textContent = beautified;
+            
+            jsonValidationResults.innerHTML = `
+                <div class="validation-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>JSON Beautified!</strong> The JSON has been formatted with proper indentation and spacing.
+                </div>
+                <div class="validation-details">
+                    <p><strong>Original Size:</strong> ${input.length} characters</p>
+                    <p><strong>Beautified Size:</strong> ${beautified.length} characters</p>
+                    <p><strong>Formatting:</strong> Consistent 2-space indentation applied</p>
+                </div>
+            `;
+            
+            showNotification('JSON beautified successfully', 'success');
+        } catch (error) {
+            // Show the error in the validation results
+            jsonValidationResults.innerHTML = `
+                <div class="validation-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Cannot Beautify Invalid JSON!</strong> ${error.message}
+                </div>
+                <div class="validation-details">
+                    <p><strong>Error Type:</strong> ${error.name}</p>
+                    <p><strong>Line:</strong> ${getJSONErrorLine(input, error.message)}</p>
+                    <p><strong>Tip:</strong> Fix JSON syntax errors first, then use the beautify function.</p>
+                </div>
+            `;
+            showNotification('Invalid JSON - cannot beautify', 'error');
+        }
+    });
+    
+    // Minify JSON
+    jsonMinify.addEventListener('click', () => {
+        const input = jsonInput.value.trim();
+        if (!input) {
+            showNotification('Please enter JSON to minify', 'error');
+            return;
+        }
+        
+        try {
+            const parsed = JSON.parse(input);
+            const minified = JSON.stringify(parsed);
+            
+            jsonOriginal.textContent = input;
+            jsonProcessed.textContent = minified;
+            
+            jsonValidationResults.innerHTML = `
+                <div class="validation-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>JSON Minified!</strong> The JSON has been compressed to remove unnecessary whitespace.
+                </div>
+                <div class="validation-details">
+                    <p><strong>Original Size:</strong> ${input.length} characters</p>
+                    <p><strong>Minified Size:</strong> ${minified.length} characters</p>
+                    <p><strong>Space Saved:</strong> ${input.length - minified.length} characters</p>
+                </div>
+            `;
+            
+            showNotification('JSON minified successfully', 'success');
+        } catch (error) {
+            // Show the error in the validation results
+            jsonValidationResults.innerHTML = `
+                <div class="validation-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Cannot Minify Invalid JSON!</strong> ${error.message}
+                </div>
+                <div class="validation-details">
+                    <p><strong>Error Type:</strong> ${error.name}</p>
+                    <p><strong>Line:</strong> ${getJSONErrorLine(input, error.message)}</p>
+                    <p><strong>Tip:</strong> Fix JSON syntax errors first, then use the minify function.</p>
+                </div>
+            `;
+            showNotification('Invalid JSON - cannot minify', 'error');
+        }
+    });
+    
+    // Clear JSON
+    jsonClear.addEventListener('click', () => {
+        jsonInput.value = '';
+        jsonOriginal.textContent = '';
+        jsonProcessed.textContent = '';
+        jsonValidationResults.innerHTML = '';
+    });
+    
+    // Copy JSON
+    jsonCopy.addEventListener('click', () => {
+        const processed = jsonProcessed.textContent;
+        if (processed) {
+            navigator.clipboard.writeText(processed).then(() => {
+                showNotification('JSON copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy JSON', 'error');
+            });
+        } else {
+            showNotification('No JSON to copy', 'error');
+        }
+    });
+    
+    // Download JSON
+    jsonDownload.addEventListener('click', () => {
+        const processed = jsonProcessed.textContent;
+        if (processed) {
+            const blob = new Blob([processed], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'processed.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotification('JSON downloaded successfully', 'success');
+        } else {
+            showNotification('No JSON to download', 'error');
+        }
+    });
+}
+
+// Helper function to get JSON error line
+function getJSONErrorLine(input, errorMessage) {
+    const match = errorMessage.match(/position (\d+)/);
+    if (match) {
+        const position = parseInt(match[1]);
+        const lines = input.substring(0, position).split('\n');
+        return lines.length;
+    }
+    return 'Unknown';
+}
+
+// Robust JSON beautification function
+function beautifyJSON(obj, indent = 2, maxDepth = 100) {
+    const seen = new WeakSet();
+    
+    function beautify(value, currentIndent = 0, depth = 0) {
+        if (depth > maxDepth) {
+            return '"[Max depth exceeded]"';
+        }
+        
+        if (value === null) return 'null';
+        if (typeof value === 'undefined') return 'undefined';
+        if (typeof value === 'string') return `"${value.replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t')}"`;
+        if (typeof value === 'number') return value.toString();
+        if (typeof value === 'boolean') return value.toString();
+        
+        if (typeof value === 'object') {
+            if (seen.has(value)) {
+                return '"[Circular reference]"';
+            }
+            seen.add(value);
+            
+            if (Array.isArray(value)) {
+                if (value.length === 0) return '[]';
+                
+                const items = value.map(item => 
+                    ' '.repeat(currentIndent + indent) + beautify(item, currentIndent + indent, depth + 1)
+                );
+                
+                return `[\n${items.join(',\n')}\n${' '.repeat(currentIndent)}]`;
+            } else {
+                const keys = Object.keys(value);
+                if (keys.length === 0) return '{}';
+                
+                const items = keys.map(key => {
+                    const formattedKey = `"${key}": `;
+                    const formattedValue = beautify(value[key], currentIndent + indent, depth + 1);
+                    return ' '.repeat(currentIndent + indent) + formattedKey + formattedValue;
+                });
+                
+                return `{\n${items.join(',\n')}\n${' '.repeat(currentIndent)}}`;
+            }
+        }
+        
+        return String(value);
+    }
+    
+    return beautify(obj, 0, 0);
+}
+
+
 
 async function generateHashes(input, hashTypes, outputFormat = 'hex') {
     const results = {};
@@ -2292,14 +2288,6 @@ function verifyChecksum() {
         hash.toLowerCase() === expectedChecksum.toLowerCase()
     );
     
-    // Track checksum verification
-    AnalyticsTracker.trackToolInteraction('hash', 'checksum_verification', {
-        expected_checksum_length: expectedChecksum.length,
-        generated_hashes_count: generatedHashes.length,
-        verification_success: matches.length > 0,
-        matches_count: matches.length
-    });
-    
     if (matches.length > 0) {
         verificationResult.innerHTML = `
             <div class="verification-success">
@@ -2356,7 +2344,6 @@ function displayHashResults(results, fileInfo = null) {
         btn.addEventListener('click', () => {
             const hash = btn.dataset.hash;
             navigator.clipboard.writeText(hash).then(() => {
-                AnalyticsTracker.trackCopyOperation('hash', 'hash_result', hash.length);
                 showNotification('Hash copied to clipboard!', 'success');
             }).catch(() => {
                 showNotification('Failed to copy hash', 'error');
@@ -2476,14 +2463,6 @@ function loadProviderPreset(provider) {
     if (preset) {
         discoveryInput.value = preset.discovery;
         clientIdInput.placeholder = preset.placeholder;
-        
-        // Track provider preset loading
-        AnalyticsTracker.trackToolInteraction('oidc', 'preset_loaded', {
-            provider: provider,
-            preset_type: 'discovery_endpoint',
-            timestamp: new Date().toISOString()
-        });
-        
         showNotification(`${provider.charAt(0).toUpperCase() + provider.slice(1)} preset loaded!`, 'success');
     }
 }
@@ -2495,18 +2474,6 @@ function openModal(title, content) {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
     
-    // Track modal opening
-    const toolId = title.toLowerCase().includes('jwt') ? 'jwt' :
-                   title.toLowerCase().includes('base64') ? 'base64' :
-                   title.toLowerCase().includes('url') ? 'url' :
-                   title.toLowerCase().includes('oidc') ? 'oidc' :
-                   title.toLowerCase().includes('hash') ? 'hash' : 'unknown';
-    
-    if (toolId !== 'unknown') {
-        AnalyticsTracker.trackModalInteraction(toolId, 'open');
-        AnalyticsTracker.trackToolPageView(toolId);
-    }
-    
     // Scroll to modal smoothly
     setTimeout(() => {
         modal.scrollIntoView({
@@ -2517,18 +2484,6 @@ function openModal(title, content) {
 }
 
 function closeModal() {
-    // Track modal closing
-    const currentTitle = modalTitle.textContent;
-    const toolId = currentTitle.toLowerCase().includes('jwt') ? 'jwt' :
-                   currentTitle.toLowerCase().includes('base64') ? 'base64' :
-                   currentTitle.toLowerCase().includes('url') ? 'url' :
-                   currentTitle.toLowerCase().includes('oidc') ? 'oidc' :
-                   currentTitle.toLowerCase().includes('hash') ? 'hash' : 'unknown';
-    
-    if (toolId !== 'unknown') {
-        AnalyticsTracker.trackModalInteraction(toolId, 'close');
-    }
-    
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
 }
@@ -2543,9 +2498,6 @@ function initializeTheme() {
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    // Track theme change
-    AnalyticsTracker.trackEngagement('theme_change', 1);
     
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
@@ -2562,12 +2514,8 @@ function toggleSidebar() {
     const contentArea = document.querySelector('.content-area');
     
     if (sidebar && contentArea) {
-        const isHidden = sidebar.classList.contains('sidebar-hidden');
         sidebar.classList.toggle('sidebar-hidden');
         contentArea.classList.toggle('content-full-width');
-        
-        // Track sidebar toggle
-        AnalyticsTracker.trackEngagement('sidebar_toggle', isHidden ? 1 : 0);
         
         // Update toggle button icon
         const icon = sidebarToggle.querySelector('i');
@@ -2654,7 +2602,6 @@ function handleKeyboard(e) {
     // Ctrl/Cmd + K to focus search
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        AnalyticsTracker.trackEngagement('keyboard_shortcut', 1);
         searchInput.focus();
     }
 }
@@ -2671,22 +2618,12 @@ function handleScroll() {
                     backToTop.classList.remove('visible');
                 }
             }
-            
-            // Track scroll depth for engagement
-            const scrollDepth = Math.round((window.pageYOffset / (document.body.scrollHeight - window.innerHeight)) * 100);
-            if (scrollDepth > 0 && scrollDepth % 25 === 0) { // Track every 25% scroll
-                AnalyticsTracker.trackEngagement('scroll_depth', scrollDepth);
-            }
-            
             window.scrollHandler = null;
         });
     }
 }
 
 function scrollToTop() {
-    // Track back to top usage
-    AnalyticsTracker.trackEngagement('back_to_top', 1);
-    
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
