@@ -1,8 +1,9 @@
 User-agent: *
 Allow: /
 
-# Sitemap
+# Sitemaps
 Sitemap: https://devhub.sbs/sitemap.xml
+Sitemap: https://devhub.sbs/tools-sitemap.xml
 
 # Allow all major search engines
 User-agent: Googlebot

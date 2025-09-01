@@ -675,7 +675,232 @@ const sidebarNavLinks = document.querySelectorAll('.sidebar .nav-link');
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    initializeURLRouting();
 });
+
+// ===== URL ROUTING SYSTEM =====
+function initializeURLRouting() {
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function(event) {
+        handleRouteChange(window.location.pathname);
+    });
+    
+    // Check initial URL on page load
+    const initialPath = window.location.pathname;
+    if (initialPath !== '/' && initialPath !== '') {
+        handleRouteChange(initialPath);
+    }
+}
+
+function handleRouteChange(path) {
+    // Remove leading slash and get tool name
+    const toolName = path.replace(/^\//, '');
+    
+    // Map URL paths to tool IDs
+    const toolRoutes = {
+        'json': 'json',
+        'jwt': 'jwt', 
+        'base64': 'base64',
+        'url': 'url',
+        'oidc': 'oidc',
+        'hash': 'hash'
+    };
+    
+    if (toolRoutes[toolName]) {
+        // Navigate to the specific tool
+        openToolModal(toolRoutes[toolName]);
+        
+        // Update page title and meta for SEO
+        updatePageMetaForTool(toolName);
+        
+        // Update breadcrumb
+        updateBreadcrumb(toolRoutes[toolName]);
+        
+        // Update URL without triggering another route change
+        const newUrl = `${window.location.origin}/${toolName}`;
+        window.history.replaceState({ tool: toolName }, '', newUrl);
+    }
+}
+
+function openToolModal(toolId) {
+    // Find the tool card and trigger click
+    const toolCard = document.querySelector(`[data-tool="${toolId}"]`);
+    if (toolCard) {
+        toolCard.click();
+    }
+}
+
+function updatePageMetaForTool(toolName) {
+    const toolMeta = getToolMeta(toolName);
+    if (toolMeta) {
+        // Update page title
+        document.title = toolMeta.title;
+        
+        // Update meta description
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+            metaDesc.setAttribute('content', toolMeta.description);
+        }
+        
+        // Update Open Graph title
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) {
+            ogTitle.setAttribute('content', toolMeta.ogTitle);
+        }
+        
+        // Update Open Graph description
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) {
+            ogDesc.setAttribute('content', toolMeta.ogDescription);
+        }
+        
+        // Update Twitter title
+        const twitterTitle = document.querySelector('meta[property="twitter:title"]');
+        if (twitterTitle) {
+            twitterTitle.setAttribute('content', toolMeta.twitterTitle);
+        }
+        
+        // Update Twitter description
+        const twitterDesc = document.querySelector('meta[property="twitter:description"]');
+        if (twitterDesc) {
+            twitterDesc.setAttribute('content', toolMeta.twitterDescription);
+        }
+    }
+}
+
+function getToolMeta(toolName) {
+    const toolMetaData = {
+        'json': {
+            title: 'JSON Validator & Beautifier | Free Online Tool | DevHub',
+            description: 'Free online JSON validator and beautifier. Validate JSON syntax, format with proper indentation, and minify JSON. Professional tool for developers and API testing.',
+            ogTitle: 'JSON Validator & Beautifier - Free Online Tool | DevHub',
+            ogDescription: 'Validate, beautify, and format JSON with our free online tool. Perfect for developers, API testing, and data validation.',
+            twitterTitle: 'JSON Validator & Beautifier - Free Online Tool | DevHub',
+            twitterDescription: 'Validate, beautify, and format JSON with our free online tool. Perfect for developers, API testing, and data validation.'
+        },
+        'jwt': {
+            title: 'JWT Token Verifier | Free Online Tool | DevHub',
+            description: 'Free online JWT token verifier. Decode and validate JSON Web Tokens instantly. Check JWT claims, signature, and expiration.',
+            ogTitle: 'JWT Token Verifier - Free Online Tool | DevHub',
+            ogDescription: 'Decode and validate JWT tokens with our free online tool. Check claims, signature, and expiration instantly.',
+            twitterTitle: 'JWT Token Verifier - Free Online Tool | DevHub',
+            twitterDescription: 'Decode and validate JWT tokens with our free online tool. Check claims, signature, and expiration instantly.'
+        },
+        'base64': {
+            title: 'Base64 Encoder/Decoder | Free Online Tool | DevHub',
+            description: 'Free online Base64 encoder and decoder. Convert text to Base64 and decode Base64 back to text instantly. Perfect for data encoding.',
+            ogTitle: 'Base64 Encoder/Decoder - Free Online Tool | DevHub',
+            ogDescription: 'Encode text to Base64 and decode Base64 back to text with our free online tool. Perfect for data encoding.',
+            twitterTitle: 'Base64 Encoder/Decoder - Free Online Tool | DevHub',
+            twitterDescription: 'Encode text to Base64 and decode Base64 back to text with our free online tool. Perfect for data encoding.'
+        },
+        'url': {
+            title: 'URL Encoder/Decoder | Free Online Tool | DevHub',
+            description: 'Free online URL encoder and decoder. Encode URLs and special characters for web development and API testing.',
+            ogTitle: 'URL Encoder/Decoder - Free Online Tool | DevHub',
+            ogDescription: 'Encode and decode URLs with our free online tool. Handle special characters for web development and API testing.',
+            twitterTitle: 'URL Encoder/Decoder - Free Online Tool | DevHub',
+            twitterDescription: 'Encode and decode URLs with our free online tool. Handle special characters for web development and API testing.'
+        },
+        'oidc': {
+            title: 'OIDC Playground & Testing Tool | Free Online Tool | DevHub',
+            description: 'Free online OIDC playground for testing OpenID Connect authentication flows. Test OAuth 2.0 and OIDC protocols.',
+            ogTitle: 'OIDC Playground & Testing Tool - Free Online Tool | DevHub',
+            ogDescription: 'Test OpenID Connect authentication flows with our free online playground. Perfect for OAuth 2.0 and OIDC testing.',
+            twitterTitle: 'OIDC Playground & Testing Tool - Free Online Tool | DevHub',
+            twitterDescription: 'Test OpenID Connect authentication flows with our free online playground. Perfect for OAuth 2.0 and OIDC testing.'
+        },
+        'hash': {
+            title: 'Hash Generator Tool | Free Online Tool | DevHub',
+            description: 'Free online hash generator supporting MD5, SHA-256, SHA-512, and more. Generate secure hashes for data integrity.',
+            ogTitle: 'Hash Generator Tool - Free Online Tool | DevHub',
+            ogDescription: 'Generate secure hashes with our free online tool. Support for MD5, SHA-256, SHA-512, and more algorithms.',
+            twitterTitle: 'Hash Generator Tool - Free Online Tool | DevHub',
+            twitterDescription: 'Generate secure hashes with our free online tool. Support for MD5, SHA-256, SHA-512, and more algorithms.'
+        }
+    };
+    
+    return toolMetaData[toolName];
+}
+
+function updateURLForTool(toolId) {
+    const toolRoutes = {
+        'json': 'json',
+        'jwt': 'jwt', 
+        'base64': 'base64',
+        'url': 'url',
+        'oidc': 'oidc',
+        'hash': 'hash'
+    };
+    
+    if (toolRoutes[toolId]) {
+        const newUrl = `${window.location.origin}/${toolRoutes[toolId]}`;
+        window.history.pushState({ tool: toolId }, '', newUrl);
+        
+        // Update page meta for SEO
+        updatePageMetaForTool(toolRoutes[toolId]);
+        
+        // Update breadcrumb
+        updateBreadcrumb(toolId);
+    }
+}
+
+function updateBreadcrumb(toolId) {
+    const toolNames = {
+        'json': 'JSON Validator',
+        'jwt': 'JWT Verifier',
+        'base64': 'Base64 Tool',
+        'url': 'URL Tool',
+        'oidc': 'OIDC Tool',
+        'hash': 'Hash Generator'
+    };
+    
+    const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+    if (breadcrumbCurrent && toolNames[toolId]) {
+        breadcrumbCurrent.textContent = toolNames[toolId];
+    }
+}
+
+function restoreOriginalPageMeta() {
+    // Restore original page title and meta
+    document.title = 'Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal | DevHub';
+    
+    // Restore original meta description
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+        metaDesc.setAttribute('content', 'Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification, authentication testing, and productivity tools. No signup required!');
+    }
+    
+    // Restore original Open Graph title
+    const ogTitle = document.querySelector('meta[name="og:title"]');
+    if (ogTitle) {
+        ogTitle.setAttribute('content', 'Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal');
+    }
+    
+    // Restore original Open Graph description
+    const ogDesc = document.querySelector('meta[name="og:description"]');
+    if (ogDesc) {
+        ogDesc.setAttribute('content', 'Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification and authentication testing.');
+    }
+    
+    // Restore original Twitter title
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+        twitterTitle.setAttribute('content', 'Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal');
+    }
+    
+    // Restore original Twitter description
+    const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDesc) {
+        twitterDesc.setAttribute('content', 'Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification and authentication testing.');
+    }
+    
+    // Restore breadcrumb
+    const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+    if (breadcrumbCurrent) {
+        breadcrumbCurrent.textContent = 'Tool';
+    }
+}
 
 function initializeApp() {
     setupEventListeners();
@@ -741,6 +966,13 @@ function setupEventListeners() {
     if (modalBackdrop) {
         modalBackdrop.addEventListener('click', closeModal);
     }
+    
+    // Handle escape key for modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
     
     // Theme toggle
     if (themeToggle) {
@@ -1128,6 +1360,11 @@ function openInternalTool(toolId) {
     const config = toolConfigs[toolId];
     if (config) {
         openModal(config.title, config.content);
+        
+        // Update URL for the specific tool
+        updateURLForTool(toolId);
+        
+        // Initialize tool functionality
         initializeToolFunctionality(toolId);
     }
 }
@@ -2486,6 +2723,13 @@ function openModal(title, content) {
 function closeModal() {
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
+    
+    // Restore original URL when modal is closed
+    if (window.history.state && window.history.state.tool) {
+        window.history.pushState({}, '', '/');
+        // Restore original page meta
+        restoreOriginalPageMeta();
+    }
 }
 
 // ===== THEME HANDLING =====

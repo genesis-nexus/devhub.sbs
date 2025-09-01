@@ -18,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal | DevHub</title>
     <meta name="description" content="Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification, authentication testing, and productivity tools. No signup required!">
-    <meta name="keywords" content="base64 encode, base64 decode, url encode, url decode, oidc playground, oidc testing, json validator, json beautifier, dev tools, dev portal, jwt verification, developer tools, authentication testing, free online tools, programming utilities">
+    <meta name="keywords" content="base64 encode, base64 decode, url encode, url decode, oidc playground, oidc testing, json validator, json beautifier, dev tools, dev portal, jwt verification, developer tools, authentication testing, free online tools, programming utilities, json formatter, jwt decoder, base64 decoder, url decoder, oidc playground, md5 generator, sha256 generator, sha512 generator, hash generator">
     <meta name="author" content="DevHub">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://devhub.sbs/">
@@ -147,6 +147,105 @@
         "worstRating": "1"
       },
       "keywords": "best developer tools 2025, jwt verification, base64 encode, url encode, json validator, json beautifier, ai tools, authentication tools, productivity tools, developer resources"
+    }
+    </script>
+    
+    <!-- Individual Tool Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://devhub.sbs/json",
+          "name": "JSON Validator & Beautifier",
+          "description": "Free online JSON validator and beautifier tool for developers",
+          "url": "https://devhub.sbs/json",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://devhub.sbs/jwt",
+          "name": "JWT Token Verifier",
+          "description": "Free online JWT token verifier and decoder tool",
+          "url": "https://devhub.sbs/jwt",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://devhub.sbs/base64",
+          "name": "Base64 Encoder/Decoder",
+          "description": "Free online Base64 encoding and decoding tool",
+          "url": "https://devhub.sbs/base64",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://devhub.sbs/url",
+          "name": "URL Encoder/Decoder",
+          "description": "Free online URL encoding and decoding tool",
+          "url": "https://devhub.sbs/url",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://devhub.sbs/oidc",
+          "name": "OIDC Playground & Testing Tool",
+          "description": "Free online OIDC playground for testing authentication flows",
+          "url": "https://devhub.sbs/oidc",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://devhub.sbs/hash",
+          "name": "Hash Generator Tool",
+          "description": "Free online hash generator supporting multiple algorithms",
+          "url": "https://devhub.sbs/hash",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      ]
     }
     </script>
 </head>
@@ -535,6 +634,11 @@
             <div class="modal-backdrop" id="modal-backdrop"></div>
             <div class="modal-content">
                 <div class="modal-header">
+                    <div class="breadcrumb-nav">
+                        <a href="/" class="breadcrumb-link">Home</a>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current" id="breadcrumb-current">Tool</span>
+                    </div>
                     <h3 id="modal-title">Tool Name</h3>
                     <button class="modal-close" id="modal-close">
                         <i class="fas fa-times"></i>
