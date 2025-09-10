@@ -445,6 +445,18 @@ body {
     color: white;
 }
 
+.hostinger-btn {
+    background: linear-gradient(135deg, #2f1c6a, #1a0e3a);
+    color: white;
+    border: 2px solid #2f1c6a;
+}
+
+.hostinger-btn:hover {
+    background: linear-gradient(135deg, #1a0e3a, #0f071f);
+    border-color: #1a0e3a;
+    color: white;
+}
+
 .social-icon {
     width: 60px;
     height: 60px;
@@ -1771,10 +1783,6 @@ body {
     gap: var(--space-md);
     color: var(--text-secondary);
     font-size: 1.1rem;
-}
-
-.callback-results {
-    /* space-y: var(--space-lg); */
 }
 
 .callback-results .result-section {
