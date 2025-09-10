@@ -446,15 +446,42 @@ body {
 }
 
 .hostinger-btn {
-    background: linear-gradient(135deg, #2f1c6a, #1a0e3a);
+    background: linear-gradient(135deg, #2f1c6a, #4c1d95);
     color: white;
     border: 2px solid #2f1c6a;
+    box-shadow: 0 4px 6px -1px rgba(47, 28, 106, 0.3);
 }
 
 .hostinger-btn:hover {
-    background: linear-gradient(135deg, #1a0e3a, #0f071f);
-    border-color: #1a0e3a;
+    background: linear-gradient(135deg, #4c1d95, #2f1c6a);
+    border-color: #4c1d95;
     color: white;
+    box-shadow: 0 10px 15px -3px rgba(47, 28, 106, 0.4);
+}
+
+/* Dark mode specific adjustments for better visibility */
+[data-theme="dark"] .hostinger-btn {
+    background: linear-gradient(135deg, #5b21b6, #7c3aed);
+    border-color: #5b21b6;
+    box-shadow: 0 4px 6px -1px rgba(91, 33, 182, 0.4);
+}
+
+[data-theme="dark"] .hostinger-btn:hover {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    border-color: #7c3aed;
+    box-shadow: 0 10px 15px -3px rgba(91, 33, 182, 0.5);
+}
+
+/* Hostinger button icon styling for better visibility */
+.hostinger-btn .social-icon {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(15px);
+}
+
+[data-theme="dark"] .hostinger-btn .social-icon {
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .social-icon {
