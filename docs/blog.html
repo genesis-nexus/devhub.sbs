@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DGT4D663Z0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DGT4D663Z0');
+    </script>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7289342350048507"
+         crossorigin="anonymous"></script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Blog - Base64, JWT, JSON Tools & Programming Guides | DevHub</title>
+    <meta name="description" content="Comprehensive developer blog covering Base64 encoding, JWT tokens, JSON validation, OIDC authentication, and modern programming techniques. Expert guides and tutorials for developers.">
+    <meta name="keywords" content="developer blog, base64 encoding guide, jwt token tutorial, json validation, oidc authentication, programming tutorials, developer tools, web development, coding guides">
+    <meta name="author" content="DevHub">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://devhub.sbs/blog.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devhub.sbs/blog.html">
+    <meta property="og:title" content="Developer Blog - Base64, JWT, JSON Tools & Programming Guides | DevHub">
+    <meta property="og:description" content="Comprehensive developer blog covering Base64 encoding, JWT tokens, JSON validation, OIDC authentication, and modern programming techniques.">
+    <meta property="og:image" content="https://devhub.sbs/favicon-192x192.png">
+    <meta property="og:site_name" content="DevHub">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://devhub.sbs/blog.html">
+    <meta property="twitter:title" content="Developer Blog - Base64, JWT, JSON Tools & Programming Guides | DevHub">
+    <meta property="twitter:description" content="Comprehensive developer blog covering Base64 encoding, JWT tokens, JSON validation, OIDC authentication, and modern programming techniques.">
+    <meta property="twitter:image" content="https://devhub.sbs/favicon-192x192.png">
+    <meta property="twitter:creator" content="@devhub">
+    <meta property="twitter:site" content="@devhub">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+    <link rel="manifest" href="site.webmanifest">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blog-styles.css">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "@id": "https://devhub.sbs/blog.html",
+      "name": "DevHub Developer Blog",
+      "description": "Comprehensive developer blog covering Base64 encoding, JWT tokens, JSON validation, OIDC authentication, and modern programming techniques.",
+      "url": "https://devhub.sbs/blog.html",
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://devhub.sbs/#organization",
+        "name": "DevHub",
+        "url": "https://devhub.sbs",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://devhub.sbs/favicon-192x192.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://devhub.sbs/blog.html"
+      }
+    }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-search">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search tools..." class="search-input">
+                </div>
+                
+                <div class="nav-actions">
+                    <a href="index.html" class="nav-btn">Tools</a>
+                    <a href="blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Blog Header -->
+        <section class="blog-header">
+            <div class="container">
+                <div class="blog-header-content">
+                    <h1 class="blog-title">Developer Blog</h1>
+                    <p class="blog-subtitle">Expert guides, tutorials, and insights for modern developers. Learn about Base64 encoding, JWT tokens, JSON validation, OIDC authentication, and more.</p>
+                    
+                    <!-- Blog Categories -->
+                    <div class="blog-categories">
+                        <a href="#all" class="category-btn active" data-category="all">All Posts</a>
+                        <a href="#tutorials" class="category-btn" data-category="tutorials">Tutorials</a>
+                        <a href="#guides" class="category-btn" data-category="guides">Guides</a>
+                        <a href="#tools" class="category-btn" data-category="tools">Tools</a>
+                        <a href="#security" class="category-btn" data-category="security">Security</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Article -->
+        <section class="featured-article">
+            <div class="container">
+                <div class="featured-card">
+                    <div class="featured-image">
+                        <div class="featured-badge">Featured</div>
+                        <i class="fas fa-code featured-icon"></i>
+                    </div>
+                    <div class="featured-content">
+                        <div class="featured-meta">
+                            <span class="featured-category">Tutorial</span>
+                            <span class="featured-date">January 15, 2025</span>
+                            <span class="featured-read-time">8 min read</span>
+                        </div>
+                        <h2 class="featured-title">
+                            <a href="blog/base64-encoding-complete-guide.html">Complete Guide to Base64 Encoding: From Basics to Advanced Implementation</a>
+                        </h2>
+                        <p class="featured-excerpt">Master Base64 encoding with this comprehensive guide. Learn the fundamentals, use cases, implementation in multiple languages, and best practices for secure data encoding and decoding.</p>
+                        <div class="featured-tags">
+                            <span class="tag">Base64</span>
+                            <span class="tag">Encoding</span>
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">Security</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Posts Grid -->
+        <section class="blog-posts">
+            <div class="container">
+                <div class="blog-grid" id="blog-grid">
+                    <!-- Blog Post 1 -->
+                    <article class="blog-card" data-category="tutorials">
+                        <div class="blog-card-image">
+                            <i class="fas fa-key blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Tutorial</span>
+                                <span class="blog-date">January 12, 2025</span>
+                                <span class="blog-read-time">6 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/jwt-token-security-best-practices.html">JWT Token Security: Best Practices for Authentication</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Learn essential JWT security practices including token validation, secure storage, expiration handling, and common vulnerabilities to avoid.</p>
+                            <div class="blog-tags">
+                                <span class="tag">JWT</span>
+                                <span class="tag">Security</span>
+                                <span class="tag">Authentication</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 2 -->
+                    <article class="blog-card" data-category="guides">
+                        <div class="blog-card-image">
+                            <i class="fas fa-code blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Guide</span>
+                                <span class="blog-date">January 10, 2025</span>
+                                <span class="blog-read-time">5 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/json-validation-complete-guide.html">JSON Validation and Formatting: A Developer's Complete Guide</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Master JSON validation techniques, understand common validation errors, and learn how to format JSON data effectively for better API development.</p>
+                            <div class="blog-tags">
+                                <span class="tag">JSON</span>
+                                <span class="tag">Validation</span>
+                                <span class="tag">API</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 3 -->
+                    <article class="blog-card" data-category="security">
+                        <div class="blog-card-image">
+                            <i class="fas fa-shield-alt blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Security</span>
+                                <span class="blog-date">January 8, 2025</span>
+                                <span class="blog-read-time">7 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/oidc-authentication-implementation.html">OIDC Authentication Implementation: Step-by-Step Guide</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Implement OpenID Connect authentication in your applications. Learn about OIDC flows, token management, and integration with popular identity providers.</p>
+                            <div class="blog-tags">
+                                <span class="tag">OIDC</span>
+                                <span class="tag">Authentication</span>
+                                <span class="tag">Security</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 4 -->
+                    <article class="blog-card" data-category="tools">
+                        <div class="blog-card-image">
+                            <i class="fas fa-link blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Tools</span>
+                                <span class="blog-date">January 5, 2025</span>
+                                <span class="blog-read-time">4 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/url-encoding-decoding-guide.html">URL Encoding and Decoding: When and How to Use It</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Understand URL encoding principles, when to encode URLs, handling special characters, and best practices for web development and API integration.</p>
+                            <div class="blog-tags">
+                                <span class="tag">URL Encoding</span>
+                                <span class="tag">Web Development</span>
+                                <span class="tag">API</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 5 -->
+                    <article class="blog-card" data-category="security">
+                        <div class="blog-card-image">
+                            <i class="fas fa-lock blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Security</span>
+                                <span class="blog-date">January 3, 2025</span>
+                                <span class="blog-read-time">6 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/hash-functions-security-guide.html">Hash Functions in Security: MD5, SHA-256, and Beyond</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Explore different hash functions, their security implications, use cases for password hashing, file integrity, and choosing the right algorithm for your needs.</p>
+                            <div class="blog-tags">
+                                <span class="tag">Hashing</span>
+                                <span class="tag">Security</span>
+                                <span class="tag">Cryptography</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 6 -->
+                    <article class="blog-card" data-category="tutorials">
+                        <div class="blog-card-image">
+                            <i class="fas fa-tools blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Tutorial</span>
+                                <span class="blog-date">December 30, 2024</span>
+                                <span class="blog-read-time">5 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/developer-tools-productivity.html">Essential Developer Tools for Maximum Productivity</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Discover the must-have developer tools that can boost your productivity, streamline your workflow, and improve code quality in 2025.</p>
+                            <div class="blog-tags">
+                                <span class="tag">Productivity</span>
+                                <span class="tag">Tools</span>
+                                <span class="tag">Development</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 7 -->
+                    <article class="blog-card" data-category="guides">
+                        <div class="blog-card-image">
+                            <i class="fas fa-code-branch blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Guide</span>
+                                <span class="blog-date">December 28, 2024</span>
+                                <span class="blog-read-time">8 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/api-security-best-practices.html">API Security Best Practices: Protecting Your Endpoints</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Learn essential API security practices including authentication, authorization, input validation, rate limiting, and protecting against common vulnerabilities.</p>
+                            <div class="blog-tags">
+                                <span class="tag">API Security</span>
+                                <span class="tag">Web Security</span>
+                                <span class="tag">Best Practices</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Blog Post 8 -->
+                    <article class="blog-card" data-category="tutorials">
+                        <div class="blog-card-image">
+                            <i class="fas fa-mobile-alt blog-icon"></i>
+                        </div>
+                        <div class="blog-card-content">
+                            <div class="blog-meta">
+                                <span class="blog-category">Tutorial</span>
+                                <span class="blog-date">December 25, 2024</span>
+                                <span class="blog-read-time">6 min read</span>
+                            </div>
+                            <h3 class="blog-card-title">
+                                <a href="blog/mobile-app-authentication.html">Mobile App Authentication: JWT vs OAuth vs Custom Solutions</a>
+                            </h3>
+                            <p class="blog-card-excerpt">Compare different authentication approaches for mobile applications, understand their trade-offs, and choose the right solution for your mobile app.</p>
+                            <div class="blog-tags">
+                                <span class="tag">Mobile</span>
+                                <span class="tag">Authentication</span>
+                                <span class="tag">JWT</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Load More Button -->
+                <div class="load-more-section">
+                    <button class="btn btn-outline" id="load-more-posts">Load More Posts</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Signup -->
+        <section class="newsletter-signup">
+            <div class="container">
+                <div class="newsletter-content">
+                    <div class="newsletter-text">
+                        <h3>Stay Updated with DevHub</h3>
+                        <p>Get the latest developer tools, tutorials, and insights delivered to your inbox.</p>
+                    </div>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Enter your email" class="newsletter-input">
+                        <button class="btn btn-primary newsletter-btn">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and JWT verification tools.</p>
+                    <div class="social-links">
+                        <a href="https://youtube.com/@techhubweekly?si=HpI1mgloDKs-wj_8" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/devhub.news?igsh=MTBkanVsZGU2bW9kZg%3D%3D&utm_source=qr" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        <a href="https://hostinger.com?REFERRALCODE=GCJACHINTO0F" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-server"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Tools</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#jwt">JWT Verifier</a></li>
+                        <li><a href="index.html#base64">Base64 Encoder</a></li>
+                        <li><a href="index.html#url">URL Encoder</a></li>
+                        <li><a href="index.html#oidc">OIDC Tester</a></li>
+                        <li><a href="index.html#hash">Hash Generator</a></li>
+                        <li><a href="index.html#json">JSON Validator</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Blog</h4>
+                    <ul class="footer-links">
+                        <li><a href="blog.html">All Posts</a></li>
+                        <li><a href="blog.html#tutorials">Tutorials</a></li>
+                        <li><a href="blog.html#guides">Guides</a></li>
+                        <li><a href="blog.html#tools">Tools</a></li>
+                        <li><a href="blog.html#security">Security</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#about">About</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="index.html#privacy">Privacy</a></li>
+                        <li><a href="index.html#help">Help</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 DevHub. Built with ❤️ for developers worldwide.</p>
+                <div class="footer-meta">
+                    <span>Keywords: Base64 encode, Base64 decode, URL encode, URL decode, OIDC playground, OIDC testing, hash generator, MD5, SHA-256, SHA-512, JSON validator, JSON beautifier, dev tools, dev portal, JWT verification, developer tools, developer blog</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+    <script src="blog-script.js"></script>
+</body>
+</html>
