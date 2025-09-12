@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OIDC Authentication Implementation: Step-by-Step Guide | DevHub Blog</title>
+    <meta name="description" content="Implement OpenID Connect authentication in your applications. Learn about OIDC flows, token management, and integration with popular identity providers.">
+    <meta name="keywords" content="oidc authentication, openid connect, oidc implementation, oauth2, identity provider, authentication flow">
+    <link rel="canonical" href="https://devhub.sbs/blog/oidc-authentication-implementation.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../blog-styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-actions">
+                    <a href="../index.html" class="nav-btn">Tools</a>
+                    <a href="../blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="main-content">
+        <article class="blog-article">
+            <div class="container">
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Security</span>
+                        <span class="article-date">January 8, 2025</span>
+                        <span class="article-read-time">7 min read</span>
+                    </div>
+                    <h1 class="article-title">OIDC Authentication Implementation: Step-by-Step Guide</h1>
+                    <p class="article-excerpt">Implement OpenID Connect authentication in your applications. Learn about OIDC flows, token management, and integration with popular identity providers.</p>
+                </div>
+
+                <div class="article-content">
+                    <h2>What is OpenID Connect (OIDC)?</h2>
+                    <p>OpenID Connect is an identity layer built on top of OAuth 2.0. It provides a simple way to verify the identity of users based on authentication performed by an authorization server, as well as to obtain basic profile information about the user.</p>
+
+                    <h2>OIDC vs OAuth 2.0</h2>
+                    <p>While OAuth 2.0 is primarily about authorization (what you can do), OIDC adds authentication (who you are) on top of it:</p>
+                    <ul>
+                        <li><strong>OAuth 2.0:</strong> "Can this app access my data?"</li>
+                        <li><strong>OIDC:</strong> "Who is this user and can this app access their data?"</li>
+                    </ul>
+
+                    <h2>OIDC Authentication Flows</h2>
+                    
+                    <h3>1. Authorization Code Flow (Recommended)</h3>
+                    <p>The most secure flow for web applications:</p>
+                    <pre><code>// Step 1: Redirect to authorization server
+const authUrl = `${oidcConfig.authorization_endpoint}?
+  client_id=${clientId}&
+  response_type=code&
+  scope=openid profile email&
+  redirect_uri=${redirectUri}&
+  state=${state}&
+  nonce=${nonce}`;
+
+window.location.href = authUrl;</code></pre>
+
+                    <h3>2. Implicit Flow (Deprecated)</h3>
+                    <p>Less secure, mainly for single-page applications (not recommended for new implementations):</p>
+                    <pre><code>// Implicit flow example (avoid in new projects)
+const authUrl = `${oidcConfig.authorization_endpoint}?
+  client_id=${clientId}&
+  response_type=id_token token&
+  scope=openid profile email&
+  redirect_uri=${redirectUri}&
+  state=${state}&
+  nonce=${nonce}`;</code></pre>
+
+                    <h2>Complete OIDC Implementation</h2>
+                    
+                    <h3>1. Discovery Configuration</h3>
+                    <p>First, discover the OIDC provider's configuration:</p>
+                    <pre><code>// Discover OIDC configuration
+async function discoverOIDCConfig(issuer) {
+  const discoveryUrl = `${issuer}/.well-known/openid_configuration`;
+  const response = await fetch(discoveryUrl);
+  return await response.json();
+}
+
+// Example usage
+const oidcConfig = await discoverOIDCConfig('https://accounts.google.com');
+console.log(oidcConfig);</code></pre>
+
+                    <h3>2. Client Registration</h3>
+                    <p>Register your application with the OIDC provider:</p>
+                    <pre><code>// Client configuration
+const clientConfig = {
+  client_id: 'your-client-id',
+  client_secret: 'your-client-secret', // For confidential clients
+  redirect_uris: ['https://yourapp.com/callback'],
+  response_types: ['code'],
+  grant_types: ['authorization_code', 'refresh_token'],
+  scope: 'openid profile email',
+  token_endpoint_auth_method: 'client_secret_post'
+};</code></pre>
+
+                    <h3>3. Authorization Request</h3>
+                    <p>Initiate the authentication flow:</p>
+                    <pre><code>function initiateAuth() {
+  const state = generateRandomString(32);
+  const nonce = generateRandomString(32);
+  
+  // Store state and nonce for validation
+  sessionStorage.setItem('oidc_state', state);
+  sessionStorage.setItem('oidc_nonce', nonce);
+  
+  const params = new URLSearchParams({
+    client_id: clientConfig.client_id,
+    response_type: 'code',
+    scope: 'openid profile email',
+    redirect_uri: clientConfig.redirect_uris[0],
+    state: state,
+    nonce: nonce,
+    response_mode: 'query'
+  });
+  
+  const authUrl = `${oidcConfig.authorization_endpoint}?${params}`;
+  window.location.href = authUrl;
+}</code></pre>
+
+                    <h3>4. Token Exchange</h3>
+                    <p>Exchange authorization code for tokens:</p>
+                    <pre><code>async function exchangeCodeForTokens(code, state) {
+  // Validate state parameter
+  const storedState = sessionStorage.getItem('oidc_state');
+  if (state !== storedState) {
+    throw new Error('Invalid state parameter');
+  }
+  
+  const tokenResponse = await fetch(oidcConfig.token_endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: clientConfig.redirect_uris[0],
+      client_id: clientConfig.client_id,
+      client_secret: clientConfig.client_secret
+    })
+  });
+  
+  const tokens = await tokenResponse.json();
+  return tokens;
+}</code></pre>
+
+                    <h3>5. ID Token Validation</h3>
+                    <p>Validate the received ID token:</p>
+                    <pre><code>async function validateIdToken(idToken, nonce) {
+  // Decode JWT header and payload
+  const [header, payload, signature] = idToken.split('.');
+  const decodedPayload = JSON.parse(atob(payload));
+  
+  // Validate claims
+  const now = Math.floor(Date.now() / 1000);
+  
+  // Check expiration
+  if (decodedPayload.exp < now) {
+    throw new Error('ID token expired');
+  }
+  
+  // Check issued at
+  if (decodedPayload.iat > now) {
+    throw new Error('ID token issued in the future');
+  }
+  
+  // Check nonce
+  if (decodedPayload.nonce !== nonce) {
+    throw new Error('Invalid nonce');
+  }
+  
+  // Check audience
+  if (decodedPayload.aud !== clientConfig.client_id) {
+    throw new Error('Invalid audience');
+  }
+  
+  // Verify signature (simplified - use proper JWT library)
+  // In production, use a JWT library like jsonwebtoken or jose
+  
+  return decodedPayload;
+}</code></pre>
+
+                    <h2>Popular OIDC Providers</h2>
+                    
+                    <h3>Google OIDC</h3>
+                    <pre><code>const googleOIDC = {
+  issuer: 'https://accounts.google.com',
+  client_id: 'your-google-client-id',
+  client_secret: 'your-google-client-secret',
+  redirect_uri: 'https://yourapp.com/callback',
+  scope: 'openid profile email'
+};</code></pre>
+
+                    <h3>Auth0 OIDC</h3>
+                    <pre><code>const auth0OIDC = {
+  issuer: 'https://your-domain.auth0.com',
+  client_id: 'your-auth0-client-id',
+  client_secret: 'your-auth0-client-secret',
+  redirect_uri: 'https://yourapp.com/callback',
+  scope: 'openid profile email'
+};</code></pre>
+
+                    <h3>Microsoft Azure AD</h3>
+                    <pre><code>const azureOIDC = {
+  issuer: 'https://login.microsoftonline.com/your-tenant-id/v2.0',
+  client_id: 'your-azure-client-id',
+  client_secret: 'your-azure-client-secret',
+  redirect_uri: 'https://yourapp.com/callback',
+  scope: 'openid profile email'
+};</code></pre>
+
+                    <h2>Token Management</h2>
+                    
+                    <h3>Access Token Refresh</h3>
+                    <pre><code>async function refreshAccessToken(refreshToken) {
+  const response = await fetch(oidcConfig.token_endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: clientConfig.client_id,
+      client_secret: clientConfig.client_secret
+    })
+  });
+  
+  const tokens = await response.json();
+  return tokens;
+}</code></pre>
+
+                    <h3>Token Storage</h3>
+                    <pre><code>// Secure token storage
+function storeTokens(tokens) {
+  // Store access token in memory (short-lived)
+  sessionStorage.setItem('access_token', tokens.access_token);
+  
+  // Store refresh token securely (long-lived)
+  // Consider using httpOnly cookies or secure storage
+  localStorage.setItem('refresh_token', tokens.refresh_token);
+  
+  // Store ID token for user info
+  sessionStorage.setItem('id_token', tokens.id_token);
+}
+
+function clearTokens() {
+  sessionStorage.removeItem('access_token');
+  sessionStorage.removeItem('id_token');
+  localStorage.removeItem('refresh_token');
+}</code></pre>
+
+                    <h2>Error Handling</h2>
+                    <pre><code>function handleOIDCError(error) {
+  switch (error.error) {
+    case 'access_denied':
+      console.log('User denied access');
+      break;
+    case 'invalid_request':
+      console.log('Invalid request parameters');
+      break;
+    case 'invalid_client':
+      console.log('Invalid client configuration');
+      break;
+    case 'invalid_grant':
+      console.log('Invalid authorization code');
+      break;
+    case 'unsupported_response_type':
+      console.log('Unsupported response type');
+      break;
+    case 'invalid_scope':
+      console.log('Invalid scope requested');
+      break;
+    default:
+      console.log('Unknown OIDC error:', error);
+  }
+}</code></pre>
+
+                    <h2>Security Best Practices</h2>
+                    <ul>
+                        <li><strong>Use HTTPS:</strong> Always use HTTPS in production</li>
+                        <li><strong>Validate State:</strong> Always validate the state parameter</li>
+                        <li><strong>Use Nonce:</strong> Include nonce for replay attack prevention</li>
+                        <li><strong>Token Validation:</strong> Always validate ID tokens on the server</li>
+                        <li><strong>Secure Storage:</strong> Store tokens securely (httpOnly cookies recommended)</li>
+                        <li><strong>Token Expiration:</strong> Implement proper token refresh logic</li>
+                    </ul>
+
+                    <div class="article-cta">
+                        <h3>Test OIDC Flows</h3>
+                        <p>Use our OIDC playground to test and debug your authentication flows with various identity providers.</p>
+                        <a href="../index.html#oidc" class="btn btn-primary">Use OIDC Playground</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, and JWT verification tools.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

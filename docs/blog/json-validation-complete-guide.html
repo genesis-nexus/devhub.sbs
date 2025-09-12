@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Validation and Formatting: A Developer's Complete Guide | DevHub Blog</title>
+    <meta name="description" content="Master JSON validation techniques, understand common validation errors, and learn how to format JSON data effectively for better API development.">
+    <meta name="keywords" content="json validation, json formatting, json schema, json parser, json beautifier, json validator tool">
+    <link rel="canonical" href="https://devhub.sbs/blog/json-validation-complete-guide.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../blog-styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-actions">
+                    <a href="../index.html" class="nav-btn">Tools</a>
+                    <a href="../blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="main-content">
+        <article class="blog-article">
+            <div class="container">
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Guide</span>
+                        <span class="article-date">January 10, 2025</span>
+                        <span class="article-read-time">5 min read</span>
+                    </div>
+                    <h1 class="article-title">JSON Validation and Formatting: A Developer's Complete Guide</h1>
+                    <p class="article-excerpt">Master JSON validation techniques, understand common validation errors, and learn how to format JSON data effectively for better API development.</p>
+                </div>
+
+                <div class="article-content">
+                    <h2>Why JSON Validation Matters</h2>
+                    <p>JSON (JavaScript Object Notation) is the backbone of modern web APIs and data exchange. Proper validation ensures data integrity, prevents runtime errors, and improves application security. Without validation, malformed JSON can crash applications or expose security vulnerabilities.</p>
+
+                    <h2>Common JSON Validation Errors</h2>
+                    
+                    <h3>1. Syntax Errors</h3>
+                    <p>These are the most common JSON errors that break parsing:</p>
+                    <pre><code>// Missing quotes around keys
+{ name: "John", age: 30 }  // ❌ Invalid
+
+// Correct syntax
+{ "name": "John", "age": 30 }  // ✅ Valid
+
+// Trailing commas
+{ "name": "John", "age": 30, }  // ❌ Invalid
+
+// Correct syntax
+{ "name": "John", "age": 30 }  // ✅ Valid
+
+// Single quotes instead of double quotes
+{ 'name': 'John', 'age': 30 }  // ❌ Invalid
+
+// Correct syntax
+{ "name": "John", "age": 30 }  // ✅ Valid</code></pre>
+
+                    <h3>2. Data Type Errors</h3>
+                    <p>JSON has specific data types that must be followed:</p>
+                    <pre><code>// Invalid data types
+{
+  "name": "John",
+  "age": 30,
+  "isActive": true,
+  "salary": undefined,  // ❌ Invalid - undefined not allowed
+  "hobbies": null,
+  "lastLogin": new Date()  // ❌ Invalid - Date objects not allowed
+}
+
+// Valid JSON data types
+{
+  "name": "John",
+  "age": 30,
+  "isActive": true,
+  "salary": null,  // ✅ Valid - null is allowed
+  "hobbies": ["reading", "coding"],
+  "lastLogin": "2025-01-10T10:30:00Z"  // ✅ Valid - ISO string
+}</code></pre>
+
+                    <h2>JSON Validation Techniques</h2>
+                    
+                    <h3>1. Basic Syntax Validation</h3>
+                    <p>Use built-in JSON parsing to catch syntax errors:</p>
+                    <pre><code>// JavaScript validation
+function validateJSON(jsonString) {
+  try {
+    const parsed = JSON.parse(jsonString);
+    return { valid: true, data: parsed };
+  } catch (error) {
+    return { 
+      valid: false, 
+      error: error.message,
+      position: error.message.match(/position (\d+)/)?.[1]
+    };
+  }
+}
+
+// Example usage
+const result = validateJSON('{"name": "John", "age": 30}');
+console.log(result); // { valid: true, data: { name: "John", age: 30 } }</code></pre>
+
+                    <h3>2. Schema Validation</h3>
+                    <p>For more robust validation, use JSON Schema:</p>
+                    <pre><code>// JSON Schema definition
+const userSchema = {
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "age": { "type": "number", "minimum": 0, "maximum": 150 },
+    "email": { "type": "string", "format": "email" },
+    "isActive": { "type": "boolean" },
+    "hobbies": { 
+      "type": "array", 
+      "items": { "type": "string" },
+      "minItems": 1
+    }
+  },
+  "required": ["name", "age", "email"],
+  "additionalProperties": false
+};
+
+// Validation using Ajv library
+const Ajv = require('ajv');
+const ajv = new Ajv();
+const validate = ajv.compile(userSchema);
+
+function validateUserData(data) {
+  const valid = validate(data);
+  return {
+    valid,
+    errors: validate.errors || []
+  };
+}</code></pre>
+
+                    <h3>3. Custom Validation Rules</h3>
+                    <p>Implement custom validation for business logic:</p>
+                    <pre><code>function validateUser(user) {
+  const errors = [];
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(user.email)) {
+    errors.push('Invalid email format');
+  }
+  
+  // Age validation
+  if (user.age < 18 || user.age > 100) {
+    errors.push('Age must be between 18 and 100');
+  }
+  
+  // Password strength
+  if (user.password && user.password.length < 8) {
+    errors.push('Password must be at least 8 characters');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}</code></pre>
+
+                    <h2>JSON Formatting Best Practices</h2>
+                    
+                    <h3>1. Consistent Indentation</h3>
+                    <p>Use consistent indentation (2 or 4 spaces) for readability:</p>
+                    <pre><code>// Well-formatted JSON
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "profile": {
+        "age": 30,
+        "city": "New York",
+        "preferences": {
+          "theme": "dark",
+          "notifications": true
+        }
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 100
+  }
+}</code></pre>
+
+                    <h3>2. Logical Structure</h3>
+                    <p>Organize JSON data in a logical hierarchy:</p>
+                    <ul>
+                        <li>Group related fields together</li>
+                        <li>Use consistent naming conventions</li>
+                        <li>Avoid deeply nested structures (max 3-4 levels)</li>
+                        <li>Include metadata when appropriate</li>
+                    </ul>
+
+                    <h3>3. API Response Formatting</h3>
+                    <p>Standardize your API responses:</p>
+                    <pre><code>// Standard API response format
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
+  },
+  "meta": {
+    "timestamp": "2025-01-10T10:30:00Z",
+    "version": "1.0"
+  }
+}
+
+// Error response format
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": [
+      {
+        "field": "email",
+        "message": "Invalid email format"
+      }
+    ]
+  },
+  "meta": {
+    "timestamp": "2025-01-10T10:30:00Z",
+    "version": "1.0"
+  }
+}</code></pre>
+
+                    <h2>Performance Considerations</h2>
+                    
+                    <h3>1. Lazy Validation</h3>
+                    <p>Validate only when necessary to improve performance:</p>
+                    <pre><code>// Cache validation results
+const validationCache = new Map();
+
+function validateWithCache(jsonString, schema) {
+  const cacheKey = `${jsonString}-${JSON.stringify(schema)}`;
+  
+  if (validationCache.has(cacheKey)) {
+    return validationCache.get(cacheKey);
+  }
+  
+  const result = validateJSON(jsonString, schema);
+  validationCache.set(cacheKey, result);
+  return result;
+}</code></pre>
+
+                    <h3>2. Streaming Validation</h3>
+                    <p>For large JSON files, use streaming validation:</p>
+                    <pre><code>// Node.js streaming JSON validation
+const stream = require('stream');
+const JSONStream = require('JSONStream');
+
+function validateLargeJSON(filePath) {
+  return new Promise((resolve, reject) => {
+    const errors = [];
+    let isValid = true;
+    
+    fs.createReadStream(filePath)
+      .pipe(JSONStream.parse('*'))
+      .on('data', (data) => {
+        // Validate each object
+        const validation = validateUserData(data);
+        if (!validation.valid) {
+          isValid = false;
+          errors.push(...validation.errors);
+        }
+      })
+      .on('end', () => {
+        resolve({ valid: isValid, errors });
+      })
+      .on('error', reject);
+  });
+}</code></pre>
+
+                    <h2>Security Considerations</h2>
+                    <ul>
+                        <li><strong>Size Limits:</strong> Set maximum JSON payload sizes to prevent DoS attacks</li>
+                        <li><strong>Depth Limits:</strong> Limit nesting depth to prevent stack overflow</li>
+                        <li><strong>Type Validation:</strong> Always validate data types to prevent injection attacks</li>
+                        <li><strong>Schema Enforcement:</strong> Use strict schemas to prevent unexpected data</li>
+                    </ul>
+
+                    <div class="article-cta">
+                        <h3>Validate Your JSON Data</h3>
+                        <p>Use our free JSON validator and beautifier tool to check and format your JSON data instantly.</p>
+                        <a href="../index.html#json" class="btn btn-primary">Use JSON Validator Tool</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, and JWT verification tools.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

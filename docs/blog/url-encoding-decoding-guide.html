@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoding and Decoding: When and How to Use It | DevHub Blog</title>
+    <meta name="description" content="Understand URL encoding principles, when to encode URLs, handling special characters, and best practices for web development and API integration.">
+    <meta name="keywords" content="url encoding, url decoding, percent encoding, url parameters, web development, api integration">
+    <link rel="canonical" href="https://devhub.sbs/blog/url-encoding-decoding-guide.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../blog-styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-actions">
+                    <a href="../index.html" class="nav-btn">Tools</a>
+                    <a href="../blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="main-content">
+        <article class="blog-article">
+            <div class="container">
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Tools</span>
+                        <span class="article-date">January 5, 2025</span>
+                        <span class="article-read-time">4 min read</span>
+                    </div>
+                    <h1 class="article-title">URL Encoding and Decoding: When and How to Use It</h1>
+                    <p class="article-excerpt">Understand URL encoding principles, when to encode URLs, handling special characters, and best practices for web development and API integration.</p>
+                </div>
+
+                <div class="article-content">
+                    <h2>What is URL Encoding?</h2>
+                    <p>URL encoding, also known as percent encoding, is a mechanism for encoding information in a Uniform Resource Identifier (URI). It ensures that special characters in URLs are properly transmitted and interpreted by web servers and browsers.</p>
+
+                    <h2>Why Do We Need URL Encoding?</h2>
+                    <p>URLs have a limited character set that can be used safely. Special characters like spaces, ampersands, and non-ASCII characters can cause issues if not properly encoded:</p>
+                    <ul>
+                        <li><strong>Spaces:</strong> Can break URL parsing</li>
+                        <li><strong>Special Characters:</strong> Have special meanings in URLs</li>
+                        <li><strong>Non-ASCII Characters:</strong> Not supported in all contexts</li>
+                        <li><strong>Reserved Characters:</strong> Used for URL structure</li>
+                    </ul>
+
+                    <h2>Characters That Need Encoding</h2>
+                    
+                    <h3>Reserved Characters</h3>
+                    <p>These characters have special meanings in URLs:</p>
+                    <pre><code>! * ' ( ) ; : @ & = + $ , / ? # [ ]</code></pre>
+
+                    <h3>Unsafe Characters</h3>
+                    <p>These characters can cause problems in URLs:</p>
+                    <pre><code>space " < > % { } | \ ^ ~ `</code></pre>
+
+                    <h2>URL Encoding Examples</h2>
+                    
+                    <h3>Basic Encoding</h3>
+                    <pre><code>// Original URL
+https://example.com/search?q=hello world&category=web development
+
+// Encoded URL
+https://example.com/search?q=hello%20world&category=web%20development</code></pre>
+
+                    <h3>Special Characters</h3>
+                    <pre><code>// Ampersand in query parameter
+https://example.com/api?name=John&age=30&city=New York
+
+// Encoded
+https://example.com/api?name=John%26age%3D30%26city%3DNew%20York</code></pre>
+
+                    <h2>Implementation in Different Languages</h2>
+                    
+                    <h3>JavaScript</h3>
+                    <pre><code>// Encoding
+const originalUrl = "https://example.com/search?q=hello world";
+const encodedUrl = encodeURIComponent(originalUrl);
+console.log(encodedUrl); // https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%20world
+
+// Decoding
+const decodedUrl = decodeURIComponent(encodedUrl);
+console.log(decodedUrl); // https://example.com/search?q=hello world
+
+// For complete URLs, use encodeURI
+const fullUrl = "https://example.com/search?q=hello world";
+const encodedFullUrl = encodeURI(fullUrl);
+console.log(encodedFullUrl); // https://example.com/search?q=hello%20world</code></pre>
+
+                    <h3>Python</h3>
+                    <pre><code>from urllib.parse import quote, unquote, urlencode
+
+# Encoding individual components
+query = "hello world"
+encoded_query = quote(query)
+print(encoded_query)  # hello%20world
+
+# Decoding
+decoded_query = unquote(encoded_query)
+print(decoded_query)  # hello world
+
+# Encoding query parameters
+params = {"q": "hello world", "category": "web development"}
+encoded_params = urlencode(params)
+print(encoded_params)  # q=hello+world&category=web+development</code></pre>
+
+                    <h3>Java</h3>
+                    <pre><code>import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
+// Encoding
+String original = "hello world";
+String encoded = URLEncoder.encode(original, StandardCharsets.UTF_8);
+System.out.println(encoded); // hello+world
+
+// Decoding
+String decoded = URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+System.out.println(decoded); // hello world</code></pre>
+
+                    <h2>Common Use Cases</h2>
+                    
+                    <h3>1. Query Parameters</h3>
+                    <pre><code>// Building query strings
+function buildQueryString(params) {
+  const queryString = Object.keys(params)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join('&');
+  return queryString;
+}
+
+const params = {
+  search: "javascript tutorial",
+  category: "programming",
+  level: "beginner"
+};
+
+const queryString = buildQueryString(params);
+console.log(queryString); // search=javascript%20tutorial&category=programming&level=beginner</code></pre>
+
+                    <h3>2. Form Data</h3>
+                    <pre><code>// Encoding form data for POST requests
+function encodeFormData(data) {
+  const formData = new FormData();
+  
+  Object.keys(data).forEach(key => {
+    formData.append(key, data[key]);
+  });
+  
+  return formData;
+}
+
+// Or using URLSearchParams
+function encodeFormDataWithURLSearchParams(data) {
+  const params = new URLSearchParams();
+  
+  Object.keys(data).forEach(key => {
+    params.append(key, data[key]);
+  });
+  
+  return params.toString();
+}</code></pre>
+
+                    <h3>3. API Requests</h3>
+                    <pre><code>// Making API requests with encoded parameters
+async function searchAPI(query, filters) {
+  const baseUrl = 'https://api.example.com/search';
+  const params = new URLSearchParams({
+    q: query,
+    ...filters
+  });
+  
+  const url = `${baseUrl}?${params}`;
+  
+  try {
+    const response = await fetch(url);
+    return await response.json();
+  } catch (error) {
+    console.error('API request failed:', error);
+  }
+}</code></pre>
+
+                    <h2>Best Practices</h2>
+                    
+                    <h3>1. When to Encode</h3>
+                    <ul>
+                        <li><strong>Query Parameters:</strong> Always encode parameter values</li>
+                        <li><strong>Path Segments:</strong> Encode special characters in paths</li>
+                        <li><strong>Fragment Identifiers:</strong> Encode special characters in fragments</li>
+                        <li><strong>User Input:</strong> Always encode user-provided data</li>
+                    </ul>
+
+                    <h3>2. When NOT to Encode</h3>
+                    <ul>
+                        <li><strong>Complete URLs:</strong> Don't double-encode already encoded URLs</li>
+                        <li><strong>Protocol and Domain:</strong> Don't encode the basic URL structure</li>
+                        <li><strong>Safe Characters:</strong> Don't encode alphanumeric characters</li>
+                    </ul>
+
+                    <h3>3. Common Mistakes</h3>
+                    <pre><code>// ❌ Wrong: Double encoding
+const doubleEncoded = encodeURIComponent(encodeURIComponent("hello world"));
+console.log(doubleEncoded); // hello%2520world
+
+// ✅ Correct: Single encoding
+const singleEncoded = encodeURIComponent("hello world");
+console.log(singleEncoded); // hello%20world
+
+// ❌ Wrong: Encoding the entire URL
+const wrongUrl = encodeURIComponent("https://example.com/search?q=hello world");
+
+// ✅ Correct: Encoding only the query parameter
+const correctUrl = "https://example.com/search?q=" + encodeURIComponent("hello world");</code></pre>
+
+                    <h2>Security Considerations</h2>
+                    <ul>
+                        <li><strong>XSS Prevention:</strong> Always encode user input to prevent XSS attacks</li>
+                        <li><strong>URL Injection:</strong> Validate and sanitize URLs before processing</li>
+                        <li><strong>Character Limits:</strong> Be aware of URL length limitations</li>
+                        <li><strong>Encoding Validation:</strong> Validate that encoded URLs are properly formatted</li>
+                    </ul>
+
+                    <div class="article-cta">
+                        <h3>Test URL Encoding</h3>
+                        <p>Use our free URL encoder and decoder tool to test and validate your URL encoding needs.</p>
+                        <a href="../index.html#url" class="btn btn-primary">Use URL Encoder Tool</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, and JWT verification tools.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
