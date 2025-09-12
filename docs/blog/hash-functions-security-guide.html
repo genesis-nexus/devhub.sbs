@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Functions in Security: MD5, SHA-256, and Beyond | DevHub Blog</title>
+    <meta name="description" content="Explore different hash functions, their security implications, use cases for password hashing, file integrity, and choosing the right algorithm for your needs.">
+    <meta name="keywords" content="hash functions, md5, sha256, sha512, password hashing, file integrity, cryptography, security">
+    <link rel="canonical" href="https://devhub.sbs/blog/hash-functions-security-guide.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../blog-styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-actions">
+                    <a href="../index.html" class="nav-btn">Tools</a>
+                    <a href="../blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="main-content">
+        <article class="blog-article">
+            <div class="container">
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Security</span>
+                        <span class="article-date">January 3, 2025</span>
+                        <span class="article-read-time">6 min read</span>
+                    </div>
+                    <h1 class="article-title">Hash Functions in Security: MD5, SHA-256, and Beyond</h1>
+                    <p class="article-excerpt">Explore different hash functions, their security implications, use cases for password hashing, file integrity, and choosing the right algorithm for your needs.</p>
+                </div>
+
+                <div class="article-content">
+                    <h2>What are Hash Functions?</h2>
+                    <p>Hash functions are cryptographic algorithms that take an input (message) of any length and produce a fixed-size output (hash value or digest). They are designed to be one-way functions, meaning it's computationally infeasible to reverse the process and obtain the original input from the hash.</p>
+
+                    <h2>Properties of Secure Hash Functions</h2>
+                    <ul>
+                        <li><strong>Deterministic:</strong> Same input always produces the same output</li>
+                        <li><strong>Fixed Output Size:</strong> Always produces the same length output</li>
+                        <li><strong>One-Way:</strong> Computationally infeasible to reverse</li>
+                        <li><strong>Avalanche Effect:</strong> Small input changes cause large output changes</li>
+                        <li><strong>Collision Resistant:</strong> Hard to find two inputs with the same hash</li>
+                    </ul>
+
+                    <h2>Common Hash Functions</h2>
+                    
+                    <h3>MD5 (Message Digest 5)</h3>
+                    <p><strong>Output Size:</strong> 128 bits (32 hex characters)</p>
+                    <p><strong>Status:</strong> ❌ Cryptographically broken, not recommended for security</p>
+                    <pre><code>// MD5 example (DO NOT use for security)
+const crypto = require('crypto');
+const data = 'Hello, World!';
+const md5Hash = crypto.createHash('md5').update(data).digest('hex');
+console.log(md5Hash); // 65a8e27d8879283831b664bd8b7f0ad4</code></pre>
+
+                    <h3>SHA-1 (Secure Hash Algorithm 1)</h3>
+                    <p><strong>Output Size:</strong> 160 bits (40 hex characters)</p>
+                    <p><strong>Status:</strong> ❌ Deprecated, vulnerable to collision attacks</p>
+                    <pre><code>// SHA-1 example (DO NOT use for security)
+const sha1Hash = crypto.createHash('sha1').update(data).digest('hex');
+console.log(sha1Hash); // 0a0a9f2a6772942557ab5355d76af442f8f65e01</code></pre>
+
+                    <h3>SHA-256 (Secure Hash Algorithm 256)</h3>
+                    <p><strong>Output Size:</strong> 256 bits (64 hex characters)</p>
+                    <p><strong>Status:</strong> ✅ Currently secure, widely recommended</p>
+                    <pre><code>// SHA-256 example (RECOMMENDED)
+const sha256Hash = crypto.createHash('sha256').update(data).digest('hex');
+console.log(sha256Hash); // dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f</code></pre>
+
+                    <h3>SHA-512 (Secure Hash Algorithm 512)</h3>
+                    <p><strong>Output Size:</strong> 512 bits (128 hex characters)</p>
+                    <p><strong>Status:</strong> ✅ Very secure, recommended for high-security applications</p>
+                    <pre><code>// SHA-512 example (RECOMMENDED for high security)
+const sha512Hash = crypto.createHash('sha512').update(data).digest('hex');
+console.log(sha512Hash); // 374d794a95cdcfd8b35993185fef9ba368f160d8daf432d08ba9f1ed1e5abe6cc69291e0fa2fe0006a52570ef18c19def4e617c33ce52ef0a6e5fbe318cb0387</code></pre>
+
+                    <h2>Password Hashing Best Practices</h2>
+                    
+                    <h3>Never Use Raw Hash Functions for Passwords</h3>
+                    <p>Raw hash functions are vulnerable to rainbow table attacks and brute force attacks:</p>
+                    <pre><code>// ❌ WRONG: Raw SHA-256 for passwords
+const password = 'mypassword123';
+const hash = crypto.createHash('sha256').update(password).digest('hex');
+// This is vulnerable to rainbow table attacks!</code></pre>
+
+                    <h3>Use Salted Hashes</h3>
+                    <p>Add a random salt to make each hash unique:</p>
+                    <pre><code>// ✅ BETTER: Salted hash
+const password = 'mypassword123';
+const salt = crypto.randomBytes(32).toString('hex');
+const hash = crypto.createHash('sha256').update(password + salt).digest('hex');
+const saltedHash = salt + ':' + hash;</code></pre>
+
+                    <h3>Use Specialized Password Hashing Functions</h3>
+                    <p>Use functions designed specifically for password hashing:</p>
+                    <pre><code>// ✅ BEST: Use bcrypt, scrypt, or Argon2
+const bcrypt = require('bcrypt');
+
+// Hashing
+const password = 'mypassword123';
+const saltRounds = 12;
+const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+// Verification
+const isValid = await bcrypt.compare(password, hashedPassword);</code></pre>
+
+                    <h2>File Integrity Verification</h2>
+                    <p>Hash functions are commonly used to verify file integrity and detect corruption:</p>
+                    
+                    <h3>Generating File Checksums</h3>
+                    <pre><code>// Generate SHA-256 checksum for a file
+const fs = require('fs');
+const crypto = require('crypto');
+
+function generateFileHash(filePath, algorithm = 'sha256') {
+  const fileBuffer = fs.readFileSync(filePath);
+  const hashSum = crypto.createHash(algorithm);
+  hashSum.update(fileBuffer);
+  return hashSum.digest('hex');
+}
+
+// Usage
+const filePath = './document.pdf';
+const checksum = generateFileHash(filePath);
+console.log(`SHA-256: ${checksum}`);</code></pre>
+
+                    <h3>Verifying File Integrity</h3>
+                    <pre><code>// Verify file against known checksum
+function verifyFileIntegrity(filePath, expectedHash, algorithm = 'sha256') {
+  const actualHash = generateFileHash(filePath, algorithm);
+  return actualHash === expectedHash;
+}
+
+// Usage
+const isValid = verifyFileIntegrity('./document.pdf', 'expected-hash-here');
+console.log(`File integrity: ${isValid ? 'Valid' : 'Invalid'}`);</code></pre>
+
+                    <h2>Digital Signatures</h2>
+                    <p>Hash functions are used in digital signatures to ensure message authenticity and integrity:</p>
+                    <pre><code>// Digital signature process
+const { createSign, createVerify } = require('crypto');
+
+// Signing
+function signMessage(message, privateKey) {
+  const sign = createSign('SHA256');
+  sign.update(message);
+  sign.end();
+  return sign.sign(privateKey, 'hex');
+}
+
+// Verification
+function verifySignature(message, signature, publicKey) {
+  const verify = createVerify('SHA256');
+  verify.update(message);
+  verify.end();
+  return verify.verify(publicKey, signature, 'hex');
+}</code></pre>
+
+                    <h2>Choosing the Right Hash Function</h2>
+                    
+                    <h3>For General Purpose (Non-Security)</h3>
+                    <ul>
+                        <li><strong>MD5:</strong> Fast, but cryptographically broken</li>
+                        <li><strong>SHA-1:</strong> Faster than SHA-256, but deprecated</li>
+                        <li><strong>SHA-256:</strong> Good balance of security and performance</li>
+                    </ul>
+
+                    <h3>For Security Applications</h3>
+                    <ul>
+                        <li><strong>SHA-256:</strong> Current standard for most applications</li>
+                        <li><strong>SHA-512:</strong> For high-security applications</li>
+                        <li><strong>SHA-3:</strong> Latest standard, future-proof</li>
+                    </ul>
+
+                    <h3>For Password Hashing</h3>
+                    <ul>
+                        <li><strong>bcrypt:</strong> Widely supported, good default choice</li>
+                        <li><strong>scrypt:</strong> Memory-hard, good for preventing ASIC attacks</li>
+                        <li><strong>Argon2:</strong> Winner of Password Hashing Competition, recommended</li>
+                    </ul>
+
+                    <h2>Performance Comparison</h2>
+                    <pre><code>// Performance test for different algorithms
+const crypto = require('crypto');
+const data = 'A'.repeat(1000000); // 1MB of data
+
+function benchmarkHash(algorithm, data) {
+  const start = process.hrtime.bigint();
+  crypto.createHash(algorithm).update(data).digest('hex');
+  const end = process.hrtime.bigint();
+  return Number(end - start) / 1000000; // Convert to milliseconds
+}
+
+console.log('MD5:', benchmarkHash('md5', data), 'ms');
+console.log('SHA-1:', benchmarkHash('sha1', data), 'ms');
+console.log('SHA-256:', benchmarkHash('sha256', data), 'ms');
+console.log('SHA-512:', benchmarkHash('sha512', data), 'ms');</code></pre>
+
+                    <h2>Security Considerations</h2>
+                    <ul>
+                        <li><strong>Algorithm Choice:</strong> Use SHA-256 or SHA-512 for security applications</li>
+                        <li><strong>Salt Usage:</strong> Always use random salts for password hashing</li>
+                        <li><strong>Key Stretching:</strong> Use multiple iterations for password hashing</li>
+                        <li><strong>Timing Attacks:</strong> Use constant-time comparison for hash verification</li>
+                        <li><strong>Regular Updates:</strong> Stay updated with cryptographic best practices</li>
+                    </ul>
+
+                    <h2>Common Mistakes to Avoid</h2>
+                    <pre><code>// ❌ WRONG: Using MD5 for security
+const passwordHash = crypto.createHash('md5').update(password).digest('hex');
+
+// ❌ WRONG: No salt for password hashing
+const hash = crypto.createHash('sha256').update(password).digest('hex');
+
+// ❌ WRONG: Timing attack vulnerability
+if (hash === storedHash) { // Vulnerable to timing attacks
+  return true;
+}
+
+// ✅ CORRECT: Use constant-time comparison
+if (crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(storedHash))) {
+  return true;
+}</code></pre>
+
+                    <div class="article-cta">
+                        <h3>Generate Secure Hashes</h3>
+                        <p>Use our free hash generator tool to create secure hashes with multiple algorithms including SHA-256, SHA-512, and more.</p>
+                        <a href="../index.html#hash" class="btn btn-primary">Use Hash Generator Tool</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, and JWT verification tools.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

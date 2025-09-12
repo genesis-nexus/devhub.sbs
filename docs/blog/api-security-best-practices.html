@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Security Best Practices: Protecting Your Endpoints | DevHub Blog</title>
+    <meta name="description" content="Learn essential API security practices including authentication, authorization, input validation, rate limiting, and protecting against common vulnerabilities.">
+    <meta name="keywords" content="api security, web security, authentication, authorization, rate limiting, input validation, api vulnerabilities">
+    <link rel="canonical" href="https://devhub.sbs/blog/api-security-best-practices.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../blog-styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-actions">
+                    <a href="../index.html" class="nav-btn">Tools</a>
+                    <a href="../blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="main-content">
+        <article class="blog-article">
+            <div class="container">
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Guide</span>
+                        <span class="article-date">December 28, 2024</span>
+                        <span class="article-read-time">8 min read</span>
+                    </div>
+                    <h1 class="article-title">API Security Best Practices: Protecting Your Endpoints</h1>
+                    <p class="article-excerpt">Learn essential API security practices including authentication, authorization, input validation, rate limiting, and protecting against common vulnerabilities.</p>
+                </div>
+
+                <div class="article-content">
+                    <h2>Why API Security Matters</h2>
+                    <p>APIs are the backbone of modern applications, but they're also prime targets for attackers. A single vulnerable endpoint can compromise your entire system. Implementing robust security measures is not optional—it's essential for protecting your data, users, and business reputation.</p>
+
+                    <h2>Common API Security Threats</h2>
+                    <ul>
+                        <li><strong>Injection Attacks:</strong> SQL injection, NoSQL injection, command injection</li>
+                        <li><strong>Broken Authentication:</strong> Weak credentials, session management flaws</li>
+                        <li><strong>Sensitive Data Exposure:</strong> Unencrypted data transmission, weak encryption</li>
+                        <li><strong>XML External Entities (XXE):</strong> XML processing vulnerabilities</li>
+                        <li><strong>Broken Access Control:</strong> Inadequate authorization checks</li>
+                        <li><strong>Security Misconfiguration:</strong> Default settings, unnecessary features</li>
+                        <li><strong>Cross-Site Scripting (XSS):</strong> Client-side code injection</li>
+                        <li><strong>Insecure Deserialization:</strong> Object injection vulnerabilities</li>
+                        <li><strong>Insufficient Logging & Monitoring:</strong> Inadequate security monitoring</li>
+                    </ul>
+
+                    <h2>Authentication & Authorization</h2>
+                    
+                    <h3>1. Implement Strong Authentication</h3>
+                    <p>Use industry-standard authentication methods:</p>
+                    <pre><code>// JWT-based authentication example
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
+// Login endpoint
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
+    }
+    
+    // Find user and verify password
+    const user = await User.findOne({ email });
+    if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    res.json({ token, user: { id: user.id, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});</code></pre>
+
+                    <h3>2. Implement Proper Authorization</h3>
+                    <pre><code>// Role-based access control middleware
+const authorize = (roles) => {
+  return (req, res, next) => {
+    const userRole = req.user.role;
+    
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+    
+    next();
+  };
+};
+
+// Usage
+app.get('/api/admin/users', authenticateToken, authorize(['admin']), getUsers);
+app.put('/api/users/:id', authenticateToken, authorize(['admin', 'user']), updateUser);</code></pre>
+
+                    <h3>3. Use OAuth 2.0 and OpenID Connect</h3>
+                    <pre><code>// OAuth 2.0 implementation with Passport.js
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/api/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  // Handle user creation/authentication
+  const user = await findOrCreateUser(profile);
+  return done(null, user);
+}));
+
+// OAuth routes
+app.get('/api/auth/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+app.get('/api/auth/google/callback', 
+  passport.authenticate('google', { session: false }),
+  (req, res) => {
+    // Generate JWT and redirect
+    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET);
+    res.redirect(`/dashboard?token=${token}`);
+  }
+);</code></pre>
+
+                    <h2>Input Validation & Sanitization</h2>
+                    
+                    <h3>1. Validate All Input</h3>
+                    <pre><code>// Using Joi for input validation
+const Joi = require('joi');
+
+const userSchema = Joi.object({
+  name: Joi.string().min(2).max(50).required(),
+  email: Joi.string().email().required(),
+  age: Joi.number().integer().min(0).max(120),
+  password: Joi.string().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required()
+});
+
+// Validation middleware
+const validateUser = (req, res, next) => {
+  const { error } = userSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ 
+      error: 'Validation failed', 
+      details: error.details[0].message 
+    });
+  }
+  next();
+};
+
+app.post('/api/users', validateUser, createUser);</code></pre>
+
+                    <h3>2. Sanitize Input Data</h3>
+                    <pre><code>// Using express-validator for sanitization
+const { body, validationResult } = require('express-validator');
+
+const sanitizeInput = [
+  body('name').trim().escape(),
+  body('email').normalizeEmail(),
+  body('description').trim().escape(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  }
+];</code></pre>
+
+                    <h3>3. Prevent SQL Injection</h3>
+                    <pre><code>// Using parameterized queries (Prisma example)
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// ❌ Vulnerable to SQL injection
+// const users = await prisma.$queryRaw`SELECT * FROM users WHERE email = '${email}'`;
+
+// ✅ Safe parameterized query
+const users = await prisma.$queryRaw`SELECT * FROM users WHERE email = ${email}`;
+
+// Or using Prisma's type-safe queries
+const user = await prisma.user.findUnique({
+  where: { email: email }
+});</code></pre>
+
+                    <h2>Rate Limiting & Throttling</h2>
+                    
+                    <h3>1. Implement Rate Limiting</h3>
+                    <pre><code>// Using express-rate-limit
+const rateLimit = require('express-rate-limit');
+
+// General rate limiting
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Strict rate limiting for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: 'Too many authentication attempts, please try again later.',
+  skipSuccessfulRequests: true,
+});
+
+app.use('/api/', generalLimiter);
+app.use('/api/auth/', authLimiter);</code></pre>
+
+                    <h3>2. Advanced Rate Limiting with Redis</h3>
+                    <pre><code>// Using express-rate-limit with Redis store
+const RedisStore = require('rate-limit-redis');
+const redis = require('redis');
+
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD
+});
+
+const redisLimiter = rateLimit({
+  store: new RedisStore({
+    client: client,
+    prefix: 'rl:',
+  }),
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests, please try again later.'
+});</code></pre>
+
+                    <h2>Data Protection & Encryption</h2>
+                    
+                    <h3>1. Use HTTPS Everywhere</h3>
+                    <pre><code>// Force HTTPS in production
+const helmet = require('helmet');
+
+app.use(helmet({
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// Redirect HTTP to HTTPS
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      next();
+    }
+  });
+}</code></pre>
+
+                    <h3>2. Encrypt Sensitive Data</h3>
+                    <pre><code>// Encrypting sensitive data at rest
+const crypto = require('crypto');
+
+class DataEncryption {
+  constructor(secretKey) {
+    this.algorithm = 'aes-256-gcm';
+    this.secretKey = crypto.scryptSync(secretKey, 'salt', 32);
+  }
+  
+  encrypt(text) {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipher(this.algorithm, this.secretKey);
+    cipher.setAAD(Buffer.from('additional data'));
+    
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    
+    const authTag = cipher.getAuthTag();
+    
+    return {
+      encrypted,
+      iv: iv.toString('hex'),
+      authTag: authTag.toString('hex')
+    };
+  }
+  
+  decrypt(encryptedData) {
+    const decipher = crypto.createDecipher(
+      this.algorithm, 
+      this.secretKey
+    );
+    
+    decipher.setAAD(Buffer.from('additional data'));
+    decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
+    
+    let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    
+    return decrypted;
+  }
+}</code></pre>
+
+                    <h2>API Security Headers</h2>
+                    
+                    <h3>Essential Security Headers</h3>
+                    <pre><code>// Using helmet for security headers
+const helmet = require('helmet');
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// Custom security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});</code></pre>
+
+                    <h2>Error Handling & Logging</h2>
+                    
+                    <h3>1. Secure Error Handling</h3>
+                    <pre><code>// Centralized error handling
+const errorHandler = (err, req, res, next) => {
+  // Log error details
+  console.error('Error:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    ip: req.ip,
+    userAgent: req.get('User-Agent'),
+    timestamp: new Date().toISOString()
+  });
+  
+  // Don't expose internal errors to client
+  if (err.status) {
+    res.status(err.status).json({
+      error: err.message,
+      timestamp: new Date().toISOString()
+    });
+  } else {
+    res.status(500).json({
+      error: 'Internal server error',
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
+app.use(errorHandler);</code></pre>
+
+                    <h3>2. Security Monitoring & Logging</h3>
+                    <pre><code>// Security event logging
+const winston = require('winston');
+
+const securityLogger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.File({ filename: 'security.log' }),
+    new winston.transports.Console()
+  ]
+});
+
+// Log security events
+const logSecurityEvent = (event, req, details = {}) => {
+  securityLogger.info({
+    event,
+    ip: req.ip,
+    userAgent: req.get('User-Agent'),
+    url: req.url,
+    method: req.method,
+    userId: req.user?.id,
+    timestamp: new Date().toISOString(),
+    ...details
+  });
+};
+
+// Usage
+app.post('/api/auth/login', (req, res, next) => {
+  // ... authentication logic
+  if (loginSuccessful) {
+    logSecurityEvent('LOGIN_SUCCESS', req, { userId: user.id });
+  } else {
+    logSecurityEvent('LOGIN_FAILED', req, { reason: 'Invalid credentials' });
+  }
+});</code></pre>
+
+                    <h2>API Versioning & Deprecation</h2>
+                    
+                    <h3>Version Your APIs</h3>
+                    <pre><code>// API versioning strategies
+// URL versioning
+app.use('/api/v1', v1Routes);
+app.use('/api/v2', v2Routes);
+
+// Header versioning
+app.use((req, res, next) => {
+  const apiVersion = req.headers['api-version'] || 'v1';
+  req.apiVersion = apiVersion;
+  next();
+});
+
+// Deprecation headers
+app.use('/api/v1', (req, res, next) => {
+  res.setHeader('Deprecation', 'true');
+  res.setHeader('Sunset', '2025-12-31T23:59:59Z');
+  res.setHeader('Link', '</api/v2>; rel="successor-version"');
+  next();
+});</code></pre>
+
+                    <h2>Testing & Security Auditing</h2>
+                    
+                    <h3>1. Automated Security Testing</h3>
+                    <pre><code>// Using OWASP ZAP for security testing
+const zap = require('zaproxy');
+
+// Security test configuration
+const securityTests = {
+  sqlInjection: true,
+  xss: true,
+  csrf: true,
+  authentication: true,
+  authorization: true
+};
+
+// Run security tests
+async function runSecurityTests() {
+  const zap = new zap('localhost', 8080);
+  await zap.spider.scan('http://localhost:3000');
+  await zap.activeScan.scan('http://localhost:3000');
+  const alerts = await zap.core.alerts();
+  return alerts;
+}</code></pre>
+
+                    <h3>2. Dependency Scanning</h3>
+                    <pre><code>// Using npm audit for dependency vulnerabilities
+// package.json scripts
+{
+  "scripts": {
+    "audit": "npm audit",
+    "audit:fix": "npm audit fix",
+    "security:check": "npm audit --audit-level moderate"
+  }
+}
+
+// Using Snyk for advanced vulnerability scanning
+// npx snyk test
+// npx snyk monitor</code></pre>
+
+                    <h2>Security Checklist</h2>
+                    <ul>
+                        <li>✅ Implement strong authentication (JWT, OAuth 2.0)</li>
+                        <li>✅ Use proper authorization and RBAC</li>
+                        <li>✅ Validate and sanitize all input data</li>
+                        <li>✅ Implement rate limiting and throttling</li>
+                        <li>✅ Use HTTPS everywhere</li>
+                        <li>✅ Encrypt sensitive data at rest and in transit</li>
+                        <li>✅ Set proper security headers</li>
+                        <li>✅ Implement comprehensive logging and monitoring</li>
+                        <li>✅ Use parameterized queries to prevent SQL injection</li>
+                        <li>✅ Implement proper error handling</li>
+                        <li>✅ Regular security testing and auditing</li>
+                        <li>✅ Keep dependencies updated</li>
+                        <li>✅ Implement API versioning</li>
+                        <li>✅ Use CORS properly</li>
+                        <li>✅ Implement request/response validation</li>
+                    </ul>
+
+                    <div class="article-cta">
+                        <h3>Test Your API Security</h3>
+                        <p>Use our OIDC playground and JWT verification tools to test and validate your API authentication and security implementations.</p>
+                        <a href="../index.html#oidc" class="btn btn-primary">Use OIDC Playground</a>
+                        <a href="../index.html#jwt" class="btn btn-primary">Use JWT Verifier</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, and JWT verification tools.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
