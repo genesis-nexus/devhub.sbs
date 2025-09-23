@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎲 Ethical Dilemma Auction Game</title>
+    <link rel="stylesheet" href="ethical-dilemma-game.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎲 Ethical Dilemma Auction Game</h1>
+            <p>Leadership and Engineering Ethics Training</p>
+        </header>
+
+        <!-- Game Setup Screen -->
+        <div id="setup-screen" class="screen active">
+            <div class="setup-section">
+                <h2>🛠️ Game Setup</h2>
+                
+                <div class="input-group">
+                    <label for="num-teams">Number of Teams:</label>
+                    <input type="number" id="num-teams" min="2" max="20" value="8">
+                </div>
+
+                <div class="input-group">
+                    <label for="starting-tokens">Starting Tokens per Team:</label>
+                    <input type="number" id="starting-tokens" min="5" max="20" value="10">
+                </div>
+
+                <div class="scenarios-config">
+                    <h3>📝 Configure Scenarios</h3>
+                    <div id="scenarios-list">
+                        <!-- Default scenarios will be loaded here -->
+                    </div>
+                </div>
+
+                <button id="start-game" class="btn btn-primary">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Play Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="round-info">
+                    <h2 id="current-round">Round 1 of 5</h2>
+                    <p id="scenario-title"></p>
+                </div>
+                <div class="timer" id="timer">Time: 5:00</div>
+            </div>
+
+            <div class="scenario-content">
+                <div class="scenario-description" id="scenario-description"></div>
+                
+                <div class="choices-container" id="choices-container">
+                    <!-- Choices will be dynamically inserted here -->
+                </div>
+
+                <div class="team-selections" id="team-selections">
+                    <!-- Team selection status will be shown here -->
+                </div>
+            </div>
+
+            <div class="game-controls">
+                <button id="reveal-choices" class="btn btn-secondary" disabled>Reveal All Choices</button>
+                <button id="next-round" class="btn btn-primary" disabled>Next Round</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="results-content">
+                <h2>🏆 Game Results</h2>
+                <div id="final-scores"></div>
+                <div id="round-breakdown"></div>
+                
+                <div class="debrief-section">
+                    <h3>🗣️ Discussion Points</h3>
+                    <ul>
+                        <li>Did teams go all-in on ethics, or balance pragmatism?</li>
+                        <li>Who fell into the grey-zone trap?</li>
+                        <li>Who took shortcuts and suffered later?</li>
+                        <li>Which path felt most like real-world leadership?</li>
+                        <li>Key message: Leadership isn't about black-and-white answers, but about seeing hidden costs and protecting long-term trust.</li>
+                    </ul>
+                </div>
+
+                <button id="restart-game" class="btn btn-primary">Start New Game</button>
+            </div>
+        </div>
+
+        <!-- Team Dashboard -->
+        <div id="team-dashboard" class="dashboard">
+            <h3>Team Scores</h3>
+            <div id="team-scores"></div>
+        </div>
+
+        <!-- Round Results Modal -->
+        <div id="round-results-modal" class="modal">
+            <div class="modal-content">
+                <h3>Round Results</h3>
+                <div id="round-results-content"></div>
+                <button id="close-modal" class="btn btn-secondary">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="ethical-dilemma-game.js"></script>
+</body>
+</html>
