@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST API Design Best Practices: Building Scalable and Maintainable APIs | DevHub Blog</title>
+    <meta name="description" content="Master REST API design with comprehensive best practices covering resource naming, HTTP methods, versioning, error handling, pagination, authentication, and more. Build scalable, maintainable APIs that developers love.">
+    <meta name="keywords" content="rest api, api design, restful api, api best practices, web api, http api, api development, rest principles">
+    <link rel="canonical" href="https://devhub.sbs/blog/rest-api-design-best-practices.html">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../blog-styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="brand-link">
+                    <i class="fas fa-cube brand-icon"></i>
+                    <span class="brand-text">DevHub</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-actions">
+                    <a href="../index.html" class="nav-btn">Tools</a>
+                    <a href="../blog.html" class="nav-btn primary">Blog</a>
+                    <button class="nav-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <article class="blog-article">
+            <div class="container">
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Guide</span>
+                        <span class="article-date">January 26, 2025</span>
+                        <span class="article-read-time">15 min read</span>
+                    </div>
+                    <h1 class="article-title">REST API Design Best Practices: Building Scalable and Maintainable APIs</h1>
+                    <p class="article-excerpt">Master REST API design with comprehensive best practices covering resource naming, HTTP methods, versioning, error handling, pagination, authentication, and more.</p>
+                </div>
+
+                <div class="article-content">
+                    <h2>Introduction to REST API Design</h2>
+                    <p>REST (Representational State Transfer) is an architectural style for designing networked applications. RESTful APIs have become the de facto standard for web services due to their simplicity, scalability, and stateless nature. However, designing a good REST API requires more than just following basic HTTP conventions—it demands careful consideration of resource modeling, naming conventions, error handling, versioning strategies, and security practices.</p>
+
+                    <p>This comprehensive guide covers essential REST API design principles and best practices that will help you build APIs that are intuitive, scalable, maintainable, and a joy for developers to use.</p>
+
+                    <h2>1. Resource-Oriented Design</h2>
+                    
+                    <h3>Think in Resources, Not Actions</h3>
+                    <p>REST is centered around resources (nouns), not actions (verbs). Each resource should represent an entity or collection of entities in your system.</p>
+
+                    <pre><code>// ✅ Good: Resource-oriented
+GET /users
+GET /users/123
+GET /users/123/orders
+POST /orders
+PUT /orders/456
+
+// ❌ Bad: Action-oriented
+GET /getUsersList
+GET /getUserById?id=123
+GET /getOrdersForUser?userId=123
+POST /createNewOrder
+PUT /updateOrder?id=456</code></pre>
+
+                    <h3>Use Nouns, Not Verbs</h3>
+                    <p>URLs should represent resources using nouns. HTTP methods (GET, POST, PUT, DELETE) already provide the verbs.</p>
+
+                    <pre><code>// ✅ Good
+GET /articles
+POST /articles
+GET /articles/42
+PUT /articles/42
+DELETE /articles/42
+
+// ❌ Bad
+GET /getAllArticles
+POST /createArticle
+GET /getArticle/42
+PUT /updateArticle/42
+DELETE /deleteArticle/42</code></pre>
+
+                    <h2>2. HTTP Methods and Their Proper Use</h2>
+
+                    <h3>GET - Retrieve Resources</h3>
+                    <p>GET requests should be safe (read-only) and idempotent (multiple identical requests produce the same result).</p>
+
+                    <pre><code>// Retrieve all users
+GET /api/users
+
+// Retrieve a specific user
+GET /api/users/123
+
+// Retrieve with filters
+GET /api/users?role=admin&status=active
+
+// Retrieve nested resources
+GET /api/users/123/posts</code></pre>
+
+                    <h3>POST - Create Resources</h3>
+                    <p>POST creates new resources. Return 201 Created with Location header pointing to the new resource.</p>
+
+                    <pre><code>// Request
+POST /api/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "developer"
+}
+
+// Response
+HTTP/1.1 201 Created
+Location: /api/users/124
+Content-Type: application/json
+
+{
+  "id": 124,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "developer",
+  "createdAt": "2025-01-26T10:30:00Z"
+}</code></pre>
+
+                    <h3>PUT - Update/Replace Resources</h3>
+                    <p>PUT replaces an entire resource. It should be idempotent.</p>
+
+                    <pre><code>// Full resource replacement
+PUT /api/users/124
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "email": "john.smith@example.com",
+  "role": "senior-developer",
+  "department": "engineering"
+}</code></pre>
+
+                    <h3>PATCH - Partial Updates</h3>
+                    <p>PATCH applies partial modifications to a resource.</p>
+
+                    <pre><code>// Partial update
+PATCH /api/users/124
+Content-Type: application/json
+
+{
+  "role": "tech-lead"
+}</code></pre>
+
+                    <h3>DELETE - Remove Resources</h3>
+                    <p>DELETE removes a resource. Return 204 No Content on success.</p>
+
+                    <pre><code>// Delete a user
+DELETE /api/users/124
+
+// Response
+HTTP/1.1 204 No Content</code></pre>
+
+                    <h2>3. URL Structure and Naming Conventions</h2>
+
+                    <h3>Use Plural Nouns for Collections</h3>
+                    <pre><code>// ✅ Good
+GET /users
+GET /users/123
+GET /orders
+GET /products
+
+// ❌ Bad (mixing singular and plural)
+GET /user
+GET /users/123
+GET /order
+GET /product</code></pre>
+
+                    <h3>Use Hierarchical Structure for Related Resources</h3>
+                    <pre><code>// Users and their posts
+GET /users/123/posts
+GET /users/123/posts/456
+
+// Companies and their employees
+GET /companies/abc/employees
+GET /companies/abc/departments/sales/employees
+
+// Orders and their items
+GET /orders/789/items
+POST /orders/789/items</code></pre>
+
+                    <h3>Use Kebab-Case for URLs</h3>
+                    <pre><code>// ✅ Good
+GET /user-profiles
+GET /order-history
+GET /payment-methods
+
+// ❌ Bad
+GET /userProfiles  // camelCase
+GET /OrderHistory  // PascalCase
+GET /payment_methods  // snake_case</code></pre>
+
+                    <h3>Avoid Deep Nesting</h3>
+                    <pre><code>// ❌ Too deep
+GET /companies/123/departments/456/employees/789/timesheets/2024/january
+
+// ✅ Better
+GET /timesheets?employeeId=789&month=2024-01
+
+// Or use separate endpoints
+GET /employees/789/timesheets?month=2024-01</code></pre>
+
+                    <h2>4. Query Parameters and Filtering</h2>
+
+                    <h3>Filtering</h3>
+                    <pre><code>// Filter by single field
+GET /products?category=electronics
+
+// Multiple filters
+GET /products?category=electronics&price_min=100&price_max=500&inStock=true
+
+// Complex filters
+GET /users?role=admin&department=engineering&status=active</code></pre>
+
+                    <h3>Sorting</h3>
+                    <pre><code>// Sort ascending
+GET /products?sort=price
+
+// Sort descending
+GET /products?sort=-price
+
+// Multiple sort fields
+GET /users?sort=lastName,firstName
+GET /products?sort=category,-price</code></pre>
+
+                    <h3>Pagination</h3>
+                    <pre><code>// Offset-based pagination
+GET /products?page=2&limit=20
+GET /products?offset=40&limit=20
+
+// Cursor-based pagination (better for large datasets)
+GET /products?cursor=eyJpZCI6MTAwfQ&limit=20
+
+// Response with pagination metadata
+{
+  "data": [...],
+  "pagination": {
+    "total": 1250,
+    "page": 2,
+    "limit": 20,
+    "pages": 63,
+    "hasNext": true,
+    "hasPrev": true
+  }
+}</code></pre>
+
+                    <h3>Field Selection (Sparse Fieldsets)</h3>
+                    <pre><code>// Request specific fields only
+GET /users?fields=id,name,email
+
+// Response contains only requested fields
+{
+  "id": 123,
+  "name": "John Doe",
+  "email": "john@example.com"
+}</code></pre>
+
+                    <h3>Searching</h3>
+                    <pre><code>// Simple search
+GET /products?q=laptop
+
+// Advanced search with filters
+GET /products?search=laptop&category=electronics&sort=-relevance</code></pre>
+
+                    <h2>5. HTTP Status Codes</h2>
+
+                    <h3>Success Codes (2xx)</h3>
+                    <pre><code>200 OK - Request succeeded (GET, PUT, PATCH)
+201 Created - Resource created successfully (POST)
+202 Accepted - Request accepted for async processing
+204 No Content - Success with no response body (DELETE)</code></pre>
+
+                    <h3>Redirection Codes (3xx)</h3>
+                    <pre><code>301 Moved Permanently - Resource permanently moved
+304 Not Modified - Cached version is still valid</code></pre>
+
+                    <h3>Client Error Codes (4xx)</h3>
+                    <pre><code>400 Bad Request - Invalid request syntax or validation error
+401 Unauthorized - Authentication required
+403 Forbidden - Authenticated but not authorized
+404 Not Found - Resource doesn't exist
+405 Method Not Allowed - HTTP method not supported
+409 Conflict - Request conflicts with current state
+422 Unprocessable Entity - Validation errors
+429 Too Many Requests - Rate limit exceeded</code></pre>
+
+                    <h3>Server Error Codes (5xx)</h3>
+                    <pre><code>500 Internal Server Error - Unexpected server error
+502 Bad Gateway - Invalid response from upstream server
+503 Service Unavailable - Server temporarily unavailable
+504 Gateway Timeout - Upstream server timeout</code></pre>
+
+                    <h2>6. Error Handling</h2>
+
+                    <h3>Consistent Error Response Format</h3>
+                    <pre><code>// Standard error format
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "details": [
+      {
+        "field": "email",
+        "message": "Email is required",
+        "code": "REQUIRED_FIELD"
+      },
+      {
+        "field": "age",
+        "message": "Age must be at least 18",
+        "code": "MIN_VALUE"
+      }
+    ],
+    "timestamp": "2025-01-26T10:30:00Z",
+    "path": "/api/users"
+  }
+}</code></pre>
+
+                    <h3>Different Error Scenarios</h3>
+                    <pre><code>// 400 Bad Request - Validation error
+HTTP/1.1 400 Bad Request
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": [...]
+  }
+}
+
+// 401 Unauthorized - Authentication required
+HTTP/1.1 401 Unauthorized
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Authentication token is missing or invalid"
+  }
+}
+
+// 403 Forbidden - Insufficient permissions
+HTTP/1.1 403 Forbidden
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "You don't have permission to perform this action"
+  }
+}
+
+// 404 Not Found
+HTTP/1.1 404 Not Found
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "User with ID 999 not found"
+  }
+}
+
+// 429 Too Many Requests
+HTTP/1.1 429 Too Many Requests
+Retry-After: 3600
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Rate limit exceeded. Try again in 1 hour."
+  }
+}</code></pre>
+
+                    <h2>7. Versioning Strategies</h2>
+
+                    <h3>URL Path Versioning (Most Common)</h3>
+                    <pre><code>// Version in URL
+GET /api/v1/users
+GET /api/v2/users
+
+// Explicit and visible
+// Easy to route and cache
+// Can maintain multiple versions simultaneously</code></pre>
+
+                    <h3>Header Versioning</h3>
+                    <pre><code>// Custom header
+GET /api/users
+Accept-Version: v2
+
+// Standard Accept header
+GET /api/users
+Accept: application/vnd.myapi.v2+json</code></pre>
+
+                    <h3>Query Parameter Versioning</h3>
+                    <pre><code>// Version as query parameter
+GET /api/users?version=2
+
+// Less common, but simple</code></pre>
+
+                    <h3>Version Management Best Practices</h3>
+                    <pre><code>// Maintain backward compatibility when possible
+// Deprecate old versions gradually
+// Document version differences clearly
+// Use semantic versioning (v1, v2, v3)
+// Communicate breaking changes in advance</code></pre>
+
+                    <h2>8. Authentication and Authorization</h2>
+
+                    <h3>Bearer Token Authentication</h3>
+                    <pre><code>// Request with JWT token
+GET /api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// Login endpoint
+POST /api/auth/login
+{
+  "email": "user@example.com",
+  "password": "securePassword123"
+}
+
+// Response
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "a3f2c1b...",
+  "expiresIn": 3600
+}</code></pre>
+
+                    <h3>OAuth 2.0</h3>
+                    <pre><code>// OAuth 2.0 Authorization Code Flow
+// 1. Redirect to authorization endpoint
+GET /oauth/authorize?client_id=abc&redirect_uri=https://app.com/callback&response_type=code
+
+// 2. Exchange code for token
+POST /oauth/token
+{
+  "grant_type": "authorization_code",
+  "code": "xyz789",
+  "client_id": "abc",
+  "client_secret": "secret",
+  "redirect_uri": "https://app.com/callback"
+}
+
+// Response
+{
+  "access_token": "eyJhbGci...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "def456"
+}</code></pre>
+
+                    <h3>API Keys</h3>
+                    <pre><code>// Header-based API key
+GET /api/data
+X-API-Key: your-api-key-here
+
+// Query parameter (less secure, avoid if possible)
+GET /api/data?api_key=your-api-key-here</code></pre>
+
+                    <h2>9. Rate Limiting and Throttling</h2>
+
+                    <h3>Rate Limit Headers</h3>
+                    <pre><code>// Include rate limit information in response headers
+HTTP/1.1 200 OK
+X-Rate-Limit-Limit: 1000
+X-Rate-Limit-Remaining: 998
+X-Rate-Limit-Reset: 1643276400
+
+// When limit exceeded
+HTTP/1.1 429 Too Many Requests
+Retry-After: 3600
+X-Rate-Limit-Limit: 1000
+X-Rate-Limit-Remaining: 0
+X-Rate-Limit-Reset: 1643276400</code></pre>
+
+                    <h2>10. HATEOAS (Hypermedia as the Engine of Application State)</h2>
+
+                    <h3>Include Links to Related Resources</h3>
+                    <pre><code>// Response with HATEOAS links
+{
+  "id": 123,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "_links": {
+    "self": {
+      "href": "/api/users/123"
+    },
+    "posts": {
+      "href": "/api/users/123/posts"
+    },
+    "following": {
+      "href": "/api/users/123/following"
+    },
+    "followers": {
+      "href": "/api/users/123/followers"
+    }
+  }
+}</code></pre>
+
+                    <h2>11. API Documentation</h2>
+
+                    <h3>Use OpenAPI/Swagger</h3>
+                    <pre><code>openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: List all users
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'</code></pre>
+
+                    <h2>12. Performance Optimization</h2>
+
+                    <h3>Caching</h3>
+                    <pre><code>// Response with cache headers
+HTTP/1.1 200 OK
+Cache-Control: max-age=3600, public
+ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"
+Last-Modified: Wed, 26 Jan 2025 10:00:00 GMT
+
+// Conditional request
+GET /api/users/123
+If-None-Match: "33a64df551425fcc55e4d42a148795d9f25f89d4"
+
+// Response if not modified
+HTTP/1.1 304 Not Modified</code></pre>
+
+                    <h3>Compression</h3>
+                    <pre><code>// Request with compression support
+GET /api/users
+Accept-Encoding: gzip, deflate, br
+
+// Response with compression
+HTTP/1.1 200 OK
+Content-Encoding: gzip</code></pre>
+
+                    <h2>13. Bulk Operations</h2>
+
+                    <h3>Batch Requests</h3>
+                    <pre><code>// Create multiple resources
+POST /api/users/batch
+[
+  {"name": "User 1", "email": "user1@example.com"},
+  {"name": "User 2", "email": "user2@example.com"}
+]
+
+// Update multiple resources
+PATCH /api/users/batch
+[
+  {"id": 1, "status": "active"},
+  {"id": 2, "status": "inactive"}
+]
+
+// Delete multiple resources
+DELETE /api/users/batch
+{
+  "ids": [1, 2, 3, 4, 5]
+}</code></pre>
+
+                    <h2>14. Asynchronous Operations</h2>
+
+                    <h3>Long-Running Tasks</h3>
+                    <pre><code>// Initiate async operation
+POST /api/reports/generate
+{
+  "type": "annual",
+  "year": 2024
+}
+
+// Response with 202 Accepted
+HTTP/1.1 202 Accepted
+Location: /api/jobs/abc123
+{
+  "jobId": "abc123",
+  "status": "processing",
+  "statusUrl": "/api/jobs/abc123"
+}
+
+// Check status
+GET /api/jobs/abc123
+{
+  "jobId": "abc123",
+  "status": "completed",
+  "result": {
+    "downloadUrl": "/api/reports/2024-annual.pdf"
+  }
+}</code></pre>
+
+                    <h2>15. Security Best Practices</h2>
+
+                    <ul>
+                        <li><strong>Always use HTTPS</strong> in production</li>
+                        <li><strong>Validate all input</strong> on the server side</li>
+                        <li><strong>Implement rate limiting</strong> to prevent abuse</li>
+                        <li><strong>Use strong authentication</strong> (OAuth 2.0, JWT)</li>
+                        <li><strong>Never expose sensitive data</strong> in URLs or error messages</li>
+                        <li><strong>Implement CORS properly</strong> to control access</li>
+                        <li><strong>Sanitize user input</strong> to prevent injection attacks</li>
+                        <li><strong>Use security headers</strong> (HSTS, CSP, X-Frame-Options)</li>
+                        <li><strong>Log security events</strong> for audit trails</li>
+                        <li><strong>Keep dependencies updated</strong> to patch vulnerabilities</li>
+                    </ul>
+
+                    <h2>Conclusion</h2>
+                    <p>Designing a great REST API requires careful consideration of many factors: resource modeling, naming conventions, HTTP methods, status codes, error handling, versioning, authentication, performance, and security. By following these best practices, you'll create APIs that are intuitive, scalable, maintainable, and secure.</p>
+
+                    <p>Remember that good API design is an iterative process. Start with these principles, gather feedback from API consumers, and continuously refine your design based on real-world usage patterns. The goal is to create APIs that developers enjoy using and that can evolve gracefully over time.</p>
+
+                    <div class="article-cta">
+                        <h3>Test Your API Development</h3>
+                        <p>Use DevHub's tools to test and validate your API development workflow.</p>
+                        <a href="../index.html#json" class="btn btn-primary">JSON Validator</a>
+                        <a href="../index.html#jwt" class="btn btn-primary">JWT Verifier</a>
+                        <a href="../index.html#oidc" class="btn btn-outline">OIDC Tester</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h2>DevHub Developer Tools</h2>
+                    <p>Professional dev portal with free online developer tools and comprehensive tutorials.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
