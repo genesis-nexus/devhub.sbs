@@ -793,15 +793,59 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== URL ROUTING SYSTEM =====
 function initializeURLRouting() {
+    // Handle hash changes for direct tool links
+    window.addEventListener('hashchange', function() {
+        handleHashRoute();
+    });
+
     // Handle browser back/forward buttons
     window.addEventListener('popstate', function(event) {
-        handleRouteChange(window.location.pathname);
+        if (event.state && event.state.tool) {
+            openInternalTool(event.state.tool);
+        } else {
+            handleRouteChange(window.location.pathname);
+        }
     });
-    
-    // Check initial URL on page load
-    const initialPath = window.location.pathname;
-    if (initialPath !== '/' && initialPath !== '') {
-        handleRouteChange(initialPath);
+
+    // Check initial URL on page load (hash takes priority)
+    if (window.location.hash) {
+        handleHashRoute();
+    } else {
+        const initialPath = window.location.pathname;
+        if (initialPath !== '/' && initialPath !== '') {
+            handleRouteChange(initialPath);
+        }
+    }
+}
+
+function handleHashRoute() {
+    const hash = window.location.hash.slice(1); // Remove #
+
+    // Map hash to tool IDs
+    const hashToTool = {
+        // Developer tools
+        'json-tool': 'json',
+        'jwt-tool': 'jwt',
+        'base64-tool': 'base64',
+        'url-tool': 'url',
+        'oidc-tool': 'oidc',
+        'hash-tool': 'hash',
+        // Calculator tools
+        'loan-calculator-tool': 'loan-calculator',
+        'mortgage-calculator-tool': 'mortgage-calculator',
+        'bmi-calculator-tool': 'bmi-calculator',
+        'calorie-calculator-tool': 'calorie-calculator',
+        'compound-interest-calculator-tool': 'compound-interest-calculator',
+        'age-calculator-tool': 'age-calculator',
+        'tip-calculator-tool': 'tip-calculator',
+        'word-counter-tool': 'word-counter',
+        'password-generator-tool': 'password-generator',
+        'qr-generator-tool': 'qr-generator'
+    };
+
+    if (hashToTool[hash]) {
+        openInternalTool(hashToTool[hash]);
+        trackToolView(hashToTool[hash]);
     }
 }
 
@@ -930,31 +974,125 @@ function getToolMeta(toolName) {
             ogDescription: 'Generate secure hashes with our free online tool. Support for MD5, SHA-256, SHA-512, and more algorithms.',
             twitterTitle: 'Hash Generator Tool - Free Online Tool | DevHub',
             twitterDescription: 'Generate secure hashes with our free online tool. Support for MD5, SHA-256, SHA-512, and more algorithms.'
+        },
+        'loan-calculator': {
+            title: 'Free Loan Calculator | Calculate Monthly Payments & Interest | DevHub',
+            description: 'Free online loan calculator. Calculate monthly loan payments, total interest, and amortization schedule instantly. Compare different loan terms and rates.',
+            ogTitle: 'Free Loan Calculator - Calculate Monthly Payments & Interest',
+            ogDescription: 'Calculate monthly loan payments, total interest, and amortization schedule with our free loan calculator. Perfect for auto loans, personal loans, and more.',
+            twitterTitle: 'Free Loan Calculator - Calculate Monthly Payments & Interest',
+            twitterDescription: 'Calculate monthly loan payments, total interest, and amortization schedule with our free loan calculator.'
+        },
+        'mortgage-calculator': {
+            title: 'Free Mortgage Calculator | Home Loan Payment Calculator | DevHub',
+            description: 'Free online mortgage calculator. Calculate monthly mortgage payments with taxes, insurance, and PMI. Compare rates and see amortization schedules.',
+            ogTitle: 'Free Mortgage Calculator - Home Loan Payment Calculator',
+            ogDescription: 'Calculate monthly mortgage payments with our free calculator. Include taxes, insurance, and PMI for accurate home affordability.',
+            twitterTitle: 'Free Mortgage Calculator - Home Loan Payment Calculator',
+            twitterDescription: 'Calculate monthly mortgage payments with our free calculator. Include taxes, insurance, and PMI.'
+        },
+        'bmi-calculator': {
+            title: 'Free BMI Calculator | Body Mass Index Calculator | DevHub',
+            description: 'Free online BMI calculator. Calculate your Body Mass Index and get health insights based on your height and weight. Understand healthy weight ranges.',
+            ogTitle: 'Free BMI Calculator - Body Mass Index Calculator',
+            ogDescription: 'Calculate your BMI and get health insights with our free Body Mass Index calculator. Understand healthy weight ranges.',
+            twitterTitle: 'Free BMI Calculator - Body Mass Index Calculator',
+            twitterDescription: 'Calculate your BMI and get health insights with our free Body Mass Index calculator.'
+        },
+        'calorie-calculator': {
+            title: 'Free Calorie Calculator | Daily Calorie Needs | TDEE Calculator | DevHub',
+            description: 'Free online calorie calculator. Calculate your daily calorie needs based on age, gender, weight, height, and activity level. TDEE and BMR calculator.',
+            ogTitle: 'Free Calorie Calculator - Daily Calorie Needs | TDEE Calculator',
+            ogDescription: 'Calculate your daily calorie needs with our free TDEE calculator. Based on Harris-Benedict equation for accurate results.',
+            twitterTitle: 'Free Calorie Calculator - Daily Calorie Needs | TDEE Calculator',
+            twitterDescription: 'Calculate your daily calorie needs with our free TDEE calculator using the Harris-Benedict equation.'
+        },
+        'compound-interest-calculator': {
+            title: 'Free Compound Interest Calculator | Investment Growth Calculator | DevHub',
+            description: 'Free online compound interest calculator. Calculate investment growth with regular contributions. See how your savings grow over time with compound interest.',
+            ogTitle: 'Free Compound Interest Calculator - Investment Growth Calculator',
+            ogDescription: 'Calculate compound interest and investment growth with our free calculator. Include monthly contributions and see long-term results.',
+            twitterTitle: 'Free Compound Interest Calculator - Investment Growth Calculator',
+            twitterDescription: 'Calculate compound interest and investment growth with our free calculator.'
+        },
+        'age-calculator': {
+            title: 'Free Age Calculator | Calculate Exact Age | DevHub',
+            description: 'Free online age calculator. Calculate your exact age in years, months, days, and hours from your birth date. Precise age calculation tool.',
+            ogTitle: 'Free Age Calculator - Calculate Exact Age',
+            ogDescription: 'Calculate your exact age in years, months, days, and hours with our free age calculator.',
+            twitterTitle: 'Free Age Calculator - Calculate Exact Age',
+            twitterDescription: 'Calculate your exact age in years, months, days, and hours with our free age calculator.'
+        },
+        'tip-calculator': {
+            title: 'Free Tip Calculator | Restaurant Tip & Bill Splitter | DevHub',
+            description: 'Free online tip calculator. Calculate restaurant tips and split bills easily. Supports custom tip percentages and multiple people.',
+            ogTitle: 'Free Tip Calculator - Restaurant Tip & Bill Splitter',
+            ogDescription: 'Calculate restaurant tips and split bills with our free tip calculator. Custom percentages and bill splitting.',
+            twitterTitle: 'Free Tip Calculator - Restaurant Tip & Bill Splitter',
+            twitterDescription: 'Calculate restaurant tips and split bills with our free tip calculator.'
+        },
+        'word-counter': {
+            title: 'Free Word Counter | Character Counter | Text Statistics | DevHub',
+            description: 'Free online word counter. Count words, characters, sentences, and paragraphs in real-time. Get reading time and detailed text statistics.',
+            ogTitle: 'Free Word Counter - Character Counter | Text Statistics',
+            ogDescription: 'Count words, characters, sentences, and paragraphs with our free word counter. Real-time statistics and reading time.',
+            twitterTitle: 'Free Word Counter - Character Counter | Text Statistics',
+            twitterDescription: 'Count words, characters, sentences, and paragraphs with our free word counter.'
+        },
+        'password-generator': {
+            title: 'Free Password Generator | Strong Random Password Creator | DevHub',
+            description: 'Free online password generator. Create strong, secure, random passwords with customizable length and character options. Cryptographically secure.',
+            ogTitle: 'Free Password Generator - Strong Random Password Creator',
+            ogDescription: 'Generate strong, secure passwords with our free password generator. Customizable length and character options.',
+            twitterTitle: 'Free Password Generator - Strong Random Password Creator',
+            twitterDescription: 'Generate strong, secure passwords with our free password generator.'
+        },
+        'qr-generator': {
+            title: 'Free QR Code Generator | Create QR Codes Instantly | DevHub',
+            description: 'Free online QR code generator. Create custom QR codes for URLs, text, WiFi, and more. Download and share instantly.',
+            ogTitle: 'Free QR Code Generator - Create QR Codes Instantly',
+            ogDescription: 'Create custom QR codes for URLs, text, WiFi with our free QR code generator. Instant download.',
+            twitterTitle: 'Free QR Code Generator - Create QR Codes Instantly',
+            twitterDescription: 'Create custom QR codes for URLs, text, WiFi with our free QR code generator.'
         }
     };
-    
+
     return toolMetaData[toolName];
 }
 
 function updateURLForTool(toolId) {
-    const toolRoutes = {
-        'json': 'json',
-        'jwt': 'jwt', 
-        'base64': 'base64',
-        'url': 'url',
-        'oidc': 'oidc',
-        'hash': 'hash'
+    // Create hash URL for the tool (better for static sites)
+    const toolHashes = {
+        'json': 'json-tool',
+        'jwt': 'jwt-tool',
+        'base64': 'base64-tool',
+        'url': 'url-tool',
+        'oidc': 'oidc-tool',
+        'hash': 'hash-tool',
+        'loan-calculator': 'loan-calculator-tool',
+        'mortgage-calculator': 'mortgage-calculator-tool',
+        'bmi-calculator': 'bmi-calculator-tool',
+        'calorie-calculator': 'calorie-calculator-tool',
+        'compound-interest-calculator': 'compound-interest-calculator-tool',
+        'age-calculator': 'age-calculator-tool',
+        'tip-calculator': 'tip-calculator-tool',
+        'word-counter': 'word-counter-tool',
+        'password-generator': 'password-generator-tool',
+        'qr-generator': 'qr-generator-tool'
     };
-    
-    if (toolRoutes[toolId]) {
-        const newUrl = `${window.location.origin}/${toolRoutes[toolId]}`;
-        window.history.pushState({ tool: toolId }, '', newUrl);
-        
+
+    if (toolHashes[toolId]) {
+        const newHash = `#${toolHashes[toolId]}`;
+        window.history.pushState({ tool: toolId }, '', newHash);
+
         // Update page meta for SEO
-        updatePageMetaForTool(toolRoutes[toolId]);
-        
+        updatePageMetaForTool(toolId);
+
         // Update breadcrumb
         updateBreadcrumb(toolId);
+
+        // Track tool view in Google Analytics
+        trackToolView(toolId);
     }
 }
 
@@ -965,18 +1103,108 @@ function updateBreadcrumb(toolId) {
         'base64': 'Base64 Tool',
         'url': 'URL Tool',
         'oidc': 'OIDC Tool',
-        'hash': 'Hash Generator'
+        'hash': 'Hash Generator',
+        'loan-calculator': 'Loan Calculator',
+        'mortgage-calculator': 'Mortgage Calculator',
+        'bmi-calculator': 'BMI Calculator',
+        'calorie-calculator': 'Calorie Calculator',
+        'compound-interest-calculator': 'Compound Interest Calculator',
+        'age-calculator': 'Age Calculator',
+        'tip-calculator': 'Tip Calculator',
+        'word-counter': 'Word Counter',
+        'password-generator': 'Password Generator',
+        'qr-generator': 'QR Code Generator'
     };
-    
+
     const breadcrumbCurrent = document.getElementById('breadcrumb-current');
     if (breadcrumbCurrent && toolNames[toolId]) {
         breadcrumbCurrent.textContent = toolNames[toolId];
     }
 }
 
+// ===== GOOGLE ANALYTICS TRACKING =====
+function trackToolView(toolId) {
+    // Track pageview in Google Analytics 4
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'page_view', {
+            page_title: getToolName(toolId),
+            page_location: window.location.href,
+            page_path: window.location.pathname + window.location.hash,
+            tool_name: toolId,
+            tool_category: getToolCategory(toolId)
+        });
+    }
+
+    // Also track as a custom event
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'tool_open', {
+            event_category: 'Tool Usage',
+            event_label: toolId,
+            tool_name: getToolName(toolId),
+            tool_category: getToolCategory(toolId)
+        });
+    }
+}
+
+function trackToolAction(toolId, action, label) {
+    // Track specific tool actions (e.g., calculate, encode, decode)
+    if (typeof gtag !== 'undefined') {
+        gtag('event', action, {
+            event_category: 'Tool Action',
+            event_label: label || toolId,
+            tool_name: toolId,
+            action_type: action
+        });
+    }
+}
+
+function getToolName(toolId) {
+    const toolNames = {
+        'json': 'JSON Validator',
+        'jwt': 'JWT Verifier',
+        'base64': 'Base64 Encoder',
+        'url': 'URL Encoder',
+        'oidc': 'OIDC Tester',
+        'hash': 'Hash Generator',
+        'loan-calculator': 'Loan Calculator',
+        'mortgage-calculator': 'Mortgage Calculator',
+        'bmi-calculator': 'BMI Calculator',
+        'calorie-calculator': 'Calorie Calculator',
+        'compound-interest-calculator': 'Compound Interest Calculator',
+        'age-calculator': 'Age Calculator',
+        'tip-calculator': 'Tip Calculator',
+        'word-counter': 'Word Counter',
+        'password-generator': 'Password Generator',
+        'qr-generator': 'QR Code Generator'
+    };
+    return toolNames[toolId] || toolId;
+}
+
+function getToolCategory(toolId) {
+    const categories = {
+        'json': 'Developer Tools',
+        'jwt': 'Developer Tools',
+        'base64': 'Developer Tools',
+        'url': 'Developer Tools',
+        'oidc': 'Developer Tools',
+        'hash': 'Developer Tools',
+        'loan-calculator': 'Financial Calculators',
+        'mortgage-calculator': 'Financial Calculators',
+        'bmi-calculator': 'Health Calculators',
+        'calorie-calculator': 'Health Calculators',
+        'compound-interest-calculator': 'Financial Calculators',
+        'age-calculator': 'Utility Tools',
+        'tip-calculator': 'Utility Tools',
+        'word-counter': 'Productivity Tools',
+        'password-generator': 'Security Tools',
+        'qr-generator': 'Utility Tools'
+    };
+    return categories[toolId] || 'General Tools';
+}
+
 function restoreOriginalPageMeta() {
     // Restore original page title and meta
-    document.title = 'Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal | DevHub';
+    document.title = 'Free Loan, BMI, Calorie Calculator | Word Counter, Base64, JSON Validator | 70+ Free Tools | DevHub';
     
     // Restore original meta description
     const metaDesc = document.querySelector('meta[name="description"]');
