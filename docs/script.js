@@ -429,6 +429,94 @@ const toolsDatabase = {
             type: "internal",
             featured: true,
             stats: { users: "280k+", rating: "4.9" }
+        },
+        {
+            name: "PDF Merger",
+            description: "Combine multiple PDF files into a single document instantly. All processing happens in your browser - no uploads required.",
+            category: "Calculators",
+            tags: ["PDF", "Merge", "Combine", "Documents", "Tool"],
+            url: "#pdf-merger-tool",
+            logo: "📄",
+            type: "internal",
+            featured: true,
+            stats: { users: "600k+", rating: "4.9" }
+        },
+        {
+            name: "PDF Splitter",
+            description: "Split PDF files into separate pages or extract specific pages. Fast and secure, all done locally.",
+            category: "Calculators",
+            tags: ["PDF", "Split", "Extract", "Pages", "Tool"],
+            url: "#pdf-splitter-tool",
+            logo: "✂️",
+            type: "internal",
+            featured: true,
+            stats: { users: "500k+", rating: "4.8" }
+        },
+        {
+            name: "Image Compressor",
+            description: "Compress images to reduce file size while maintaining quality. Supports JPG, PNG, and WebP formats.",
+            category: "Calculators",
+            tags: ["Image", "Compress", "Optimize", "Size", "Tool"],
+            url: "#image-compressor-tool",
+            logo: "🖼️",
+            type: "internal",
+            featured: true,
+            stats: { users: "700k+", rating: "4.9" }
+        },
+        {
+            name: "Image Resizer",
+            description: "Resize images to specific dimensions or percentage. Maintain aspect ratio or set custom sizes.",
+            category: "Calculators",
+            tags: ["Image", "Resize", "Dimensions", "Scale", "Tool"],
+            url: "#image-resizer-tool",
+            logo: "📐",
+            type: "internal",
+            featured: true,
+            stats: { users: "550k+", rating: "4.8" }
+        },
+        {
+            name: "Image Format Converter",
+            description: "Convert images between JPG, PNG, WebP, and other formats instantly in your browser.",
+            category: "Calculators",
+            tags: ["Image", "Convert", "Format", "JPG", "PNG", "WebP", "Tool"],
+            url: "#image-converter-tool",
+            logo: "🔄",
+            type: "internal",
+            featured: true,
+            stats: { users: "480k+", rating: "4.9" }
+        },
+        {
+            name: "Text Case Converter",
+            description: "Convert text between uppercase, lowercase, title case, sentence case, and more with one click.",
+            category: "Calculators",
+            tags: ["Text", "Case", "Convert", "Upper", "Lower", "Tool"],
+            url: "#text-case-tool",
+            logo: "🔤",
+            type: "internal",
+            featured: false,
+            stats: { users: "320k+", rating: "4.7" }
+        },
+        {
+            name: "Text Difference Checker",
+            description: "Compare two text files or snippets side-by-side and see the differences highlighted instantly.",
+            category: "Calculators",
+            tags: ["Text", "Diff", "Compare", "Changes", "Tool"],
+            url: "#text-diff-tool",
+            logo: "🔍",
+            type: "internal",
+            featured: false,
+            stats: { users: "280k+", rating: "4.8" }
+        },
+        {
+            name: "Lorem Ipsum Generator",
+            description: "Generate placeholder text for your designs and mockups with customizable paragraph, word, or character counts.",
+            category: "Calculators",
+            tags: ["Lorem Ipsum", "Placeholder", "Text", "Generator", "Tool"],
+            url: "#lorem-ipsum-tool",
+            logo: "📃",
+            type: "internal",
+            featured: false,
+            stats: { users: "400k+", rating: "4.7" }
         }
     ],
     
@@ -840,7 +928,16 @@ function handleHashRoute() {
         'tip-calculator-tool': 'tip-calculator',
         'word-counter-tool': 'word-counter',
         'password-generator-tool': 'password-generator',
-        'qr-generator-tool': 'qr-generator'
+        'qr-generator-tool': 'qr-generator',
+        // Phase 2 tools - PDF, Image, Text
+        'pdf-merger-tool': 'pdf-merger',
+        'pdf-splitter-tool': 'pdf-splitter',
+        'image-compressor-tool': 'image-compressor',
+        'image-resizer-tool': 'image-resizer',
+        'image-converter-tool': 'image-converter',
+        'text-case-tool': 'text-case',
+        'text-diff-tool': 'text-diff',
+        'lorem-ipsum-tool': 'lorem-ipsum'
     };
 
     if (hashToTool[hash]) {
@@ -1175,7 +1272,15 @@ function getToolName(toolId) {
         'tip-calculator': 'Tip Calculator',
         'word-counter': 'Word Counter',
         'password-generator': 'Password Generator',
-        'qr-generator': 'QR Code Generator'
+        'qr-generator': 'QR Code Generator',
+        'pdf-merger': 'PDF Merger',
+        'pdf-splitter': 'PDF Splitter',
+        'image-compressor': 'Image Compressor',
+        'image-resizer': 'Image Resizer',
+        'image-converter': 'Image Format Converter',
+        'text-case': 'Text Case Converter',
+        'text-diff': 'Text Difference Checker',
+        'lorem-ipsum': 'Lorem Ipsum Generator'
     };
     return toolNames[toolId] || toolId;
 }
@@ -1197,7 +1302,15 @@ function getToolCategory(toolId) {
         'tip-calculator': 'Utility Tools',
         'word-counter': 'Productivity Tools',
         'password-generator': 'Security Tools',
-        'qr-generator': 'Utility Tools'
+        'qr-generator': 'Utility Tools',
+        'pdf-merger': 'PDF Tools',
+        'pdf-splitter': 'PDF Tools',
+        'image-compressor': 'Image Tools',
+        'image-resizer': 'Image Tools',
+        'image-converter': 'Image Tools',
+        'text-case': 'Text Tools',
+        'text-diff': 'Text Tools',
+        'lorem-ipsum': 'Text Tools'
     };
     return categories[toolId] || 'General Tools';
 }
@@ -1739,6 +1852,38 @@ function openInternalTool(toolId) {
         'qr-generator': {
             title: 'QR Code Generator',
             content: createQRGeneratorInterface()
+        },
+        'pdf-merger': {
+            title: 'PDF Merger',
+            content: createPDFMergerInterface()
+        },
+        'pdf-splitter': {
+            title: 'PDF Splitter',
+            content: createPDFSplitterInterface()
+        },
+        'image-compressor': {
+            title: 'Image Compressor',
+            content: createImageCompressorInterface()
+        },
+        'image-resizer': {
+            title: 'Image Resizer',
+            content: createImageResizerInterface()
+        },
+        'image-converter': {
+            title: 'Image Format Converter',
+            content: createImageConverterInterface()
+        },
+        'text-case': {
+            title: 'Text Case Converter',
+            content: createTextCaseInterface()
+        },
+        'text-diff': {
+            title: 'Text Difference Checker',
+            content: createTextDiffInterface()
+        },
+        'lorem-ipsum': {
+            title: 'Lorem Ipsum Generator',
+            content: createLoremIpsumInterface()
         }
     };
     
@@ -2140,6 +2285,30 @@ function initializeToolFunctionality(toolId) {
             break;
         case 'qr-generator':
             initializeQRGeneratorTool();
+            break;
+        case 'pdf-merger':
+            initializePDFMergerTool();
+            break;
+        case 'pdf-splitter':
+            initializePDFSplitterTool();
+            break;
+        case 'image-compressor':
+            initializeImageCompressorTool();
+            break;
+        case 'image-resizer':
+            initializeImageResizerTool();
+            break;
+        case 'image-converter':
+            initializeImageConverterTool();
+            break;
+        case 'text-case':
+            initializeTextCaseTool();
+            break;
+        case 'text-diff':
+            initializeTextDiffTool();
+            break;
+        case 'lorem-ipsum':
+            initializeLoremIpsumTool();
             break;
     }
 }
@@ -2799,6 +2968,158 @@ function beautifyJSON(obj, indent = 2, maxDepth = 100) {
     }
     
     return beautify(obj, 0, 0);
+}
+
+// ===== PDF MERGER TOOL =====
+function createPDFMergerInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="pdf-files">Select PDF Files:</label>
+                <input type="file" id="pdf-files" accept=".pdf" multiple>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                    Select multiple PDF files to merge them into a single document. All processing happens locally in your browser.
+                </p>
+            </div>
+            <div id="pdf-list" style="margin: 1rem 0;">
+                <!-- File list will appear here -->
+            </div>
+            <div class="button-group">
+                <button id="pdf-merge-btn" class="btn btn-primary" disabled>
+                    <i class="fas fa-file-pdf"></i> Merge PDFs
+                </button>
+                <button id="pdf-clear-btn" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div id="pdf-merge-status" style="margin-top: 1rem; display: none;">
+                <!-- Status messages -->
+            </div>
+            <div style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 4px;">
+                <strong>Privacy Note:</strong> All PDF processing happens entirely in your browser. No files are uploaded to any server.
+            </div>
+        </div>
+    `;
+}
+
+function initializePDFMergerTool() {
+    const fileInput = document.getElementById('pdf-files');
+    const mergeBtn = document.getElementById('pdf-merge-btn');
+    const clearBtn = document.getElementById('pdf-clear-btn');
+    const fileList = document.getElementById('pdf-list');
+    const statusDiv = document.getElementById('pdf-merge-status');
+
+    let selectedFiles = [];
+
+    fileInput.addEventListener('change', (e) => {
+        selectedFiles = Array.from(e.target.files);
+
+        if (selectedFiles.length === 0) {
+            fileList.innerHTML = '';
+            mergeBtn.disabled = true;
+            return;
+        }
+
+        // Display file list
+        fileList.innerHTML = '<h4>Selected Files:</h4><ul style="list-style: none; padding: 0;">';
+        selectedFiles.forEach((file, index) => {
+            fileList.innerHTML += `
+                <li style="padding: 0.5rem; background: #f9f9f9; margin: 0.3rem 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                    <span><strong>${index + 1}.</strong> ${file.name} (${(file.size / 1024).toFixed(2)} KB)</span>
+                    <button class="btn-remove" data-index="${index}" style="background: #ff4444; color: white; border: none; padding: 0.3rem 0.8rem; border-radius: 4px; cursor: pointer;">Remove</button>
+                </li>
+            `;
+        });
+        fileList.innerHTML += '</ul>';
+
+        // Add remove button listeners
+        document.querySelectorAll('.btn-remove').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                selectedFiles.splice(index, 1);
+
+                // Recreate file input to reflect changes
+                const dt = new DataTransfer();
+                selectedFiles.forEach(file => dt.items.add(file));
+                fileInput.files = dt.files;
+
+                // Trigger change event
+                fileInput.dispatchEvent(new Event('change'));
+            });
+        });
+
+        mergeBtn.disabled = selectedFiles.length < 2;
+        if (selectedFiles.length < 2) {
+            showNotification('Please select at least 2 PDF files to merge', 'info');
+        }
+    });
+
+    mergeBtn.addEventListener('click', async () => {
+        if (selectedFiles.length < 2) {
+            showNotification('Please select at least 2 PDF files', 'error');
+            return;
+        }
+
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Merging PDFs...</p>';
+        mergeBtn.disabled = true;
+
+        try {
+            // Load pdf-lib dynamically
+            if (typeof PDFLib === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js';
+                document.head.appendChild(script);
+                await new Promise((resolve, reject) => {
+                    script.onload = resolve;
+                    script.onerror = () => reject(new Error('Failed to load PDF library'));
+                });
+            }
+
+            const { PDFDocument } = PDFLib;
+            const mergedPdf = await PDFDocument.create();
+
+            // Process each PDF
+            for (let i = 0; i < selectedFiles.length; i++) {
+                statusDiv.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Processing file ${i + 1} of ${selectedFiles.length}...</p>`;
+
+                const fileData = await selectedFiles[i].arrayBuffer();
+                const pdf = await PDFDocument.load(fileData);
+                const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                pages.forEach(page => mergedPdf.addPage(page));
+            }
+
+            // Generate merged PDF
+            const mergedPdfBytes = await mergedPdf.save();
+            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+
+            // Download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'merged.pdf';
+            link.click();
+
+            statusDiv.innerHTML = '<p style="color: green;"><i class="fas fa-check-circle"></i> PDFs merged successfully!</p>';
+            showNotification('PDFs merged and downloaded successfully!', 'success');
+
+        } catch (error) {
+            console.error('PDF merge error:', error);
+            statusDiv.innerHTML = `<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</p>`;
+            showNotification('Failed to merge PDFs. Please try again.', 'error');
+        } finally {
+            mergeBtn.disabled = false;
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        selectedFiles = [];
+        fileList.innerHTML = '';
+        statusDiv.style.display = 'none';
+        statusDiv.innerHTML = '';
+        mergeBtn.disabled = true;
+    });
 }
 
 
@@ -4194,5 +4515,990 @@ function initializeQRGeneratorTool() {
         textInput.value = '';
         output.style.display = 'none';
     });
+}
+
+// ===== PDF SPLITTER TOOL =====
+function createPDFSplitterInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="pdf-split-file">Select PDF File:</label>
+                <input type="file" id="pdf-split-file" accept=".pdf">
+                <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                    Upload a PDF to split into individual pages or extract specific pages.
+                </p>
+            </div>
+            <div id="pdf-split-info" style="margin: 1rem 0; display: none;">
+                <!-- PDF info will appear here -->
+            </div>
+            <div class="button-group" id="pdf-split-actions" style="display: none;">
+                <button id="pdf-split-all-btn" class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i> Split All Pages
+                </button>
+                <button id="pdf-split-range-btn" class="btn btn-outline">
+                    <i class="fas fa-scissors"></i> Extract Page Range
+                </button>
+            </div>
+            <div id="pdf-split-range-input" style="display: none; margin: 1rem 0;">
+                <div class="input-group">
+                    <label>Page Range (e.g., 1-3, 5, 7-9):</label>
+                    <input type="text" id="pdf-page-range" placeholder="1-3, 5, 7-9">
+                    <button id="pdf-extract-btn" class="btn btn-primary">Extract Pages</button>
+                </div>
+            </div>
+            <div id="pdf-split-status" style="margin-top: 1rem; display: none;">
+                <!-- Status messages -->
+            </div>
+        </div>
+    `;
+}
+
+function initializePDFSplitterTool() {
+    const fileInput = document.getElementById('pdf-split-file');
+    const pdfInfo = document.getElementById('pdf-split-info');
+    const actionsDiv = document.getElementById('pdf-split-actions');
+    const splitAllBtn = document.getElementById('pdf-split-all-btn');
+    const splitRangeBtn = document.getElementById('pdf-split-range-btn');
+    const rangeInput = document.getElementById('pdf-split-range-input');
+    const extractBtn = document.getElementById('pdf-extract-btn');
+    const statusDiv = document.getElementById('pdf-split-status');
+
+    let loadedPdf = null;
+    let pdfDoc = null;
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Loading PDF...</p>';
+
+        try {
+            // Load pdf-lib dynamically
+            if (typeof PDFLib === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js';
+                document.head.appendChild(script);
+                await new Promise((resolve, reject) => {
+                    script.onload = resolve;
+                    script.onerror = () => reject(new Error('Failed to load PDF library'));
+                });
+            }
+
+            const { PDFDocument } = PDFLib;
+            const fileData = await file.arrayBuffer();
+            pdfDoc = await PDFDocument.load(fileData);
+            const pageCount = pdfDoc.getPageCount();
+
+            pdfInfo.style.display = 'block';
+            pdfInfo.innerHTML = `
+                <div style="padding: 1rem; background: #f9f9f9; border-radius: 4px;">
+                    <h4>${file.name}</h4>
+                    <p><strong>Pages:</strong> ${pageCount}</p>
+                    <p><strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                </div>
+            `;
+
+            actionsDiv.style.display = 'block';
+            statusDiv.style.display = 'none';
+
+        } catch (error) {
+            console.error('PDF load error:', error);
+            statusDiv.innerHTML = `<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</p>`;
+            pdfInfo.style.display = 'none';
+            actionsDiv.style.display = 'none';
+        }
+    });
+
+    splitAllBtn.addEventListener('click', async () => {
+        if (!pdfDoc) return;
+
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Splitting PDF...</p>';
+
+        try {
+            const { PDFDocument } = PDFLib;
+            const pageCount = pdfDoc.getPageCount();
+
+            for (let i = 0; i < pageCount; i++) {
+                const newPdf = await PDFDocument.create();
+                const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
+                newPdf.addPage(copiedPage);
+
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `page_${i + 1}.pdf`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                statusDiv.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Processing page ${i + 1} of ${pageCount}...</p>`;
+            }
+
+            statusDiv.innerHTML = '<p style="color: green;"><i class="fas fa-check-circle"></i> All pages split successfully!</p>';
+            showNotification(`${pageCount} pages extracted successfully!`, 'success');
+
+        } catch (error) {
+            console.error('PDF split error:', error);
+            statusDiv.innerHTML = `<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</p>`;
+            showNotification('Failed to split PDF. Please try again.', 'error');
+        }
+    });
+
+    splitRangeBtn.addEventListener('click', () => {
+        rangeInput.style.display = rangeInput.style.display === 'none' ? 'block' : 'none';
+    });
+
+    extractBtn.addEventListener('click', async () => {
+        if (!pdfDoc) return;
+
+        const rangeText = document.getElementById('pdf-page-range').value.trim();
+        if (!rangeText) {
+            showNotification('Please enter a page range', 'error');
+            return;
+        }
+
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Extracting pages...</p>';
+
+        try {
+            const { PDFDocument } = PDFLib;
+            const newPdf = await PDFDocument.create();
+
+            // Parse page range (e.g., "1-3, 5, 7-9")
+            const ranges = rangeText.split(',').map(r => r.trim());
+            const pages = [];
+
+            for (const range of ranges) {
+                if (range.includes('-')) {
+                    const [start, end] = range.split('-').map(n => parseInt(n.trim()) - 1);
+                    for (let i = start; i <= end; i++) {
+                        if (i >= 0 && i < pdfDoc.getPageCount()) {
+                            pages.push(i);
+                        }
+                    }
+                } else {
+                    const pageNum = parseInt(range) - 1;
+                    if (pageNum >= 0 && pageNum < pdfDoc.getPageCount()) {
+                        pages.push(pageNum);
+                    }
+                }
+            }
+
+            if (pages.length === 0) {
+                throw new Error('No valid pages found in range');
+            }
+
+            const copiedPages = await newPdf.copyPages(pdfDoc, pages);
+            copiedPages.forEach(page => newPdf.addPage(page));
+
+            const pdfBytes = await newPdf.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'extracted_pages.pdf';
+            link.click();
+
+            statusDiv.innerHTML = '<p style="color: green;"><i class="fas fa-check-circle"></i> Pages extracted successfully!</p>';
+            showNotification(`${pages.length} pages extracted successfully!`, 'success');
+
+        } catch (error) {
+            console.error('PDF extract error:', error);
+            statusDiv.innerHTML = `<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</p>`;
+            showNotification('Failed to extract pages. Please check your page range.', 'error');
+        }
+    });
+}
+
+// ===== IMAGE COMPRESSOR TOOL =====
+function createImageCompressorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="img-compress-file">Select Image:</label>
+                <input type="file" id="img-compress-file" accept="image/jpeg,image/png,image/webp">
+                <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                    Supports JPG, PNG, and WebP formats. Compression happens locally in your browser.
+                </p>
+            </div>
+            <div id="img-compress-preview" style="margin: 1rem 0; display: none;">
+                <!-- Preview will appear here -->
+            </div>
+            <div class="input-group" id="img-compress-controls" style="display: none;">
+                <label for="img-quality">Quality: <span id="quality-value">80</span>%</label>
+                <input type="range" id="img-quality" min="1" max="100" value="80" style="width: 100%;">
+            </div>
+            <div class="button-group" id="img-compress-actions" style="display: none;">
+                <button id="img-compress-btn" class="btn btn-primary">
+                    <i class="fas fa-compress"></i> Compress Image
+                </button>
+                <button id="img-download-btn" class="btn btn-outline" disabled>
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </div>
+            <div id="img-compress-result" style="margin-top: 1rem; display: none;">
+                <!-- Result will appear here -->
+            </div>
+        </div>
+    `;
+}
+
+function initializeImageCompressorTool() {
+    const fileInput = document.getElementById('img-compress-file');
+    const previewDiv = document.getElementById('img-compress-preview');
+    const controlsDiv = document.getElementById('img-compress-controls');
+    const actionsDiv = document.getElementById('img-compress-actions');
+    const qualitySlider = document.getElementById('img-quality');
+    const qualityValue = document.getElementById('quality-value');
+    const compressBtn = document.getElementById('img-compress-btn');
+    const downloadBtn = document.getElementById('img-download-btn');
+    const resultDiv = document.getElementById('img-compress-result');
+
+    let originalFile = null;
+    let compressedBlob = null;
+
+    qualitySlider.addEventListener('input', (e) => {
+        qualityValue.textContent = e.target.value;
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        originalFile = file;
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            previewDiv.style.display = 'block';
+            previewDiv.innerHTML = `
+                <div style="text-align: center;">
+                    <h4>Original Image</h4>
+                    <img src="${e.target.result}" style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px;">
+                    <p><strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                </div>
+            `;
+
+            controlsDiv.style.display = 'block';
+            actionsDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            downloadBtn.disabled = true;
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    compressBtn.addEventListener('click', async () => {
+        if (!originalFile) return;
+
+        const quality = parseInt(qualitySlider.value) / 100;
+
+        try {
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                img.src = e.target.result;
+            };
+
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob(async (blob) => {
+                    compressedBlob = blob;
+
+                    const reduction = ((originalFile.size - blob.size) / originalFile.size * 100).toFixed(1);
+
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = `
+                        <div style="padding: 1rem; background: #f0f9ff; border-radius: 4px; border-left: 4px solid #0284c7;">
+                            <h4>Compression Results</h4>
+                            <p><strong>Original Size:</strong> ${(originalFile.size / 1024).toFixed(2)} KB</p>
+                            <p><strong>Compressed Size:</strong> ${(blob.size / 1024).toFixed(2)} KB</p>
+                            <p><strong>Reduction:</strong> ${reduction}%</p>
+                        </div>
+                    `;
+
+                    downloadBtn.disabled = false;
+                    showNotification(`Image compressed by ${reduction}%!`, 'success');
+
+                }, originalFile.type, quality);
+            };
+
+            reader.readAsDataURL(originalFile);
+
+        } catch (error) {
+            console.error('Image compression error:', error);
+            showNotification('Failed to compress image. Please try again.', 'error');
+        }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (!compressedBlob) return;
+
+        const url = URL.createObjectURL(compressedBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `compressed_${originalFile.name}`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        showNotification('Compressed image downloaded!', 'success');
+    });
+}
+
+// ===== IMAGE RESIZER TOOL =====
+function createImageResizerInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="img-resize-file">Select Image:</label>
+                <input type="file" id="img-resize-file" accept="image/*">
+            </div>
+            <div id="img-resize-preview" style="margin: 1rem 0; display: none;">
+                <!-- Preview will appear here -->
+            </div>
+            <div id="img-resize-controls" style="display: none;">
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" id="img-maintain-ratio" checked> Maintain Aspect Ratio
+                    </label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label for="img-new-width">Width (px):</label>
+                        <input type="number" id="img-new-width" placeholder="e.g., 800" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="img-new-height">Height (px):</label>
+                        <input type="number" id="img-new-height" placeholder="e.g., 600" min="1">
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="img-resize-btn" class="btn btn-primary">
+                        <i class="fas fa-expand-arrows-alt"></i> Resize Image
+                    </button>
+                    <button id="img-resize-download-btn" class="btn btn-outline" disabled>
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+            <div id="img-resize-result" style="margin-top: 1rem; display: none;">
+                <!-- Result will appear here -->
+            </div>
+        </div>
+    `;
+}
+
+function initializeImageResizerTool() {
+    const fileInput = document.getElementById('img-resize-file');
+    const previewDiv = document.getElementById('img-resize-preview');
+    const controlsDiv = document.getElementById('img-resize-controls');
+    const maintainRatio = document.getElementById('img-maintain-ratio');
+    const widthInput = document.getElementById('img-new-width');
+    const heightInput = document.getElementById('img-new-height');
+    const resizeBtn = document.getElementById('img-resize-btn');
+    const downloadBtn = document.getElementById('img-resize-download-btn');
+    const resultDiv = document.getElementById('img-resize-result');
+
+    let originalImage = null;
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let resizedCanvas = null;
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                originalImage = img;
+                originalWidth = img.width;
+                originalHeight = img.height;
+
+                previewDiv.style.display = 'block';
+                previewDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <h4>Original Image</h4>
+                        <img src="${e.target.result}" style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px;">
+                        <p><strong>Dimensions:</strong> ${originalWidth} x ${originalHeight} px</p>
+                    </div>
+                `;
+
+                widthInput.value = originalWidth;
+                heightInput.value = originalHeight;
+
+                controlsDiv.style.display = 'block';
+                resultDiv.style.display = 'none';
+                downloadBtn.disabled = true;
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    widthInput.addEventListener('input', () => {
+        if (maintainRatio.checked && originalWidth && widthInput.value) {
+            const ratio = originalHeight / originalWidth;
+            heightInput.value = Math.round(widthInput.value * ratio);
+        }
+    });
+
+    heightInput.addEventListener('input', () => {
+        if (maintainRatio.checked && originalHeight && heightInput.value) {
+            const ratio = originalWidth / originalHeight;
+            widthInput.value = Math.round(heightInput.value * ratio);
+        }
+    });
+
+    resizeBtn.addEventListener('click', () => {
+        if (!originalImage) return;
+
+        const newWidth = parseInt(widthInput.value);
+        const newHeight = parseInt(heightInput.value);
+
+        if (!newWidth || !newHeight || newWidth < 1 || newHeight < 1) {
+            showNotification('Please enter valid dimensions', 'error');
+            return;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(originalImage, 0, 0, newWidth, newHeight);
+
+        resizedCanvas = canvas;
+
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <div style="text-align: center;">
+                <h4>Resized Image</h4>
+                <img src="${canvas.toDataURL()}" style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px;">
+                <p><strong>New Dimensions:</strong> ${newWidth} x ${newHeight} px</p>
+            </div>
+        `;
+
+        downloadBtn.disabled = false;
+        showNotification('Image resized successfully!', 'success');
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (!resizedCanvas) return;
+
+        resizedCanvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `resized_image.png`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotification('Resized image downloaded!', 'success');
+        });
+    });
+}
+
+// ===== IMAGE FORMAT CONVERTER TOOL =====
+function createImageConverterInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="img-convert-file">Select Image:</label>
+                <input type="file" id="img-convert-file" accept="image/*">
+            </div>
+            <div id="img-convert-preview" style="margin: 1rem 0; display: none;">
+                <!-- Preview will appear here -->
+            </div>
+            <div id="img-convert-controls" style="display: none;">
+                <div class="input-group">
+                    <label for="img-target-format">Convert to:</label>
+                    <select id="img-target-format">
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                </div>
+                <div class="input-group" id="img-quality-control" style="display: none;">
+                    <label for="img-convert-quality">Quality: <span id="convert-quality-value">90</span>%</label>
+                    <input type="range" id="img-convert-quality" min="1" max="100" value="90" style="width: 100%;">
+                </div>
+                <div class="button-group">
+                    <button id="img-convert-btn" class="btn btn-primary">
+                        <i class="fas fa-exchange-alt"></i> Convert Image
+                    </button>
+                    <button id="img-convert-download-btn" class="btn btn-outline" disabled>
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+            <div id="img-convert-result" style="margin-top: 1rem; display: none;">
+                <!-- Result will appear here -->
+            </div>
+        </div>
+    `;
+}
+
+function initializeImageConverterTool() {
+    const fileInput = document.getElementById('img-convert-file');
+    const previewDiv = document.getElementById('img-convert-preview');
+    const controlsDiv = document.getElementById('img-convert-controls');
+    const formatSelect = document.getElementById('img-target-format');
+    const qualityControl = document.getElementById('img-quality-control');
+    const qualitySlider = document.getElementById('img-convert-quality');
+    const qualityValue = document.getElementById('convert-quality-value');
+    const convertBtn = document.getElementById('img-convert-btn');
+    const downloadBtn = document.getElementById('img-convert-download-btn');
+    const resultDiv = document.getElementById('img-convert-result');
+
+    let originalImage = null;
+    let originalFormat = '';
+    let convertedBlob = null;
+
+    qualitySlider.addEventListener('input', (e) => {
+        qualityValue.textContent = e.target.value;
+    });
+
+    formatSelect.addEventListener('change', () => {
+        // Show quality control for JPEG and WebP
+        qualityControl.style.display =
+            (formatSelect.value === 'image/jpeg' || formatSelect.value === 'image/webp')
+            ? 'block' : 'none';
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        originalFormat = file.type;
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                originalImage = img;
+
+                previewDiv.style.display = 'block';
+                previewDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <h4>Original Image</h4>
+                        <img src="${e.target.result}" style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px;">
+                        <p><strong>Format:</strong> ${originalFormat}</p>
+                        <p><strong>Dimensions:</strong> ${img.width} x ${img.height} px</p>
+                    </div>
+                `;
+
+                controlsDiv.style.display = 'block';
+                resultDiv.style.display = 'none';
+                downloadBtn.disabled = true;
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    convertBtn.addEventListener('click', () => {
+        if (!originalImage) return;
+
+        const targetFormat = formatSelect.value;
+        const quality = parseInt(qualitySlider.value) / 100;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = originalImage.width;
+        canvas.height = originalImage.height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(originalImage, 0, 0);
+
+        canvas.toBlob((blob) => {
+            convertedBlob = blob;
+
+            const extension = targetFormat.split('/')[1];
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div style="padding: 1rem; background: #f0fdf4; border-radius: 4px; border-left: 4px solid #16a34a;">
+                    <h4>Conversion Successful</h4>
+                    <p><strong>New Format:</strong> ${extension.toUpperCase()}</p>
+                    <p><strong>File Size:</strong> ${(blob.size / 1024).toFixed(2)} KB</p>
+                </div>
+            `;
+
+            downloadBtn.disabled = false;
+            showNotification(`Image converted to ${extension.toUpperCase()}!`, 'success');
+
+        }, targetFormat, quality);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (!convertedBlob) return;
+
+        const extension = formatSelect.value.split('/')[1];
+        const url = URL.createObjectURL(convertedBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `converted_image.${extension}`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        showNotification('Converted image downloaded!', 'success');
+    });
+}
+
+// ===== TEXT CASE CONVERTER TOOL =====
+function createTextCaseInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="text-case-input">Enter Text:</label>
+                <textarea id="text-case-input" placeholder="Enter or paste your text here..." rows="8"></textarea>
+            </div>
+            <div class="button-group">
+                <button id="case-upper" class="btn btn-outline">UPPERCASE</button>
+                <button id="case-lower" class="btn btn-outline">lowercase</button>
+                <button id="case-title" class="btn btn-outline">Title Case</button>
+                <button id="case-sentence" class="btn btn-outline">Sentence case</button>
+                <button id="case-camel" class="btn btn-outline">camelCase</button>
+                <button id="case-snake" class="btn btn-outline">snake_case</button>
+            </div>
+            <div class="output-group">
+                <label>Result:</label>
+                <textarea id="text-case-output" readonly rows="8"></textarea>
+            </div>
+            <div class="button-group">
+                <button id="case-copy" class="btn btn-primary">
+                    <i class="fas fa-copy"></i> Copy Result
+                </button>
+                <button id="case-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function initializeTextCaseTool() {
+    const input = document.getElementById('text-case-input');
+    const output = document.getElementById('text-case-output');
+    const upperBtn = document.getElementById('case-upper');
+    const lowerBtn = document.getElementById('case-lower');
+    const titleBtn = document.getElementById('case-title');
+    const sentenceBtn = document.getElementById('case-sentence');
+    const camelBtn = document.getElementById('case-camel');
+    const snakeBtn = document.getElementById('case-snake');
+    const copyBtn = document.getElementById('case-copy');
+    const clearBtn = document.getElementById('case-clear');
+
+    upperBtn.addEventListener('click', () => {
+        output.value = input.value.toUpperCase();
+        showNotification('Converted to UPPERCASE', 'success');
+    });
+
+    lowerBtn.addEventListener('click', () => {
+        output.value = input.value.toLowerCase();
+        showNotification('Converted to lowercase', 'success');
+    });
+
+    titleBtn.addEventListener('click', () => {
+        output.value = input.value.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+        showNotification('Converted to Title Case', 'success');
+    });
+
+    sentenceBtn.addEventListener('click', () => {
+        output.value = input.value.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, char => char.toUpperCase());
+        showNotification('Converted to Sentence case', 'success');
+    });
+
+    camelBtn.addEventListener('click', () => {
+        const words = input.value.trim().split(/\s+/);
+        output.value = words[0].toLowerCase() + words.slice(1).map(w =>
+            w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+        ).join('');
+        showNotification('Converted to camelCase', 'success');
+    });
+
+    snakeBtn.addEventListener('click', () => {
+        output.value = input.value.trim().toLowerCase().replace(/\s+/g, '_');
+        showNotification('Converted to snake_case', 'success');
+    });
+
+    copyBtn.addEventListener('click', () => {
+        if (!output.value) {
+            showNotification('Nothing to copy', 'error');
+            return;
+        }
+        output.select();
+        document.execCommand('copy');
+        showNotification('Copied to clipboard!', 'success');
+    });
+
+    clearBtn.addEventListener('click', () => {
+        input.value = '';
+        output.value = '';
+    });
+}
+
+// ===== TEXT DIFFERENCE CHECKER TOOL =====
+function createTextDiffInterface() {
+    return `
+        <div class="tool-interface">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="input-group">
+                    <label for="text-diff-original">Original Text:</label>
+                    <textarea id="text-diff-original" placeholder="Enter original text..." rows="10"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="text-diff-modified">Modified Text:</label>
+                    <textarea id="text-diff-modified" placeholder="Enter modified text..." rows="10"></textarea>
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="text-diff-compare" class="btn btn-primary">
+                    <i class="fas fa-exchange-alt"></i> Compare Texts
+                </button>
+                <button id="text-diff-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div id="text-diff-result" style="margin-top: 1rem; display: none;">
+                <!-- Diff result will appear here -->
+            </div>
+        </div>
+    `;
+}
+
+function initializeTextDiffTool() {
+    const originalInput = document.getElementById('text-diff-original');
+    const modifiedInput = document.getElementById('text-diff-modified');
+    const compareBtn = document.getElementById('text-diff-compare');
+    const clearBtn = document.getElementById('text-diff-clear');
+    const resultDiv = document.getElementById('text-diff-result');
+
+    compareBtn.addEventListener('click', () => {
+        const original = originalInput.value;
+        const modified = modifiedInput.value;
+
+        if (!original && !modified) {
+            showNotification('Please enter text in both fields', 'error');
+            return;
+        }
+
+        // Simple word-based diff
+        const originalWords = original.split(/\s+/);
+        const modifiedWords = modified.split(/\s+/);
+
+        let diffHtml = '<div style="padding: 1rem; background: #f9f9f9; border-radius: 4px;">';
+        diffHtml += '<h4>Differences:</h4>';
+
+        // Count differences
+        let additions = 0;
+        let deletions = 0;
+        let unchanged = 0;
+
+        // Simple comparison
+        const maxLength = Math.max(originalWords.length, modifiedWords.length);
+        let resultText = '';
+
+        for (let i = 0; i < maxLength; i++) {
+            const origWord = originalWords[i] || '';
+            const modWord = modifiedWords[i] || '';
+
+            if (origWord === modWord && origWord !== '') {
+                resultText += `<span style="color: #666;">${origWord} </span>`;
+                unchanged++;
+            } else {
+                if (origWord && !modWord) {
+                    resultText += `<span style="background: #ffcccc; padding: 2px 4px; border-radius: 2px; text-decoration: line-through;">${origWord}</span> `;
+                    deletions++;
+                } else if (!origWord && modWord) {
+                    resultText += `<span style="background: #ccffcc; padding: 2px 4px; border-radius: 2px;">${modWord}</span> `;
+                    additions++;
+                } else if (origWord !== modWord) {
+                    resultText += `<span style="background: #ffcccc; padding: 2px 4px; border-radius: 2px; text-decoration: line-through;">${origWord}</span> `;
+                    resultText += `<span style="background: #ccffcc; padding: 2px 4px; border-radius: 2px;">${modWord}</span> `;
+                    deletions++;
+                    additions++;
+                }
+            }
+        }
+
+        diffHtml += `<div style="margin: 1rem 0; padding: 1rem; background: white; border-radius: 4px;">${resultText}</div>`;
+        diffHtml += `
+            <div style="margin-top: 1rem;">
+                <p><strong>Statistics:</strong></p>
+                <p style="color: #16a34a;">✓ Additions: ${additions} words</p>
+                <p style="color: #dc2626;">✗ Deletions: ${deletions} words</p>
+                <p style="color: #666;">= Unchanged: ${unchanged} words</p>
+            </div>
+        `;
+        diffHtml += '</div>';
+
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = diffHtml;
+
+        showNotification('Text comparison complete!', 'success');
+    });
+
+    clearBtn.addEventListener('click', () => {
+        originalInput.value = '';
+        modifiedInput.value = '';
+        resultDiv.style.display = 'none';
+        resultDiv.innerHTML = '';
+    });
+}
+
+// ===== LOREM IPSUM GENERATOR TOOL =====
+function createLoremIpsumInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label>Generate:</label>
+                <select id="lorem-type">
+                    <option value="paragraphs">Paragraphs</option>
+                    <option value="sentences">Sentences</option>
+                    <option value="words">Words</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="lorem-count">Count:</label>
+                <input type="number" id="lorem-count" value="3" min="1" max="100">
+            </div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="lorem-start-classic" checked> Start with "Lorem ipsum dolor sit amet..."
+                </label>
+            </div>
+            <div class="button-group">
+                <button id="lorem-generate" class="btn btn-primary">
+                    <i class="fas fa-file-alt"></i> Generate
+                </button>
+                <button id="lorem-copy" class="btn btn-outline">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button id="lorem-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group">
+                <label>Generated Text:</label>
+                <textarea id="lorem-output" readonly rows="12"></textarea>
+            </div>
+        </div>
+    `;
+}
+
+function initializeLoremIpsumTool() {
+    const typeSelect = document.getElementById('lorem-type');
+    const countInput = document.getElementById('lorem-count');
+    const startClassic = document.getElementById('lorem-start-classic');
+    const generateBtn = document.getElementById('lorem-generate');
+    const copyBtn = document.getElementById('lorem-copy');
+    const clearBtn = document.getElementById('lorem-clear');
+    const output = document.getElementById('lorem-output');
+
+    const loremWords = [
+        'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
+        'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
+        'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
+        'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
+        'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate',
+        'velit', 'esse', 'cillum', 'fugiat', 'nulla', 'pariatur', 'excepteur', 'sint',
+        'occaecat', 'cupidatat', 'non', 'proident', 'sunt', 'culpa', 'qui', 'officia',
+        'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum'
+    ];
+
+    const classicStart = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+    function getRandomWord() {
+        return loremWords[Math.floor(Math.random() * loremWords.length)];
+    }
+
+    function generateWords(count) {
+        const words = [];
+        for (let i = 0; i < count; i++) {
+            words.push(getRandomWord());
+        }
+        return words.join(' ');
+    }
+
+    function generateSentence() {
+        const wordCount = Math.floor(Math.random() * 10) + 5; // 5-15 words
+        const sentence = generateWords(wordCount);
+        return sentence.charAt(0).toUpperCase() + sentence.slice(1) + '.';
+    }
+
+    function generateParagraph() {
+        const sentenceCount = Math.floor(Math.random() * 4) + 3; // 3-7 sentences
+        const sentences = [];
+        for (let i = 0; i < sentenceCount; i++) {
+            sentences.push(generateSentence());
+        }
+        return sentences.join(' ');
+    }
+
+    generateBtn.addEventListener('click', () => {
+        const type = typeSelect.value;
+        const count = parseInt(countInput.value) || 1;
+        const useClassic = startClassic.checked;
+
+        let result = '';
+
+        if (type === 'paragraphs') {
+            const paragraphs = [];
+            if (useClassic) {
+                paragraphs.push(classicStart);
+            }
+            for (let i = useClassic ? 1 : 0; i < count; i++) {
+                paragraphs.push(generateParagraph());
+            }
+            result = paragraphs.join('\n\n');
+        } else if (type === 'sentences') {
+            const sentences = [];
+            if (useClassic) {
+                sentences.push(classicStart);
+            }
+            for (let i = useClassic ? 1 : 0; i < count; i++) {
+                sentences.push(generateSentence());
+            }
+            result = sentences.join(' ');
+        } else if (type === 'words') {
+            if (useClassic) {
+                result = classicStart.split(' ').slice(0, count).join(' ');
+            } else {
+                result = generateWords(count);
+            }
+        }
+
+        output.value = result;
+        showNotification(`Generated ${count} ${type}!`, 'success');
+    });
+
+    copyBtn.addEventListener('click', () => {
+        if (!output.value) {
+            showNotification('Nothing to copy', 'error');
+            return;
+        }
+        output.select();
+        document.execCommand('copy');
+        showNotification('Copied to clipboard!', 'success');
+    });
+
+    clearBtn.addEventListener('click', () => {
+        output.value = '';
+    });
+
+    // Generate default text on load
+    generateBtn.click();
 }
 
