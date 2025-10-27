@@ -318,6 +318,119 @@ const toolsDatabase = {
             stats: { users: "35k+", rating: "4.7" }
         }
     ],
+
+    calculators: [
+        {
+            name: "Loan Calculator",
+            description: "Calculate monthly loan payments, total interest, and amortization schedule for any loan amount and term.",
+            category: "Calculators",
+            tags: ["Loan", "Finance", "Payment", "Interest", "Calculator"],
+            url: "#loan-calculator-tool",
+            logo: "💰",
+            type: "internal",
+            featured: true,
+            stats: { users: "250k+", rating: "4.9" }
+        },
+        {
+            name: "Mortgage Calculator",
+            description: "Calculate mortgage payments, compare rates, and see amortization schedules with taxes and insurance.",
+            category: "Calculators",
+            tags: ["Mortgage", "Home Loan", "Real Estate", "Finance", "Calculator"],
+            url: "#mortgage-calculator-tool",
+            logo: "🏠",
+            type: "internal",
+            featured: true,
+            stats: { users: "300k+", rating: "4.9" }
+        },
+        {
+            name: "BMI Calculator",
+            description: "Calculate your Body Mass Index (BMI) and get health insights based on height and weight.",
+            category: "Calculators",
+            tags: ["BMI", "Health", "Fitness", "Weight", "Calculator"],
+            url: "#bmi-calculator-tool",
+            logo: "⚕️",
+            type: "internal",
+            featured: true,
+            stats: { users: "500k+", rating: "4.8" }
+        },
+        {
+            name: "Calorie Calculator",
+            description: "Calculate your daily calorie needs based on age, gender, activity level, and fitness goals.",
+            category: "Calculators",
+            tags: ["Calorie", "Health", "Fitness", "Diet", "Calculator"],
+            url: "#calorie-calculator-tool",
+            logo: "🍎",
+            type: "internal",
+            featured: true,
+            stats: { users: "450k+", rating: "4.9" }
+        },
+        {
+            name: "Compound Interest Calculator",
+            description: "Calculate compound interest and see how your investments grow over time with regular contributions.",
+            category: "Calculators",
+            tags: ["Interest", "Investment", "Finance", "Savings", "Calculator"],
+            url: "#compound-interest-calculator-tool",
+            logo: "📈",
+            type: "internal",
+            featured: true,
+            stats: { users: "200k+", rating: "4.8" }
+        },
+        {
+            name: "Age Calculator",
+            description: "Calculate exact age in years, months, days, and even hours from your birth date.",
+            category: "Calculators",
+            tags: ["Age", "Date", "Time", "Birthday", "Calculator"],
+            url: "#age-calculator-tool",
+            logo: "🎂",
+            type: "internal",
+            featured: false,
+            stats: { users: "350k+", rating: "4.7" }
+        },
+        {
+            name: "Tip Calculator",
+            description: "Calculate tip amount and split bills easily for restaurants and services.",
+            category: "Calculators",
+            tags: ["Tip", "Restaurant", "Bill", "Split", "Calculator"],
+            url: "#tip-calculator-tool",
+            logo: "🧾",
+            type: "internal",
+            featured: false,
+            stats: { users: "180k+", rating: "4.8" }
+        },
+        {
+            name: "Word Counter",
+            description: "Count words, characters, sentences, and paragraphs in your text instantly with detailed statistics.",
+            category: "Calculators",
+            tags: ["Word Count", "Character Count", "Text", "Writing", "Tool"],
+            url: "#word-counter-tool",
+            logo: "📝",
+            type: "internal",
+            featured: true,
+            stats: { users: "400k+", rating: "4.9" }
+        },
+        {
+            name: "Password Generator",
+            description: "Generate strong, secure, random passwords with customizable length and character options.",
+            category: "Calculators",
+            tags: ["Password", "Security", "Generator", "Random", "Tool"],
+            url: "#password-generator-tool",
+            logo: "🔐",
+            type: "internal",
+            featured: true,
+            stats: { users: "220k+", rating: "4.9" }
+        },
+        {
+            name: "QR Code Generator",
+            description: "Create custom QR codes for URLs, text, WiFi, and more with instant download options.",
+            category: "Calculators",
+            tags: ["QR Code", "Generator", "Barcode", "Link", "Tool"],
+            url: "#qr-generator-tool",
+            logo: "📱",
+            type: "internal",
+            featured: true,
+            stats: { users: "280k+", rating: "4.9" }
+        }
+    ],
     
     ui: [
         {
@@ -1076,9 +1189,13 @@ function updateCategoryDisplay(category) {
         json: {
             title: "JSON Tools",
             subtitle: "Validate, beautify, and format JSON data with professional tools"
+        },
+        calculators: {
+            title: "Calculators & Utilities",
+            subtitle: "Financial, health, and productivity calculators for everyone"
         }
     };
-    
+
     const info = categoryInfo[category];
     if (collectionTitle && info) {
         collectionTitle.textContent = info.title;
@@ -1336,7 +1453,7 @@ function openInternalTool(toolId) {
             content: createJWTToolInterface()
         },
         base64: {
-            title: 'Base64 Encoder/Decoder', 
+            title: 'Base64 Encoder/Decoder',
             content: createBase64ToolInterface()
         },
         url: {
@@ -1354,6 +1471,46 @@ function openInternalTool(toolId) {
         json: {
             title: 'JSON Validator & Beautifier',
             content: createJSONToolInterface()
+        },
+        'loan-calculator': {
+            title: 'Loan Calculator',
+            content: createLoanCalculatorInterface()
+        },
+        'mortgage-calculator': {
+            title: 'Mortgage Calculator',
+            content: createMortgageCalculatorInterface()
+        },
+        'bmi-calculator': {
+            title: 'BMI Calculator',
+            content: createBMICalculatorInterface()
+        },
+        'calorie-calculator': {
+            title: 'Calorie Calculator',
+            content: createCalorieCalculatorInterface()
+        },
+        'compound-interest-calculator': {
+            title: 'Compound Interest Calculator',
+            content: createCompoundInterestCalculatorInterface()
+        },
+        'age-calculator': {
+            title: 'Age Calculator',
+            content: createAgeCalculatorInterface()
+        },
+        'tip-calculator': {
+            title: 'Tip Calculator',
+            content: createTipCalculatorInterface()
+        },
+        'word-counter': {
+            title: 'Word Counter',
+            content: createWordCounterInterface()
+        },
+        'password-generator': {
+            title: 'Password Generator',
+            content: createPasswordGeneratorInterface()
+        },
+        'qr-generator': {
+            title: 'QR Code Generator',
+            content: createQRGeneratorInterface()
         }
     };
     
@@ -1725,6 +1882,36 @@ function initializeToolFunctionality(toolId) {
             break;
         case 'json':
             initializeJSONTool();
+            break;
+        case 'loan-calculator':
+            initializeLoanCalculatorTool();
+            break;
+        case 'mortgage-calculator':
+            initializeMortgageCalculatorTool();
+            break;
+        case 'bmi-calculator':
+            initializeBMICalculatorTool();
+            break;
+        case 'calorie-calculator':
+            initializeCalorieCalculatorTool();
+            break;
+        case 'compound-interest-calculator':
+            initializeCompoundInterestCalculatorTool();
+            break;
+        case 'age-calculator':
+            initializeAgeCalculatorTool();
+            break;
+        case 'tip-calculator':
+            initializeTipCalculatorTool();
+            break;
+        case 'word-counter':
+            initializeWordCounterTool();
+            break;
+        case 'password-generator':
+            initializePasswordGeneratorTool();
+            break;
+        case 'qr-generator':
+            initializeQRGeneratorTool();
             break;
     }
 }
@@ -2873,3 +3060,911 @@ function scrollToTop() {
         behavior: 'smooth'
     });
 }
+
+// ===== NEW GENERAL PURPOSE TOOLS =====
+
+// ===== LOAN CALCULATOR TOOL =====
+function createLoanCalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="loan-amount">Loan Amount ($):</label>
+                <input type="number" id="loan-amount" placeholder="e.g., 20000" min="0" step="1000">
+            </div>
+            <div class="input-group">
+                <label for="loan-rate">Annual Interest Rate (%):</label>
+                <input type="number" id="loan-rate" placeholder="e.g., 5.5" min="0" max="100" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="loan-term">Loan Term (years):</label>
+                <input type="number" id="loan-term" placeholder="e.g., 5" min="1" max="50" step="1">
+            </div>
+            <div class="button-group">
+                <button id="loan-calculate" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Calculate Payment
+                </button>
+                <button id="loan-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="loan-results" style="display: none;">
+                <h4>Results</h4>
+                <div class="result-item">
+                    <strong>Monthly Payment:</strong>
+                    <span id="loan-monthly-payment"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Interest:</strong>
+                    <span id="loan-total-interest"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Amount:</strong>
+                    <span id="loan-total-amount"></span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeLoanCalculatorTool() {
+    const loanAmount = document.getElementById('loan-amount');
+    const loanRate = document.getElementById('loan-rate');
+    const loanTerm = document.getElementById('loan-term');
+    const calculateBtn = document.getElementById('loan-calculate');
+    const clearBtn = document.getElementById('loan-clear');
+    const results = document.getElementById('loan-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const amount = parseFloat(loanAmount.value);
+        const rate = parseFloat(loanRate.value) / 100 / 12;
+        const term = parseFloat(loanTerm.value) * 12;
+        
+        if (!amount || !loanRate.value || !loanTerm.value) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+        
+        const monthlyPayment = (amount * rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1);
+        const totalAmount = monthlyPayment * term;
+        const totalInterest = totalAmount - amount;
+        
+        document.getElementById('loan-monthly-payment').textContent = '$' + monthlyPayment.toFixed(2);
+        document.getElementById('loan-total-interest').textContent = '$' + totalInterest.toFixed(2);
+        document.getElementById('loan-total-amount').textContent = '$' + totalAmount.toFixed(2);
+        results.style.display = 'block';
+        showNotification('Loan calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        loanAmount.value = '';
+        loanRate.value = '';
+        loanTerm.value = '';
+        results.style.display = 'none';
+    });
+}
+
+// ===== MORTGAGE CALCULATOR TOOL =====
+function createMortgageCalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="mortgage-amount">Home Price ($):</label>
+                <input type="number" id="mortgage-amount" placeholder="e.g., 300000" min="0" step="10000">
+            </div>
+            <div class="input-group">
+                <label for="mortgage-down">Down Payment ($):</label>
+                <input type="number" id="mortgage-down" placeholder="e.g., 60000" min="0" step="5000">
+            </div>
+            <div class="input-group">
+                <label for="mortgage-rate">Interest Rate (%):</label>
+                <input type="number" id="mortgage-rate" placeholder="e.g., 3.5" min="0" max="100" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="mortgage-term">Loan Term (years):</label>
+                <input type="number" id="mortgage-term" placeholder="e.g., 30" min="1" max="50" step="1">
+            </div>
+            <div class="button-group">
+                <button id="mortgage-calculate" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Calculate Mortgage
+                </button>
+                <button id="mortgage-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="mortgage-results" style="display: none;">
+                <h4>Results</h4>
+                <div class="result-item">
+                    <strong>Loan Amount:</strong>
+                    <span id="mortgage-loan-amount"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Monthly Payment:</strong>
+                    <span id="mortgage-monthly-payment"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Interest:</strong>
+                    <span id="mortgage-total-interest"></span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeMortgageCalculatorTool() {
+    const homePrice = document.getElementById('mortgage-amount');
+    const downPayment = document.getElementById('mortgage-down');
+    const interestRate = document.getElementById('mortgage-rate');
+    const loanTerm = document.getElementById('mortgage-term');
+    const calculateBtn = document.getElementById('mortgage-calculate');
+    const clearBtn = document.getElementById('mortgage-clear');
+    const results = document.getElementById('mortgage-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const price = parseFloat(homePrice.value);
+        const down = parseFloat(downPayment.value) || 0;
+        const rate = parseFloat(interestRate.value) / 100 / 12;
+        const term = parseFloat(loanTerm.value) * 12;
+        
+        if (!price || !interestRate.value || !loanTerm.value) {
+            showNotification('Please fill in required fields', 'error');
+            return;
+        }
+        
+        const loanAmount = price - down;
+        const monthlyPayment = (loanAmount * rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1);
+        const totalAmount = monthlyPayment * term;
+        const totalInterest = totalAmount - loanAmount;
+        
+        document.getElementById('mortgage-loan-amount').textContent = '$' + loanAmount.toFixed(2);
+        document.getElementById('mortgage-monthly-payment').textContent = '$' + monthlyPayment.toFixed(2);
+        document.getElementById('mortgage-total-interest').textContent = '$' + totalInterest.toFixed(2);
+        results.style.display = 'block';
+        showNotification('Mortgage calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        homePrice.value = '';
+        downPayment.value = '';
+        interestRate.value = '';
+        loanTerm.value = '';
+        results.style.display = 'none';
+    });
+}
+
+// ===== BMI CALCULATOR TOOL =====
+function createBMICalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="bmi-weight">Weight (lbs):</label>
+                <input type="number" id="bmi-weight" placeholder="e.g., 150" min="1" step="1">
+            </div>
+            <div class="input-group">
+                <label for="bmi-height-ft">Height (feet):</label>
+                <input type="number" id="bmi-height-ft" placeholder="e.g., 5" min="1" max="8" step="1">
+            </div>
+            <div class="input-group">
+                <label for="bmi-height-in">Height (inches):</label>
+                <input type="number" id="bmi-height-in" placeholder="e.g., 8" min="0" max="11" step="1">
+            </div>
+            <div class="button-group">
+                <button id="bmi-calculate" class="btn btn-primary">
+                    <i class="fas fa-heartbeat"></i> Calculate BMI
+                </button>
+                <button id="bmi-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="bmi-results" style="display: none;">
+                <h4>Results</h4>
+                <div class="result-item">
+                    <strong>Your BMI:</strong>
+                    <span id="bmi-value"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Category:</strong>
+                    <span id="bmi-category"></span>
+                </div>
+                <div class="result-item" id="bmi-interpretation"></div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeBMICalculatorTool() {
+    const weight = document.getElementById('bmi-weight');
+    const heightFt = document.getElementById('bmi-height-ft');
+    const heightIn = document.getElementById('bmi-height-in');
+    const calculateBtn = document.getElementById('bmi-calculate');
+    const clearBtn = document.getElementById('bmi-clear');
+    const results = document.getElementById('bmi-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const w = parseFloat(weight.value);
+        const ft = parseFloat(heightFt.value) || 0;
+        const inches = parseFloat(heightIn.value) || 0;
+        
+        if (!w || (!ft && !inches)) {
+            showNotification('Please enter your weight and height', 'error');
+            return;
+        }
+        
+        const totalInches = (ft * 12) + inches;
+        const bmi = (w / (totalInches * totalInches)) * 703;
+        
+        let category, interpretation;
+        if (bmi < 18.5) {
+            category = 'Underweight';
+            interpretation = 'You may need to gain weight. Consult a healthcare provider.';
+        } else if (bmi < 25) {
+            category = 'Normal weight';
+            interpretation = 'You have a healthy weight. Keep it up!';
+        } else if (bmi < 30) {
+            category = 'Overweight';
+            interpretation = 'You may benefit from losing some weight.';
+        } else {
+            category = 'Obese';
+            interpretation = 'Consider consulting a healthcare provider for weight management.';
+        }
+        
+        document.getElementById('bmi-value').textContent = bmi.toFixed(1);
+        document.getElementById('bmi-category').textContent = category;
+        document.getElementById('bmi-interpretation').textContent = interpretation;
+        results.style.display = 'block';
+        showNotification('BMI calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        weight.value = '';
+        heightFt.value = '';
+        heightIn.value = '';
+        results.style.display = 'none';
+    });
+}
+
+// ===== CALORIE CALCULATOR TOOL =====
+function createCalorieCalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="cal-age">Age:</label>
+                <input type="number" id="cal-age" placeholder="e.g., 30" min="1" max="120">
+            </div>
+            <div class="input-group">
+                <label for="cal-gender">Gender:</label>
+                <select id="cal-gender">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="cal-weight">Weight (lbs):</label>
+                <input type="number" id="cal-weight" placeholder="e.g., 150" min="1">
+            </div>
+            <div class="input-group">
+                <label for="cal-height">Height (inches):</label>
+                <input type="number" id="cal-height" placeholder="e.g., 68" min="1">
+            </div>
+            <div class="input-group">
+                <label for="cal-activity">Activity Level:</label>
+                <select id="cal-activity">
+                    <option value="1.2">Sedentary (little to no exercise)</option>
+                    <option value="1.375">Lightly active (1-3 days/week)</option>
+                    <option value="1.55" selected>Moderately active (3-5 days/week)</option>
+                    <option value="1.725">Very active (6-7 days/week)</option>
+                    <option value="1.9">Extremely active (athlete)</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button id="cal-calculate" class="btn btn-primary">
+                    <i class="fas fa-apple-alt"></i> Calculate Calories
+                </button>
+                <button id="cal-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="cal-results" style="display: none;">
+                <h4>Daily Calorie Needs</h4>
+                <div class="result-item">
+                    <strong>Maintain Weight:</strong>
+                    <span id="cal-maintain"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Mild Weight Loss:</strong>
+                    <span id="cal-loss-mild"></span> (0.5 lb/week)
+                </div>
+                <div class="result-item">
+                    <strong>Weight Loss:</strong>
+                    <span id="cal-loss"></span> (1 lb/week)
+                </div>
+                <div class="result-item">
+                    <strong>Weight Gain:</strong>
+                    <span id="cal-gain"></span> (1 lb/week)
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeCalorieCalculatorTool() {
+    const age = document.getElementById('cal-age');
+    const gender = document.getElementById('cal-gender');
+    const weight = document.getElementById('cal-weight');
+    const height = document.getElementById('cal-height');
+    const activity = document.getElementById('cal-activity');
+    const calculateBtn = document.getElementById('cal-calculate');
+    const clearBtn = document.getElementById('cal-clear');
+    const results = document.getElementById('cal-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const a = parseFloat(age.value);
+        const g = gender.value;
+        const w = parseFloat(weight.value);
+        const h = parseFloat(height.value);
+        const activityLevel = parseFloat(activity.value);
+        
+        if (!a || !g || !w || !h) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+        
+        // Convert to metric
+        const weightKg = w * 0.453592;
+        const heightCm = h * 2.54;
+        
+        // Harris-Benedict Equation
+        let bmr;
+        if (g === 'male') {
+            bmr = 88.362 + (13.397 * weightKg) + (4.799 * heightCm) - (5.677 * a);
+        } else {
+            bmr = 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * a);
+        }
+        
+        const tdee = bmr * activityLevel;
+        
+        document.getElementById('cal-maintain').textContent = Math.round(tdee) + ' calories/day';
+        document.getElementById('cal-loss-mild').textContent = Math.round(tdee - 250) + ' calories/day';
+        document.getElementById('cal-loss').textContent = Math.round(tdee - 500) + ' calories/day';
+        document.getElementById('cal-gain').textContent = Math.round(tdee + 500) + ' calories/day';
+        results.style.display = 'block';
+        showNotification('Calorie needs calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        age.value = '';
+        gender.value = '';
+        weight.value = '';
+        height.value = '';
+        results.style.display = 'none';
+    });
+}
+
+// ===== COMPOUND INTEREST CALCULATOR TOOL =====
+function createCompoundInterestCalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="ci-principal">Initial Investment ($):</label>
+                <input type="number" id="ci-principal" placeholder="e.g., 10000" min="0" step="100">
+            </div>
+            <div class="input-group">
+                <label for="ci-contribution">Monthly Contribution ($):</label>
+                <input type="number" id="ci-contribution" placeholder="e.g., 200" min="0" step="10">
+            </div>
+            <div class="input-group">
+                <label for="ci-rate">Annual Interest Rate (%):</label>
+                <input type="number" id="ci-rate" placeholder="e.g., 7" min="0" max="100" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="ci-years">Investment Period (years):</label>
+                <input type="number" id="ci-years" placeholder="e.g., 20" min="1" max="100" step="1">
+            </div>
+            <div class="button-group">
+                <button id="ci-calculate" class="btn btn-primary">
+                    <i class="fas fa-chart-line"></i> Calculate Growth
+                </button>
+                <button id="ci-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="ci-results" style="display: none;">
+                <h4>Investment Growth</h4>
+                <div class="result-item">
+                    <strong>Future Value:</strong>
+                    <span id="ci-future-value"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Contributions:</strong>
+                    <span id="ci-contributions"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Interest Earned:</strong>
+                    <span id="ci-interest"></span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeCompoundInterestCalculatorTool() {
+    const principal = document.getElementById('ci-principal');
+    const contribution = document.getElementById('ci-contribution');
+    const rate = document.getElementById('ci-rate');
+    const years = document.getElementById('ci-years');
+    const calculateBtn = document.getElementById('ci-calculate');
+    const clearBtn = document.getElementById('ci-clear');
+    const results = document.getElementById('ci-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const p = parseFloat(principal.value) || 0;
+        const pmt = parseFloat(contribution.value) || 0;
+        const r = parseFloat(rate.value) / 100 / 12;
+        const n = parseFloat(years.value) * 12;
+        
+        if ((!p && !pmt) || !rate.value || !years.value) {
+            showNotification('Please fill in the required fields', 'error');
+            return;
+        }
+        
+        // Future value of principal
+        const fvPrincipal = p * Math.pow(1 + r, n);
+        
+        // Future value of monthly contributions
+        const fvContributions = pmt * ((Math.pow(1 + r, n) - 1) / r);
+        
+        const futureValue = fvPrincipal + fvContributions;
+        const totalContributions = p + (pmt * n);
+        const interestEarned = futureValue - totalContributions;
+        
+        document.getElementById('ci-future-value').textContent = '$' + futureValue.toFixed(2);
+        document.getElementById('ci-contributions').textContent = '$' + totalContributions.toFixed(2);
+        document.getElementById('ci-interest').textContent = '$' + interestEarned.toFixed(2);
+        results.style.display = 'block';
+        showNotification('Investment growth calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        principal.value = '';
+        contribution.value = '';
+        rate.value = '';
+        years.value = '';
+        results.style.display = 'none';
+    });
+}
+
+// ===== AGE CALCULATOR TOOL =====
+function createAgeCalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="age-birth">Birth Date:</label>
+                <input type="date" id="age-birth">
+            </div>
+            <div class="button-group">
+                <button id="age-calculate" class="btn btn-primary">
+                    <i class="fas fa-birthday-cake"></i> Calculate Age
+                </button>
+                <button id="age-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="age-results" style="display: none;">
+                <h4>Your Age</h4>
+                <div class="result-item">
+                    <strong>Age:</strong>
+                    <span id="age-years"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Months:</strong>
+                    <span id="age-months"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Days:</strong>
+                    <span id="age-days"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Hours:</strong>
+                    <span id="age-hours"></span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeAgeCalculatorTool() {
+    const birthDate = document.getElementById('age-birth');
+    const calculateBtn = document.getElementById('age-calculate');
+    const clearBtn = document.getElementById('age-clear');
+    const results = document.getElementById('age-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const birth = new Date(birthDate.value);
+        
+        if (!birthDate.value) {
+            showNotification('Please enter your birth date', 'error');
+            return;
+        }
+        
+        const now = new Date();
+        const diff = now - birth;
+        
+        const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        
+        const ageYears = now.getFullYear() - birth.getFullYear();
+        const ageMonths = now.getMonth() - birth.getMonth();
+        const ageDays = now.getDate() - birth.getDate();
+        
+        let displayYears = ageYears;
+        let displayMonths = ageMonths;
+        let displayDays = ageDays;
+        
+        if (displayDays < 0) {
+            displayMonths--;
+            displayDays += 30;
+        }
+        if (displayMonths < 0) {
+            displayYears--;
+            displayMonths += 12;
+        }
+        
+        document.getElementById('age-years').textContent = `${displayYears} years, ${displayMonths} months, ${displayDays} days`;
+        document.getElementById('age-months').textContent = months.toLocaleString() + ' months';
+        document.getElementById('age-days').textContent = days.toLocaleString() + ' days';
+        document.getElementById('age-hours').textContent = hours.toLocaleString() + ' hours';
+        results.style.display = 'block';
+        showNotification('Age calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        birthDate.value = '';
+        results.style.display = 'none';
+    });
+}
+
+// ===== TIP CALCULATOR TOOL =====
+function createTipCalculatorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="tip-bill">Bill Amount ($):</label>
+                <input type="number" id="tip-bill" placeholder="e.g., 50.00" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label for="tip-percent">Tip Percentage (%):</label>
+                <input type="number" id="tip-percent" placeholder="e.g., 18" min="0" max="100" step="1" value="18">
+            </div>
+            <div class="input-group">
+                <label for="tip-people">Split Between (people):</label>
+                <input type="number" id="tip-people" placeholder="e.g., 2" min="1" step="1" value="1">
+            </div>
+            <div class="button-group">
+                <button id="tip-calculate" class="btn btn-primary">
+                    <i class="fas fa-receipt"></i> Calculate Tip
+                </button>
+                <button id="tip-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="tip-results" style="display: none;">
+                <h4>Results</h4>
+                <div class="result-item">
+                    <strong>Tip Amount:</strong>
+                    <span id="tip-amount"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Bill:</strong>
+                    <span id="tip-total"></span>
+                </div>
+                <div class="result-item">
+                    <strong>Per Person:</strong>
+                    <span id="tip-per-person"></span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeTipCalculatorTool() {
+    const billAmount = document.getElementById('tip-bill');
+    const tipPercent = document.getElementById('tip-percent');
+    const numPeople = document.getElementById('tip-people');
+    const calculateBtn = document.getElementById('tip-calculate');
+    const clearBtn = document.getElementById('tip-clear');
+    const results = document.getElementById('tip-results');
+    
+    calculateBtn.addEventListener('click', () => {
+        const bill = parseFloat(billAmount.value);
+        const percent = parseFloat(tipPercent.value);
+        const people = parseInt(numPeople.value) || 1;
+        
+        if (!bill || !percent) {
+            showNotification('Please enter bill amount and tip percentage', 'error');
+            return;
+        }
+        
+        const tipAmount = bill * (percent / 100);
+        const total = bill + tipAmount;
+        const perPerson = total / people;
+        
+        document.getElementById('tip-amount').textContent = '$' + tipAmount.toFixed(2);
+        document.getElementById('tip-total').textContent = '$' + total.toFixed(2);
+        document.getElementById('tip-per-person').textContent = '$' + perPerson.toFixed(2);
+        results.style.display = 'block';
+        showNotification('Tip calculated successfully', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        billAmount.value = '';
+        tipPercent.value = '18';
+        numPeople.value = '1';
+        results.style.display = 'none';
+    });
+}
+
+// ===== WORD COUNTER TOOL =====
+function createWordCounterInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="word-text">Enter or Paste Your Text:</label>
+                <textarea id="word-text" placeholder="Type or paste your text here..." rows="10"></textarea>
+            </div>
+            <div class="button-group">
+                <button id="word-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="word-results">
+                <h4>Statistics</h4>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <strong>Words:</strong>
+                        <span id="word-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Characters:</strong>
+                        <span id="char-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Characters (no spaces):</strong>
+                        <span id="char-no-space">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Sentences:</strong>
+                        <span id="sentence-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Paragraphs:</strong>
+                        <span id="paragraph-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Reading Time:</strong>
+                        <span id="reading-time">0 min</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializeWordCounterTool() {
+    const textArea = document.getElementById('word-text');
+    const clearBtn = document.getElementById('word-clear');
+    
+    function updateStats() {
+        const text = textArea.value;
+        
+        const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        const chars = text.length;
+        const charsNoSpace = text.replace(/\s/g, '').length;
+        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+        const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0).length;
+        const readingTime = Math.ceil(words / 200);
+        
+        document.getElementById('word-count').textContent = words;
+        document.getElementById('char-count').textContent = chars;
+        document.getElementById('char-no-space').textContent = charsNoSpace;
+        document.getElementById('sentence-count').textContent = sentences;
+        document.getElementById('paragraph-count').textContent = paragraphs;
+        document.getElementById('reading-time').textContent = readingTime + ' min';
+    }
+    
+    textArea.addEventListener('input', updateStats);
+    
+    clearBtn.addEventListener('click', () => {
+        textArea.value = '';
+        updateStats();
+    });
+}
+
+// ===== PASSWORD GENERATOR TOOL =====
+function createPasswordGeneratorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="pass-length">Password Length:</label>
+                <input type="number" id="pass-length" value="16" min="4" max="128" step="1">
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="pass-uppercase" checked> Uppercase Letters (A-Z)
+                </label>
+                <label>
+                    <input type="checkbox" id="pass-lowercase" checked> Lowercase Letters (a-z)
+                </label>
+                <label>
+                    <input type="checkbox" id="pass-numbers" checked> Numbers (0-9)
+                </label>
+                <label>
+                    <input type="checkbox" id="pass-symbols" checked> Symbols (!@#$%^&*)
+                </label>
+            </div>
+            <div class="button-group">
+                <button id="pass-generate" class="btn btn-primary">
+                    <i class="fas fa-key"></i> Generate Password
+                </button>
+                <button id="pass-copy" class="btn btn-outline">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            <div class="output-group">
+                <label for="pass-output">Generated Password:</label>
+                <textarea id="pass-output" readonly rows="2" style="font-family: monospace;"></textarea>
+            </div>
+        </div>
+    `;
+}
+
+function initializePasswordGeneratorTool() {
+    const length = document.getElementById('pass-length');
+    const uppercase = document.getElementById('pass-uppercase');
+    const lowercase = document.getElementById('pass-lowercase');
+    const numbers = document.getElementById('pass-numbers');
+    const symbols = document.getElementById('pass-symbols');
+    const generateBtn = document.getElementById('pass-generate');
+    const copyBtn = document.getElementById('pass-copy');
+    const output = document.getElementById('pass-output');
+    
+    function generatePassword() {
+        const len = parseInt(length.value);
+        let chars = '';
+        
+        if (uppercase.checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        if (lowercase.checked) chars += 'abcdefghijklmnopqrstuvwxyz';
+        if (numbers.checked) chars += '0123456789';
+        if (symbols.checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+        
+        if (chars.length === 0) {
+            showNotification('Please select at least one character type', 'error');
+            return;
+        }
+        
+        let password = '';
+        const array = new Uint32Array(len);
+        crypto.getRandomValues(array);
+        
+        for (let i = 0; i < len; i++) {
+            password += chars[array[i] % chars.length];
+        }
+        
+        output.value = password;
+        showNotification('Password generated successfully', 'success');
+    }
+    
+    generateBtn.addEventListener('click', generatePassword);
+    
+    copyBtn.addEventListener('click', () => {
+        if (!output.value) {
+            showNotification('Please generate a password first', 'error');
+            return;
+        }
+        
+        navigator.clipboard.writeText(output.value).then(() => {
+            showNotification('Password copied to clipboard', 'success');
+        }).catch(() => {
+            showNotification('Failed to copy password', 'error');
+        });
+    });
+    
+    // Generate password on load
+    generatePassword();
+}
+
+// ===== QR CODE GENERATOR TOOL =====
+function createQRGeneratorInterface() {
+    return `
+        <div class="tool-interface">
+            <div class="input-group">
+                <label for="qr-text">Text or URL:</label>
+                <textarea id="qr-text" placeholder="Enter text or URL to encode..." rows="3"></textarea>
+            </div>
+            <div class="button-group">
+                <button id="qr-generate" class="btn btn-primary">
+                    <i class="fas fa-qrcode"></i> Generate QR Code
+                </button>
+                <button id="qr-download" class="btn btn-outline">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button id="qr-clear" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="output-group" id="qr-output" style="display: none; text-align: center;">
+                <canvas id="qr-canvas"></canvas>
+            </div>
+            <div style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 4px;">
+                <strong>Note:</strong> QR code generation requires the QRCode.js library. For now, this is a placeholder. 
+                To enable full functionality, include: <code>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"&gt;&lt;/script&gt;</code>
+            </div>
+        </div>
+    `;
+}
+
+function initializeQRGeneratorTool() {
+    const textInput = document.getElementById('qr-text');
+    const generateBtn = document.getElementById('qr-generate');
+    const downloadBtn = document.getElementById('qr-download');
+    const clearBtn = document.getElementById('qr-clear');
+    const output = document.getElementById('qr-output');
+    const canvas = document.getElementById('qr-canvas');
+    
+    generateBtn.addEventListener('click', () => {
+        const text = textInput.value.trim();
+        
+        if (!text) {
+            showNotification('Please enter text or URL', 'error');
+            return;
+        }
+        
+        // Simple placeholder - in production, use QRCode.js library
+        const ctx = canvas.getContext('2d');
+        canvas.width = 256;
+        canvas.height = 256;
+        
+        // Draw a simple pattern as placeholder
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 256, 256);
+        ctx.fillStyle = 'black';
+        
+        // Draw simple QR-like pattern
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if ((i + j) % 2 === 0) {
+                    ctx.fillRect(i * 32, j * 32, 32, 32);
+                }
+            }
+        }
+        
+        ctx.font = '12px Arial';
+        ctx.fillStyle = 'blue';
+        ctx.textAlign = 'center';
+        ctx.fillText('QR Code Placeholder', 128, 128);
+        ctx.fillText('Include QRCode.js for real QR codes', 128, 145);
+        
+        output.style.display = 'block';
+        showNotification('QR code generated (placeholder)', 'info');
+    });
+    
+    downloadBtn.addEventListener('click', () => {
+        if (output.style.display === 'none') {
+            showNotification('Please generate a QR code first', 'error');
+            return;
+        }
+        
+        const link = document.createElement('a');
+        link.download = 'qrcode.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        showNotification('QR code downloaded', 'success');
+    });
+    
+    clearBtn.addEventListener('click', () => {
+        textInput.value = '';
+        output.style.display = 'none';
+    });
+}
+
