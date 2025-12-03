@@ -1,6 +1,6 @@
 # DevHub.sbs - Static Website Deployment
 
-Professional Nginx deployment for DevHub.sbs static website following industry best practices.
+Professional Nginx deployment for DevHub.sbs following industry best practices.
 
 ## Quick Start
 
@@ -32,12 +32,13 @@ Professional Nginx deployment for DevHub.sbs static website following industry b
 ```
 devhub.sbs/
 ├── nginx/
-│   └── devhub.conf          # Standard Nginx configuration
+│   └── devhub.conf          # Nginx configuration
 ├── scripts/
-│   └── setup-nginx.sh       # Automated setup script
-├── docs/                     # Your website files (deploy to /var/www/devhub.sbs/docs/)
-├── DEPLOYMENT.txt           # Complete deployment guide
-└── README.md               # This file
+│   └── setup-nginx.sh       # Deployment script
+├── docs/                     # Website files
+├── DEPLOYMENT.txt           # Complete guide
+├── QUICKSTART.txt           # 3-command reference
+└── README.md                # This file
 ```
 
 ## What Gets Deployed
