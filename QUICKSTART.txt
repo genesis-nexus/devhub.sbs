@@ -1,0 +1,51 @@
+================================================================================
+                    QUICKSTART - DevHub.sbs Deployment
+================================================================================
+
+DEPLOYMENT IN 3 COMMANDS
+-------------------------
+
+1. Copy setup script to your server:
+
+   scp scripts/setup-nginx.sh user@your-server:/tmp/
+
+2. SSH to server and run setup:
+
+   ssh user@your-server
+   sudo bash /tmp/setup-nginx.sh
+
+3. Access your website:
+
+   http://YOUR_SERVER_IP
+
+   (Get your IP with: hostname -I | awk '{print $1}')
+
+THAT'S IT!
+----------
+The script handles everything:
+  ✓ Nginx installation
+  ✓ Configuration
+  ✓ Firewall setup
+  ✓ Permissions
+  ✓ Service start
+
+VERIFY DEPLOYMENT
+-----------------
+sudo systemctl status nginx
+sudo nginx -t
+curl -I http://localhost
+
+DOCUMENTATION
+-------------
+Quick Start:     README.md
+Complete Guide:  DEPLOYMENT.txt
+Configuration:   nginx/devhub.conf
+
+SUPPORT
+-------
+If issues occur:
+  1. Check logs: sudo tail -50 /var/log/nginx/devhub-error.log
+  2. Test config: sudo nginx -t
+  3. See DEPLOYMENT.txt for troubleshooting
+
+================================================================================

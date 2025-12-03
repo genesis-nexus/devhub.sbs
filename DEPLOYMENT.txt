@@ -1,0 +1,263 @@
+================================================================================
+                    DevHub.sbs - Deployment Guide
+                    Static Site with Nginx on Ubuntu
+================================================================================
+
+OVERVIEW
+--------
+This guide explains how to deploy DevHub.sbs static website using Nginx
+following standard best practices.
+
+PREREQUISITES
+-------------
+1. Ubuntu Server 20.04 or newer
+2. Root or sudo access
+3. Website files located at: /var/www/devhub.sbs/docs/
+4. Port 80 accessible (firewall configured)
+
+FILE STRUCTURE ON SERVER
+------------------------
+/var/www/devhub.sbs/
+└── docs/                    # Your static website files
+    ├── index.html
+    ├── styles.css
+    ├── script.js
+    ├── blog/
+    └── ...
+
+DEPLOYMENT METHODS
+------------------
+
+Method 1: Using the Setup Script (Recommended)
+-----------------------------------------------
+The setup script automates the entire process following Nginx best practices.
+
+1. Copy the setup script to your server:
+
+   scp scripts/setup-nginx.sh user@your-server:/tmp/
+
+2. SSH to your server:
+
+   ssh user@your-server
+
+3. Run the setup script:
+
+   sudo bash /tmp/setup-nginx.sh
+
+4. Access your website:
+
+   http://YOUR_SERVER_IP
+
+Method 2: Manual Setup
+----------------------
+For those who prefer manual configuration:
+
+Step 1: Install Nginx
+
+   sudo apt update
+   sudo apt install nginx
+
+Step 2: Copy Nginx configuration
+
+   sudo cp nginx/devhub.conf /etc/nginx/sites-available/devhub.conf
+
+Step 3: Remove default site and enable yours
+
+   sudo rm /etc/nginx/sites-enabled/default
+   sudo ln -s /etc/nginx/sites-available/devhub.conf /etc/nginx/sites-enabled/
+
+Step 4: Set correct permissions
+
+   sudo chown -R www-data:www-data /var/www/devhub.sbs
+   sudo find /var/www/devhub.sbs/docs -type f -exec chmod 644 {} \;
+   sudo find /var/www/devhub.sbs/docs -type d -exec chmod 755 {} \;
+
+Step 5: Test and reload Nginx
+
+   sudo nginx -t
+   sudo systemctl reload nginx
+   sudo systemctl enable nginx
+
+Step 6: Configure firewall
+
+   sudo ufw allow 80/tcp
+
+NGINX CONFIGURATION DETAILS
+----------------------------
+Location: /etc/nginx/sites-available/devhub.conf
+
+Key Features:
+- default_server: Catches all requests (enables IP address access)
+- server_name _: Wildcard that matches any hostname/IP
+- root: /var/www/devhub.sbs/docs
+- Gzip compression enabled
+- Static asset caching (1 year)
+- Security headers included
+- Hidden files blocked
+
+IP ADDRESS ACCESS
+-----------------
+The configuration uses "server_name _;" which is Nginx's standard way
+to create a catch-all server block. This allows access via:
+
+- IP address:  http://YOUR_SERVER_IP
+- Domain name: http://devhub.sbs (when DNS configured)
+- Any hostname that points to this server
+
+VERIFICATION
+------------
+After deployment, verify everything works:
+
+1. Check Nginx is running:
+   sudo systemctl status nginx
+
+2. Test configuration:
+   sudo nginx -t
+
+3. Check if port 80 is listening:
+   sudo netstat -tulpn | grep :80
+
+4. Test from server itself:
+   curl -I http://localhost
+
+5. Get your server IP:
+   hostname -I | awk '{print $1}'
+
+6. Access from browser:
+   http://YOUR_SERVER_IP
+
+LOGS
+----
+Access Log:  /var/log/nginx/devhub-access.log
+Error Log:   /var/log/nginx/devhub-error.log
+
+View logs in real-time:
+   sudo tail -f /var/log/nginx/devhub-access.log
+   sudo tail -f /var/log/nginx/devhub-error.log
+
+COMMON COMMANDS
+---------------
+Test configuration:        sudo nginx -t
+Reload configuration:      sudo systemctl reload nginx
+Restart Nginx:             sudo systemctl restart nginx
+Check status:              sudo systemctl status nginx
+View error logs:           sudo tail -50 /var/log/nginx/devhub-error.log
+
+UPDATING WEBSITE CONTENT
+------------------------
+To update your website files:
+
+1. Upload new files to /var/www/devhub.sbs/docs/
+2. Ensure correct permissions (owned by www-data)
+3. No Nginx restart needed for static file changes
+
+FIREWALL CONFIGURATION
+----------------------
+Ubuntu (UFW):
+   sudo ufw allow 80/tcp
+   sudo ufw allow 443/tcp  # For future HTTPS
+
+Cloud Provider Firewalls:
+If using AWS, DigitalOcean, Google Cloud, or Azure, you must ALSO
+configure their firewall/security groups to allow HTTP (port 80).
+
+AWS:         EC2 → Security Groups → Inbound Rules → HTTP (80)
+DigitalOcean: Networking → Firewalls → Inbound Rules → HTTP (80)
+Google Cloud: VPC Network → Firewall Rules → tcp:80
+Azure:       Network Security Groups → Inbound Rules → HTTP (80)
+
+TROUBLESHOOTING
+---------------
+
+Issue: Cannot access website
+Solution:
+  1. Check Nginx is running: sudo systemctl status nginx
+  2. Check firewall: sudo ufw status
+  3. Check cloud provider firewall (if applicable)
+  4. Test locally: curl http://localhost
+
+Issue: 403 Forbidden
+Solution:
+  1. Check permissions: ls -la /var/www/devhub.sbs/docs/
+  2. Fix ownership: sudo chown -R www-data:www-data /var/www/devhub.sbs
+  3. Fix permissions: sudo chmod -R 755 /var/www/devhub.sbs/docs
+
+Issue: 502 Bad Gateway
+Solution:
+  1. Check Nginx config: sudo nginx -t
+  2. Check error logs: sudo tail -50 /var/log/nginx/devhub-error.log
+  3. Restart Nginx: sudo systemctl restart nginx
+
+Issue: Configuration test fails
+Solution:
+  1. Check syntax: sudo nginx -t
+  2. Review configuration: sudo cat /etc/nginx/sites-available/devhub.conf
+  3. Check for typos in file paths
+
+HTTPS/SSL (Optional - For Later)
+---------------------------------
+To add HTTPS with Let's Encrypt:
+
+1. Install Certbot:
+   sudo apt install certbot python3-certbot-nginx
+
+2. Obtain certificate:
+   sudo certbot --nginx -d devhub.sbs -d www.devhub.sbs
+
+3. Certbot will automatically update your Nginx configuration
+
+STANDARD NGINX STRUCTURE
+-------------------------
+This deployment follows standard Nginx conventions:
+
+/etc/nginx/
+├── nginx.conf                 # Main Nginx config (don't modify)
+├── sites-available/
+│   └── devhub.conf           # Your site config (inactive)
+└── sites-enabled/
+    └── devhub.conf           # Symlink to sites-available (active)
+
+/var/www/
+└── devhub.sbs/
+    └── docs/                 # Website files (document root)
+
+/var/log/nginx/
+├── devhub-access.log         # Access logs
+└── devhub-error.log          # Error logs
+
+BEST PRACTICES IMPLEMENTED
+---------------------------
+✓ Standard Nginx directory structure
+✓ Separate sites-available and sites-enabled
+✓ Proper file permissions (www-data:www-data)
+✓ Gzip compression enabled
+✓ Static asset caching
+✓ Security headers
+✓ Proper logging
+✓ Firewall configuration
+✓ Service management (systemd)
+
+NEXT STEPS
+----------
+After successful deployment:
+
+1. Test website thoroughly
+2. Configure DNS to point to your server IP
+3. Setup SSL/TLS with Let's Encrypt
+4. Configure log rotation (usually automatic)
+5. Setup monitoring (optional)
+6. Configure automated backups (optional)
+
+SUPPORT
+-------
+If you encounter issues:
+
+1. Check logs first: sudo tail -50 /var/log/nginx/devhub-error.log
+2. Verify configuration: sudo nginx -t
+3. Check Nginx status: sudo systemctl status nginx
+4. Review this guide
+5. Consult Nginx documentation: https://nginx.org/en/docs/
+
+================================================================================
+                          End of Deployment Guide
+================================================================================
