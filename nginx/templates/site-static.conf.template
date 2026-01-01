@@ -1,24 +1,26 @@
-# Nginx configuration for DevHub.sbs
-# Multi-site compatible configuration - specific domain binding
-# Place this file at: /etc/nginx/sites-available/devhub.conf
+# Nginx Site Configuration Template - Static Website
+# Template variables (replace when deploying):
+#   {{SITE_NAME}}     - Site identifier (e.g., devhub, mysite)
+#   {{DOMAIN}}        - Primary domain (e.g., devhub.sbs, example.com)
+#   {{DOMAIN_ALIASES}} - Additional domains/subdomains (space-separated, optional)
+#   {{DOC_ROOT}}      - Document root path (e.g., /var/www/devhub.sbs/docs)
+#
+# Place generated config at: /etc/nginx/sites-available/{{SITE_NAME}}.conf
 
 server {
     listen 80;
     listen [::]:80;
 
-    # Domain configuration - binds to specific domain only
-    # Add www subdomain and any other aliases as needed
-    server_name devhub.sbs www.devhub.sbs;
+    # Domain configuration
+    server_name {{DOMAIN}} {{DOMAIN_ALIASES}};
 
-    # Document root - where your static files are located
-    root /var/www/devhub.sbs/docs;
-
-    # Default index file
+    # Document root
+    root {{DOC_ROOT}};
     index index.html index.htm;
 
     # Logging (per-site logs)
-    access_log /var/log/nginx/devhub-access.log;
-    error_log /var/log/nginx/devhub-error.log;
+    access_log /var/log/nginx/{{SITE_NAME}}-access.log;
+    error_log /var/log/nginx/{{SITE_NAME}}-error.log;
 
     # Main location block - serve static files
     location / {
@@ -26,7 +28,7 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # Security: Deny access to hidden files (files starting with .)
+    # Security: Deny access to hidden files
     location ~ /\. {
         deny all;
         access_log off;

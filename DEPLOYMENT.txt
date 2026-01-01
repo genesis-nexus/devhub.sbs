@@ -1,19 +1,25 @@
 ================================================================================
                     DevHub.sbs - Deployment Guide
-                    Static Site with Nginx on Ubuntu
+                    Multi-Site Nginx Reverse Proxy on Ubuntu
 ================================================================================
 
 OVERVIEW
 --------
-This guide explains how to deploy DevHub.sbs static website using Nginx
-following standard best practices.
+This guide explains how to deploy DevHub.sbs and other websites using a
+multi-site Nginx reverse proxy architecture. The setup supports:
+- Multiple static websites on different domains
+- Reverse proxying to backend applications
+- SSL/TLS with Let's Encrypt
+- Easy site management with a single command
+
+For detailed multi-site documentation, see: MULTI-SITE-GUIDE.md
 
 PREREQUISITES
 -------------
 1. Ubuntu Server 20.04 or newer
 2. Root or sudo access
 3. Website files located at: /var/www/devhub.sbs/docs/
-4. Port 80 accessible (firewall configured)
+4. Ports 80 and 443 accessible (firewall configured)
 
 FILE STRUCTURE ON SERVER
 ------------------------
@@ -25,16 +31,33 @@ FILE STRUCTURE ON SERVER
     ├── blog/
     └── ...
 
+PROJECT STRUCTURE
+-----------------
+nginx/
+├── nginx.conf                    # Main Nginx config (global settings)
+├── default.conf                  # Default/catch-all server
+├── devhub.conf                   # DevHub.sbs site configuration
+└── templates/                    # Configuration templates
+    ├── site-static.conf.template      # Static site template
+    ├── site-static-ssl.conf.template  # Static site with SSL
+    ├── site-proxy.conf.template       # Reverse proxy template
+    └── site-proxy-ssl.conf.template   # Reverse proxy with SSL
+
+scripts/
+├── setup-nginx.sh               # Initial multi-site setup
+└── manage-site.sh               # Site management script
+
 DEPLOYMENT METHODS
 ------------------
 
 Method 1: Using the Setup Script (Recommended)
 -----------------------------------------------
-The setup script automates the entire process following Nginx best practices.
+The setup script automates the entire process and installs the multi-site
+architecture with devhub.sbs as the first site.
 
-1. Copy the setup script to your server:
+1. Copy files to your server:
 
-   scp scripts/setup-nginx.sh user@your-server:/tmp/
+   scp -r . user@your-server:/var/www/devhub.sbs/
 
 2. SSH to your server:
 
@@ -42,11 +65,18 @@ The setup script automates the entire process following Nginx best practices.
 
 3. Run the setup script:
 
-   sudo bash /tmp/setup-nginx.sh
+   cd /var/www/devhub.sbs
+   sudo ./scripts/setup-nginx.sh
 
 4. Access your website:
 
-   http://YOUR_SERVER_IP
+   http://YOUR_SERVER_IP  (default page if domain not configured)
+   http://devhub.sbs      (when DNS is configured)
+
+5. Add more sites as needed:
+
+   sudo manage-site add myblog --domain blog.example.com --type static
+   sudo manage-site add api --domain api.example.com --type proxy --upstream 127.0.0.1:3000
 
 Method 2: Manual Setup
 ----------------------
@@ -57,13 +87,16 @@ Step 1: Install Nginx
    sudo apt update
    sudo apt install nginx
 
-Step 2: Copy Nginx configuration
+Step 2: Install multi-site configuration
 
+   sudo cp nginx/nginx.conf /etc/nginx/nginx.conf
+   sudo cp nginx/default.conf /etc/nginx/sites-available/00-default.conf
    sudo cp nginx/devhub.conf /etc/nginx/sites-available/devhub.conf
 
-Step 3: Remove default site and enable yours
+Step 3: Enable sites
 
    sudo rm /etc/nginx/sites-enabled/default
+   sudo ln -s /etc/nginx/sites-available/00-default.conf /etc/nginx/sites-enabled/
    sudo ln -s /etc/nginx/sites-available/devhub.conf /etc/nginx/sites-enabled/
 
 Step 4: Set correct permissions
@@ -80,29 +113,57 @@ Step 5: Test and reload Nginx
 
 Step 6: Configure firewall
 
-   sudo ufw allow 80/tcp
+   sudo ufw allow 'Nginx Full'
+
+MULTI-SITE MANAGEMENT
+---------------------
+After initial setup, use the manage-site script to add more websites:
+
+Add a static website:
+   sudo manage-site add myblog --domain blog.example.com
+
+Add a reverse proxy:
+   sudo manage-site add api --domain api.example.com --type proxy --upstream 127.0.0.1:3000
+
+Add with SSL:
+   sudo manage-site add secure --domain secure.example.com --ssl
+
+List all sites:
+   sudo manage-site list
+
+Disable a site:
+   sudo manage-site disable mysite
+
+Enable a site:
+   sudo manage-site enable mysite
+
+Remove a site:
+   sudo manage-site remove mysite
+
+Check site status:
+   sudo manage-site status mysite
 
 NGINX CONFIGURATION DETAILS
 ----------------------------
 Location: /etc/nginx/sites-available/devhub.conf
 
 Key Features:
-- default_server: Catches all requests (enables IP address access)
-- server_name _: Wildcard that matches any hostname/IP
+- Specific domain binding (server_name devhub.sbs www.devhub.sbs)
+- Separate configuration per site
 - root: /var/www/devhub.sbs/docs
-- Gzip compression enabled
+- Gzip compression (in main nginx.conf)
 - Static asset caching (1 year)
 - Security headers included
 - Hidden files blocked
+- Per-site logging
 
-IP ADDRESS ACCESS
------------------
-The configuration uses "server_name _;" which is Nginx's standard way
-to create a catch-all server block. This allows access via:
+ACCESSING YOUR SITE
+-------------------
+With the multi-site architecture:
 
-- IP address:  http://YOUR_SERVER_IP
-- Domain name: http://devhub.sbs (when DNS configured)
-- Any hostname that points to this server
+- Direct IP access shows the default page (from 00-default.conf)
+- Domain access (http://devhub.sbs) shows your site
+- Each domain is routed to its specific configuration
 
 VERIFICATION
 ------------
@@ -114,8 +175,8 @@ After deployment, verify everything works:
 2. Test configuration:
    sudo nginx -t
 
-3. Check if port 80 is listening:
-   sudo netstat -tulpn | grep :80
+3. List enabled sites:
+   sudo manage-site list
 
 4. Test from server itself:
    curl -I http://localhost
@@ -124,12 +185,18 @@ After deployment, verify everything works:
    hostname -I | awk '{print $1}'
 
 6. Access from browser:
-   http://YOUR_SERVER_IP
+   http://YOUR_SERVER_IP  (shows default page)
+   http://devhub.sbs      (shows devhub site)
 
 LOGS
 ----
-Access Log:  /var/log/nginx/devhub-access.log
-Error Log:   /var/log/nginx/devhub-error.log
+Global logs:
+   Access Log:  /var/log/nginx/access.log
+   Error Log:   /var/log/nginx/error.log
+
+Per-site logs:
+   Access Log:  /var/log/nginx/devhub-access.log
+   Error Log:   /var/log/nginx/devhub-error.log
 
 View logs in real-time:
    sudo tail -f /var/log/nginx/devhub-access.log
@@ -141,6 +208,7 @@ Test configuration:        sudo nginx -t
 Reload configuration:      sudo systemctl reload nginx
 Restart Nginx:             sudo systemctl restart nginx
 Check status:              sudo systemctl status nginx
+List sites:                sudo manage-site list
 View error logs:           sudo tail -50 /var/log/nginx/devhub-error.log
 
 UPDATING WEBSITE CONTENT
@@ -151,20 +219,39 @@ To update your website files:
 2. Ensure correct permissions (owned by www-data)
 3. No Nginx restart needed for static file changes
 
+ADDING A NEW WEBSITE
+--------------------
+To add a new website to the proxy:
+
+1. Add the site:
+   sudo manage-site add newsite --domain newsite.com --type static
+
+2. Copy your website files:
+   sudo cp -r /path/to/your/files/* /var/www/newsite/
+
+3. Set permissions:
+   sudo chown -R www-data:www-data /var/www/newsite
+
+4. Configure DNS to point newsite.com to your server IP
+
+5. (Optional) Add SSL:
+   sudo certbot certonly --nginx -d newsite.com
+   sudo manage-site remove newsite
+   sudo manage-site add newsite --domain newsite.com --ssl
+
 FIREWALL CONFIGURATION
 ----------------------
 Ubuntu (UFW):
-   sudo ufw allow 80/tcp
-   sudo ufw allow 443/tcp  # For future HTTPS
+   sudo ufw allow 'Nginx Full'  # Opens both 80 and 443
 
 Cloud Provider Firewalls:
 If using AWS, DigitalOcean, Google Cloud, or Azure, you must ALSO
-configure their firewall/security groups to allow HTTP (port 80).
+configure their firewall/security groups to allow HTTP (80) and HTTPS (443).
 
-AWS:         EC2 → Security Groups → Inbound Rules → HTTP (80)
-DigitalOcean: Networking → Firewalls → Inbound Rules → HTTP (80)
-Google Cloud: VPC Network → Firewall Rules → tcp:80
-Azure:       Network Security Groups → Inbound Rules → HTTP (80)
+AWS:         EC2 → Security Groups → Inbound Rules → HTTP (80), HTTPS (443)
+DigitalOcean: Networking → Firewalls → Inbound Rules → HTTP, HTTPS
+Google Cloud: VPC Network → Firewall Rules → tcp:80,443
+Azure:       Network Security Groups → Inbound Rules → HTTP, HTTPS
 
 TROUBLESHOOTING
 ---------------
@@ -175,67 +262,95 @@ Solution:
   2. Check firewall: sudo ufw status
   3. Check cloud provider firewall (if applicable)
   4. Test locally: curl http://localhost
+  5. Check site is enabled: sudo manage-site status sitename
 
 Issue: 403 Forbidden
 Solution:
-  1. Check permissions: ls -la /var/www/devhub.sbs/docs/
-  2. Fix ownership: sudo chown -R www-data:www-data /var/www/devhub.sbs
-  3. Fix permissions: sudo chmod -R 755 /var/www/devhub.sbs/docs
+  1. Check permissions: ls -la /var/www/sitename/
+  2. Fix ownership: sudo chown -R www-data:www-data /var/www/sitename
+  3. Fix permissions: sudo chmod -R 755 /var/www/sitename
 
-Issue: 502 Bad Gateway
+Issue: 502 Bad Gateway (for proxies)
 Solution:
-  1. Check Nginx config: sudo nginx -t
-  2. Check error logs: sudo tail -50 /var/log/nginx/devhub-error.log
-  3. Restart Nginx: sudo systemctl restart nginx
+  1. Check backend is running: curl http://127.0.0.1:PORT
+  2. Check error logs: sudo tail -50 /var/log/nginx/sitename-error.log
+  3. Verify upstream configuration
 
 Issue: Configuration test fails
 Solution:
   1. Check syntax: sudo nginx -t
-  2. Review configuration: sudo cat /etc/nginx/sites-available/devhub.conf
+  2. Review configuration: sudo cat /etc/nginx/sites-available/sitename.conf
   3. Check for typos in file paths
 
-HTTPS/SSL (Optional - For Later)
----------------------------------
-To add HTTPS with Let's Encrypt:
+Issue: Wrong site showing
+Solution:
+  1. Check DNS is pointing to correct server
+  2. Verify server_name in site configuration
+  3. Check no conflicts with other sites
+
+HTTPS/SSL WITH LET'S ENCRYPT
+-----------------------------
+To add HTTPS to a site:
 
 1. Install Certbot:
    sudo apt install certbot python3-certbot-nginx
 
 2. Obtain certificate:
-   sudo certbot --nginx -d devhub.sbs -d www.devhub.sbs
+   sudo certbot certonly --nginx -d yourdomain.com -d www.yourdomain.com
 
-3. Certbot will automatically update your Nginx configuration
+3. Recreate site with SSL:
+   sudo manage-site remove sitename
+   sudo manage-site add sitename --domain yourdomain.com --ssl
+
+Or use the SSL templates directly:
+   sudo cp /etc/nginx/templates/site-static-ssl.conf.template /etc/nginx/sites-available/sitename.conf
+   # Edit and replace template variables
+   sudo ln -sf /etc/nginx/sites-available/sitename.conf /etc/nginx/sites-enabled/
+   sudo nginx -t && sudo systemctl reload nginx
 
 STANDARD NGINX STRUCTURE
 -------------------------
 This deployment follows standard Nginx conventions:
 
 /etc/nginx/
-├── nginx.conf                 # Main Nginx config (don't modify)
-├── sites-available/
-│   └── devhub.conf           # Your site config (inactive)
-└── sites-enabled/
-    └── devhub.conf           # Symlink to sites-available (active)
+├── nginx.conf                 # Main Nginx config (global settings)
+├── sites-available/           # All site configurations
+│   ├── 00-default.conf       # Catch-all default server
+│   ├── devhub.conf           # DevHub.sbs
+│   └── ...                   # Other sites
+├── sites-enabled/             # Enabled sites (symlinks)
+│   ├── 00-default.conf → ../sites-available/00-default.conf
+│   ├── devhub.conf → ../sites-available/devhub.conf
+│   └── ...
+└── templates/                 # Configuration templates
 
 /var/www/
-└── devhub.sbs/
-    └── docs/                 # Website files (document root)
+├── default/                   # Default page
+├── devhub.sbs/docs/          # DevHub website files
+└── ...                       # Other sites
 
 /var/log/nginx/
-├── devhub-access.log         # Access logs
-└── devhub-error.log          # Error logs
+├── access.log                 # Global access log
+├── error.log                  # Global error log
+├── devhub-access.log         # Per-site logs
+└── devhub-error.log
 
 BEST PRACTICES IMPLEMENTED
 ---------------------------
+✓ Multi-site architecture with site isolation
+✓ Specific domain binding (no catch-all for production sites)
+✓ Default server for unmatched requests
 ✓ Standard Nginx directory structure
 ✓ Separate sites-available and sites-enabled
 ✓ Proper file permissions (www-data:www-data)
-✓ Gzip compression enabled
+✓ Global Gzip compression
 ✓ Static asset caching
 ✓ Security headers
-✓ Proper logging
+✓ Per-site logging
+✓ Configuration templates for easy site addition
+✓ Management script for site operations
 ✓ Firewall configuration
-✓ Service management (systemd)
+✓ SSL/TLS support with Let's Encrypt
 
 NEXT STEPS
 ----------
@@ -243,20 +358,23 @@ After successful deployment:
 
 1. Test website thoroughly
 2. Configure DNS to point to your server IP
-3. Setup SSL/TLS with Let's Encrypt
-4. Configure log rotation (usually automatic)
-5. Setup monitoring (optional)
-6. Configure automated backups (optional)
+3. Setup SSL/TLS with Let's Encrypt for each site
+4. Add additional websites as needed
+5. Configure log rotation (usually automatic)
+6. Setup monitoring (optional)
+7. Configure automated backups (optional)
 
 SUPPORT
 -------
 If you encounter issues:
 
-1. Check logs first: sudo tail -50 /var/log/nginx/devhub-error.log
+1. Check logs first: sudo tail -50 /var/log/nginx/error.log
 2. Verify configuration: sudo nginx -t
 3. Check Nginx status: sudo systemctl status nginx
-4. Review this guide
-5. Consult Nginx documentation: https://nginx.org/en/docs/
+4. List sites: sudo manage-site list
+5. Check site status: sudo manage-site status sitename
+6. Review MULTI-SITE-GUIDE.md for detailed instructions
+7. Consult Nginx documentation: https://nginx.org/en/docs/
 
 ================================================================================
                           End of Deployment Guide

@@ -1,0 +1,130 @@
+================================================================================
+                DNS Setup Quick Reference - Hostinger
+================================================================================
+
+STEP-BY-STEP:
+-------------
+
+1. Get Server IP
+   → On server: hostname -I | awk '{print $1}'
+   → Example: 45.123.45.67
+
+2. Login to Hostinger
+   → https://hpanel.hostinger.com/
+
+3. Navigate to DNS
+   → Domains → devhub.sbs → Manage → DNS Zone
+
+4. Add/Edit DNS Record
+   → DELETE any existing A/CNAME records for @
+   → ADD this record:
+
+   Record:
+   ┌────────────────────────────┐
+   │ Type:     A                │
+   │ Name:     @                │
+   │ Points to: YOUR_SERVER_IP  │
+   │ TTL:      3600             │
+   └────────────────────────────┘
+
+5. Save Changes
+   → Click "Save" or "Add Record"
+
+6. Wait for Propagation
+   → 15-30 minutes minimum
+   → Up to 24-48 hours for full propagation
+
+7. Test
+   → http://devhub.sbs
+
+8. Add SSL (Optional but Recommended)
+   → sudo apt install certbot python3-certbot-nginx
+   → sudo certbot --nginx -d devhub.sbs
+
+DONE!
+
+================================================================================
+
+CHECK DNS PROPAGATION:
+----------------------
+https://dnschecker.org/
+https://www.whatsmydns.net/
+
+Command line:
+  dig devhub.sbs +short
+  nslookup devhub.sbs
+
+Should return your server IP.
+
+================================================================================
+
+TROUBLESHOOTING:
+----------------
+
+DNS not working after 30+ minutes?
+  → Check records are correct in Hostinger
+  → Verify name servers are Hostinger's
+  → Clear your DNS cache:
+    • Mac:    sudo dscacheutil -flushcache
+    • Linux:  sudo systemd-resolve --flush-caches
+    • Windows: ipconfig /flushdns
+
+Domain shows wrong site?
+  → Delete all A/CNAME records except yours
+  → Remove parking page records
+  → Wait for propagation
+
+HTTPS not working?
+  → Don't use https:// until SSL is setup
+  → Run: sudo certbot --nginx -d devhub.sbs -d www.devhub.sbs
+
+================================================================================
+
+COMPLETE DNS EXAMPLE:
+---------------------
+
+Type    Name    Points To        TTL     Comment
+----    ----    ---------        ---     -------
+A       @       45.123.45.67     3600    Main domain
+MX      @       mail.host.com    3600    Email (if needed)
+
+DELETE any:
+  - CNAME records
+  - Other A records for @
+  - Parking page records
+
+================================================================================
+
+QUICK COMMANDS:
+---------------
+
+# Get your server IP
+hostname -I
+
+# Check DNS resolution
+dig devhub.sbs +short
+
+# Test website
+curl -I http://devhub.sbs
+
+# Install SSL certificate
+sudo certbot --nginx -d devhub.sbs
+
+# Check SSL auto-renewal
+sudo certbot renew --dry-run
+
+================================================================================
+
+TIMELINE:
+---------
+Now:        Configure DNS in Hostinger
+15-30 min:  DNS starts working
+2-6 hours:  Most locations can access
+24-48 hrs:  Guaranteed worldwide propagation
+
+================================================================================
+
+For complete guide with screenshots and detailed troubleshooting:
+→ See DNS-SETUP-GUIDE.md
+
+================================================================================
