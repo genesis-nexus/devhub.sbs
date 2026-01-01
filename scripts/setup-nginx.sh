@@ -180,19 +180,22 @@ create_directories() {
     log_success "Directory structure created"
 }
 
-# Install default server configuration
+# Install default server configuration (but don't enable it yet)
 install_default_conf() {
-    log_info "Installing default server configuration..."
+    log_info "Preparing default server configuration (for multi-site use)..."
 
     if [[ ! -f "$DEFAULT_CONF_SRC" ]]; then
-        log_error "default.conf not found at ${DEFAULT_CONF_SRC}"
-        exit 1
+        log_warning "default.conf not found at ${DEFAULT_CONF_SRC}, skipping"
+        return
     fi
 
+    # Install to sites-available but DON'T enable
+    # This will be enabled when user adds a second site
     cp "$DEFAULT_CONF_SRC" "${NGINX_AVAILABLE}/00-default.conf"
-    ln -sf "${NGINX_AVAILABLE}/00-default.conf" "${NGINX_ENABLED}/00-default.conf"
+    # Note: NOT creating symlink to sites-enabled
 
-    # Create a simple default page
+    # Create default page directory and content (for future use)
+    mkdir -p "${DEFAULT_WEB_ROOT}/default"
     cat > "${DEFAULT_WEB_ROOT}/default/index.html" << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
@@ -236,7 +239,7 @@ install_default_conf() {
 EOF
 
     chown -R www-data:www-data "${DEFAULT_WEB_ROOT}/default"
-    log_success "Default server configuration installed"
+    log_success "Default server configuration prepared (not enabled - devhub.sbs handles default)"
 }
 
 # Install templates
@@ -266,13 +269,8 @@ remove_old_defaults() {
 add_devhub_site() {
     log_info "Adding devhub.sbs site..."
 
-    local template="${TEMPLATE_DIR}/site-static.conf.template"
+    local devhub_conf_src="${PROJECT_DIR}/nginx/devhub.conf"
     local config_file="${NGINX_AVAILABLE}/devhub.conf"
-
-    if [[ ! -f "$template" ]]; then
-        log_error "Static site template not found"
-        exit 1
-    fi
 
     # Check if docs directory exists
     if [[ ! -d "$DEVHUB_DOC_ROOT" ]]; then
@@ -281,15 +279,27 @@ add_devhub_site() {
         exit 1
     fi
 
-    # Generate config from template
-    local config
-    config=$(cat "$template")
-    config="${config//\{\{SITE_NAME\}\}/devhub}"
-    config="${config//\{\{DOMAIN\}\}/${DEVHUB_DOMAIN}}"
-    config="${config//\{\{DOMAIN_ALIASES\}\}/www.${DEVHUB_DOMAIN}}"
-    config="${config//\{\{DOC_ROOT\}\}/${DEVHUB_DOC_ROOT}}"
-
-    echo "$config" > "$config_file"
+    # Use the pre-configured devhub.conf (includes default_server for single-site setup)
+    if [[ -f "$devhub_conf_src" ]]; then
+        # Copy and adjust the document root path
+        sed "s|root /var/www/devhub.sbs/docs;|root ${DEVHUB_DOC_ROOT};|g" "$devhub_conf_src" > "$config_file"
+        log_info "Using devhub.conf with default_server (works with IP and domain access)"
+    else
+        # Fallback: generate from template
+        log_warning "devhub.conf not found, generating from template..."
+        local template="${TEMPLATE_DIR}/site-static.conf.template"
+        if [[ ! -f "$template" ]]; then
+            log_error "Static site template not found"
+            exit 1
+        fi
+        local config
+        config=$(cat "$template")
+        config="${config//\{\{SITE_NAME\}\}/devhub}"
+        config="${config//\{\{DOMAIN\}\}/${DEVHUB_DOMAIN}}"
+        config="${config//\{\{DOMAIN_ALIASES\}\}/www.${DEVHUB_DOMAIN}}"
+        config="${config//\{\{DOC_ROOT\}\}/${DEVHUB_DOC_ROOT}}"
+        echo "$config" > "$config_file"
+    fi
 
     # Enable the site
     ln -sf "$config_file" "${NGINX_ENABLED}/devhub.conf"
@@ -299,7 +309,7 @@ add_devhub_site() {
     find "$DEVHUB_DOC_ROOT" -type f -exec chmod 644 {} \; 2>/dev/null || true
     find "$DEVHUB_DOC_ROOT" -type d -exec chmod 755 {} \; 2>/dev/null || true
 
-    log_success "devhub.sbs site added"
+    log_success "devhub.sbs site added (with default_server - accessible via IP and domain)"
 }
 
 # Install management script

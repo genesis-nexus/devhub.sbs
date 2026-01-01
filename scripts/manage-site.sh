@@ -116,6 +116,35 @@ site_enabled() {
     [[ -L "${NGINX_ENABLED}/${name}.conf" ]]
 }
 
+# Check if this is the first additional site (transition to multi-site)
+check_multisite_transition() {
+    local devhub_conf="${NGINX_AVAILABLE}/devhub.conf"
+    local default_conf="${NGINX_AVAILABLE}/00-default.conf"
+    local default_enabled="${NGINX_ENABLED}/00-default.conf"
+
+    # Check if devhub.conf has default_server (single-site mode)
+    if [[ -f "$devhub_conf" ]] && grep -q "default_server" "$devhub_conf"; then
+        log_info "Transitioning to multi-site mode..."
+
+        # 1. Enable the default server config if it exists
+        if [[ -f "$default_conf" ]] && [[ ! -L "$default_enabled" ]]; then
+            ln -sf "$default_conf" "$default_enabled"
+            log_success "Enabled 00-default.conf as catch-all server"
+        fi
+
+        # 2. Remove default_server and catch-all from devhub.conf
+        sed -i.bak \
+            -e 's/listen 80 default_server;/listen 80;/' \
+            -e 's/listen \[::\]:80 default_server;/listen [::]:80;/' \
+            -e 's/server_name devhub.sbs www.devhub.sbs _;/server_name devhub.sbs www.devhub.sbs;/' \
+            "$devhub_conf"
+        rm -f "${devhub_conf}.bak"
+
+        log_success "Updated devhub.conf for multi-site mode (removed default_server)"
+        log_info "devhub.sbs now responds only to its specific domain"
+    fi
+}
+
 # Generate config from template
 generate_config() {
     local template="$1"
@@ -266,6 +295,9 @@ cmd_add() {
     log_info "  Domain: $domain"
     [[ -n "$aliases" ]] && log_info "  Aliases: $aliases"
     log_info "  Type: $site_type"
+
+    # Check if we need to transition to multi-site mode
+    check_multisite_transition
 
     # Create document root for static sites
     if [[ "$site_type" == "static" ]]; then
