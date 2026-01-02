@@ -24,7 +24,14 @@ set -euo pipefail
 
 # Configuration
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly TEMPLATE_DIR="${SCRIPT_DIR}/../nginx/templates"
+# Check multiple locations for templates
+if [[ -d "/etc/nginx/templates" ]]; then
+    readonly TEMPLATE_DIR="/etc/nginx/templates"
+elif [[ -d "${SCRIPT_DIR}/../nginx/templates" ]]; then
+    readonly TEMPLATE_DIR="${SCRIPT_DIR}/../nginx/templates"
+else
+    readonly TEMPLATE_DIR="/etc/nginx/templates"  # Default, will error if not found
+fi
 readonly NGINX_AVAILABLE="/etc/nginx/sites-available"
 readonly NGINX_ENABLED="/etc/nginx/sites-enabled"
 readonly DEFAULT_WEB_ROOT="/var/www"
