@@ -65,7 +65,7 @@ const toolsDatabase = {
             stats: { stars: "8k+", downloads: "500k+" }
         }
     ],
-    
+
     ai: [
         {
             name: "OpenAI API",
@@ -130,7 +130,7 @@ const toolsDatabase = {
             stats: { models: "20+", downloads: "10M+" }
         }
     ],
-    
+
     productivity: [
         {
             name: "Notion",
@@ -217,7 +217,7 @@ const toolsDatabase = {
             stats: { users: "1M+", plugins: "1k+" }
         }
     ],
-    
+
     database: [
         {
             name: "Supabase",
@@ -282,7 +282,7 @@ const toolsDatabase = {
             stats: { stars: "60k+", downloads: "1B+" }
         }
     ],
-    
+
     json: [
         {
             name: "JSON Validator & Beautifier",
@@ -519,7 +519,7 @@ const toolsDatabase = {
             stats: { users: "400k+", rating: "4.7" }
         }
     ],
-    
+
     ui: [
         {
             name: "Tailwind CSS",
@@ -584,7 +584,7 @@ const toolsDatabase = {
             stats: { stars: "23k+", downloads: "4M+" }
         }
     ],
-    
+
     testing: [
         {
             name: "Playwright",
@@ -649,7 +649,7 @@ const toolsDatabase = {
             stats: { stars: "82k+", addons: "400+" }
         }
     ],
-    
+
     hosting: [
         {
             name: "Vercel",
@@ -714,7 +714,7 @@ const toolsDatabase = {
             stats: { databases: "100k+", queries: "1B+" }
         }
     ],
-    
+
     analytics: [
         {
             name: "Vercel Analytics",
@@ -779,7 +779,7 @@ const toolsDatabase = {
             stats: { sites: "50M+", events: "1T+" }
         }
     ],
-    
+
     finance: [
         {
             name: "Stripe",
@@ -849,32 +849,36 @@ const toolsDatabase = {
 // ===== STATE MANAGEMENT =====
 let currentCategory = 'all';
 let currentPage = 1;
-const itemsPerPage = 12;
-let filteredTools = [];
 let searchQuery = '';
+let visibleTools = 12;
+const toolsPerLoad = 12;
+
 
 // ===== DOM ELEMENTS =====
-const categoryButtons = document.querySelectorAll('.category-btn');
+const searchInput = document.getElementById('hero-search-input');
+const themeToggle = document.getElementById('theme-toggle');
 const toolsGrid = document.getElementById('tools-grid');
 const featuredGrid = document.getElementById('featured-grid');
 const collectionTitle = document.getElementById('collection-title');
 const collectionSubtitle = document.getElementById('collection-subtitle');
 const loadMoreBtn = document.getElementById('load-more-btn');
-const searchInput = document.getElementById('search-input');
-const sidebarSearch = document.getElementById('sidebar-search');
-const modal = document.getElementById('tool-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalBody = document.getElementById('modal-body');
-const modalClose = document.getElementById('modal-close');
-const modalBackdrop = document.getElementById('modal-backdrop');
-const themeToggle = document.getElementById('theme-toggle');
-const sidebarToggle = document.getElementById('sidebar-toggle');
 const backToTop = document.getElementById('back-to-top');
-const quickTools = document.querySelectorAll('.quick-tool');
-const sidebarNavLinks = document.querySelectorAll('.sidebar .nav-link');
+
+// Mobile Menu
+const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+const closeMenuBtn = document.getElementById('close-menu');
+const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+// Category Buttons
+const categoryButtons = document.querySelectorAll('.tab-btn');
+
+// Key Tools (Hero Grid)
+const keyTools = document.querySelectorAll('.key-tool-card');
 
 // ===== INITIALIZATION =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeApp();
     initializeURLRouting();
 });
@@ -882,12 +886,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== URL ROUTING SYSTEM =====
 function initializeURLRouting() {
     // Handle hash changes for direct tool links
-    window.addEventListener('hashchange', function() {
+    window.addEventListener('hashchange', function () {
         handleHashRoute();
     });
 
     // Handle browser back/forward buttons
-    window.addEventListener('popstate', function(event) {
+    window.addEventListener('popstate', function (event) {
         if (event.state && event.state.tool) {
             openInternalTool(event.state.tool);
         } else {
@@ -949,27 +953,27 @@ function handleHashRoute() {
 function handleRouteChange(path) {
     // Remove leading slash and get tool name
     const toolName = path.replace(/^\//, '');
-    
+
     // Map URL paths to tool IDs
     const toolRoutes = {
         'json': 'json',
-        'jwt': 'jwt', 
+        'jwt': 'jwt',
         'base64': 'base64',
         'url': 'url',
         'oidc': 'oidc',
         'hash': 'hash'
     };
-    
+
     if (toolRoutes[toolName]) {
         // Navigate to the specific tool
         openToolModal(toolRoutes[toolName]);
-        
+
         // Update page title and meta for SEO
         updatePageMetaForTool(toolName);
-        
+
         // Update breadcrumb
         updateBreadcrumb(toolRoutes[toolName]);
-        
+
         // Update URL without triggering another route change
         const newUrl = `${window.location.origin}/${toolName}`;
         window.history.replaceState({ tool: toolName }, '', newUrl);
@@ -989,31 +993,31 @@ function updatePageMetaForTool(toolName) {
     if (toolMeta) {
         // Update page title
         document.title = toolMeta.title;
-        
+
         // Update meta description
         const metaDesc = document.querySelector('meta[name="description"]');
         if (metaDesc) {
             metaDesc.setAttribute('content', toolMeta.description);
         }
-        
+
         // Update Open Graph title
         const ogTitle = document.querySelector('meta[property="og:title"]');
         if (ogTitle) {
             ogTitle.setAttribute('content', toolMeta.ogTitle);
         }
-        
+
         // Update Open Graph description
         const ogDesc = document.querySelector('meta[property="og:description"]');
         if (ogDesc) {
             ogDesc.setAttribute('content', toolMeta.ogDescription);
         }
-        
+
         // Update Twitter title
         const twitterTitle = document.querySelector('meta[property="twitter:title"]');
         if (twitterTitle) {
             twitterTitle.setAttribute('content', toolMeta.twitterTitle);
         }
-        
+
         // Update Twitter description
         const twitterDesc = document.querySelector('meta[property="twitter:description"]');
         if (twitterDesc) {
@@ -1318,37 +1322,37 @@ function getToolCategory(toolId) {
 function restoreOriginalPageMeta() {
     // Restore original page title and meta
     document.title = 'Free Loan, BMI, Calorie Calculator | Word Counter, Base64, JSON Validator | 70+ Free Tools | DevHub';
-    
+
     // Restore original meta description
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
         metaDesc.setAttribute('content', 'Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification, authentication testing, and productivity tools. No signup required!');
     }
-    
+
     // Restore original Open Graph title
     const ogTitle = document.querySelector('meta[name="og:title"]');
     if (ogTitle) {
         ogTitle.setAttribute('content', 'Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal');
     }
-    
+
     // Restore original Open Graph description
     const ogDesc = document.querySelector('meta[name="og:description"]');
     if (ogDesc) {
         ogDesc.setAttribute('content', 'Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification and authentication testing.');
     }
-    
+
     // Restore original Twitter title
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) {
         twitterTitle.setAttribute('content', 'Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator | Free Dev Tools Portal');
     }
-    
+
     // Restore original Twitter description
     const twitterDesc = document.querySelector('meta[name="twitter:description"]');
     if (twitterDesc) {
         twitterDesc.setAttribute('content', 'Free online Base64 encode/decode, URL encode/decode, OIDC playground testing, JSON validator, JSON beautifier, and 60+ developer tools. Professional dev portal with JWT verification and authentication testing.');
     }
-    
+
     // Restore breadcrumb
     const breadcrumbCurrent = document.getElementById('breadcrumb-current');
     if (breadcrumbCurrent) {
@@ -1366,53 +1370,45 @@ function initializeApp() {
 
 // ===== EVENT LISTENERS =====
 function setupEventListeners() {
-    // Sidebar navigation
-    if (sidebarNavLinks && sidebarNavLinks.length > 0) {
-        sidebarNavLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Remove active class from all links
-                sidebarNavLinks.forEach(l => l.classList.remove('active'));
-                
-                // Add active class to clicked link
-                link.classList.add('active');
-                
-                if (link.dataset.tool) {
-                    openInternalTool(link.dataset.tool);
-                } else if (link.dataset.category) {
-                    handleCategoryChange(link.dataset.category);
-                }
+    // Mobile Menu
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+    }
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', toggleMobileMenu);
+    }
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+    }
+
+    if (mobileNavLinks) {
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                toggleMobileMenu();
             });
         });
     }
-    
-    // Sidebar search
-    if (sidebarSearch) {
-        sidebarSearch.addEventListener('input', handleSidebarSearch);
-    }
-    
-    // Category filters (for backward compatibility)
+
+    // Category Tabs
     if (categoryButtons && categoryButtons.length > 0) {
         categoryButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Category clicked:', btn.dataset.category);
-                handleCategoryChange(btn.dataset.category);
+                const category = btn.dataset.category;
+                handleCategoryChange(category);
             });
         });
     }
-    
+
     // Search
     if (searchInput) {
         searchInput.addEventListener('input', handleSearch);
     }
-    
+
     // Load more
     if (loadMoreBtn) {
         loadMoreBtn.addEventListener('click', loadMoreTools);
     }
-    
+
     // Modal
     if (modalClose) {
         modalClose.addEventListener('click', closeModal);
@@ -1420,69 +1416,66 @@ function setupEventListeners() {
     if (modalBackdrop) {
         modalBackdrop.addEventListener('click', closeModal);
     }
-    
+
     // Handle escape key for modal
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeModal();
         }
     });
-    
+
     // Theme toggle
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleTheme);
     }
-    
-    // Sidebar toggle
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', toggleSidebar);
-    }
-    
+
     // Back to top
     if (backToTop) {
         backToTop.addEventListener('click', scrollToTop);
     }
-    
-    // Quick tools
-    if (quickTools && quickTools.length > 0) {
-        quickTools.forEach(tool => {
-            tool.addEventListener('click', () => openInternalTool(tool.dataset.tool));
+
+    // Key tools
+    if (keyTools && keyTools.length > 0) {
+        keyTools.forEach(tool => {
+            tool.addEventListener('click', (e) => {
+                e.preventDefault();
+                openInternalTool(tool.dataset.tool)
+            });
         });
     }
-    
+
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboard);
-    
+
     // Scroll events
     window.addEventListener('scroll', handleScroll);
+}
+
+function toggleMobileMenu() {
+    mobileMenu.classList.toggle('active');
+    mobileMenuOverlay.classList.toggle('active');
 }
 
 // ===== CATEGORY HANDLING =====
 function handleCategoryChange(category) {
     currentCategory = category;
     currentPage = 1;
-    
+
     // Update active button
-    categoryButtons.forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`[data-category="${category}"]`).classList.add('active');
-    
+    if (categoryButtons) {
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.querySelector(`[data-category="${category}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+    }
+
     // Update title and subtitle
     updateCategoryDisplay(category);
-    
+
     // Render tools
     renderTools();
-    
-    // Show/hide category sections based on selection
-    toggleCategorySections(category);
-    
-    // Scroll to appropriate section
-    if (category === 'all') {
-        // Scroll to tools collection section
-        scrollToSection('tools');
-    } else {
-        // Scroll to specific category section
-        scrollToSection(category);
-    }
+
+    // Scroll to tools section
+    scrollToSection('tools');
 }
 
 function updateCategoryDisplay(category) {
@@ -1552,34 +1545,18 @@ function handleSearch(e) {
     currentPage = 1;
     console.log('Search query:', searchQuery);
     renderTools();
-    
-    // If there's a search query, show relevant category sections and scroll to tools
+
+    // If there's a search query, scroll to tools
     if (searchQuery.trim()) {
-        showRelevantCategorySections(searchQuery);
         scrollToSection('tools');
-    } else {
-        // If search is cleared, show all sections
-        showAllCategorySections();
     }
 }
 
+// Updated sidebar search reference to main search (fallback)
 function handleSidebarSearch(e) {
-    const query = e.target.value.toLowerCase();
-    
-    // Filter sidebar navigation items
-    sidebarNavLinks.forEach(link => {
-        const text = link.textContent.toLowerCase();
-        const shouldShow = text.includes(query);
-        link.parentElement.style.display = shouldShow ? 'block' : 'none';
-    });
-    
-    // If searching for a specific tool, show relevant category sections and scroll to tools
-    if (query.trim()) {
-        showRelevantCategorySections(query);
-        scrollToSection('tools');
-    } else {
-        // If search is cleared, show all sections
-        showAllCategorySections();
+    if (searchInput) {
+        searchInput.value = e.target.value;
+        handleSearch(e);
     }
 }
 
@@ -1591,7 +1568,7 @@ function scrollToSection(sectionId) {
             behavior: 'smooth',
             block: 'start'
         });
-        
+
         // Add a subtle highlight effect
         section.classList.add('section-highlight');
         setTimeout(() => {
@@ -1603,21 +1580,21 @@ function scrollToSection(sectionId) {
 // ===== TOOL RENDERING =====
 function getFilteredTools() {
     let tools = [];
-    
+
     if (currentCategory === 'all') {
         tools = Object.values(toolsDatabase).flat();
     } else {
         tools = toolsDatabase[currentCategory] || [];
     }
-    
+
     if (searchQuery) {
-        tools = tools.filter(tool => 
+        tools = tools.filter(tool =>
             tool.name.toLowerCase().includes(searchQuery) ||
             tool.description.toLowerCase().includes(searchQuery) ||
             tool.tags.some(tag => tag.toLowerCase().includes(searchQuery))
         );
     }
-    
+
     return tools;
 }
 
@@ -1626,7 +1603,7 @@ function renderFeaturedTools() {
         .flat()
         .filter(tool => tool.featured)
         .slice(0, 6);
-    
+
     if (featuredGrid) {
         featuredGrid.innerHTML = featured.map(tool => createResourceCard(tool)).join('');
         addCardEventListeners(featuredGrid);
@@ -1634,103 +1611,120 @@ function renderFeaturedTools() {
 }
 
 function renderTools() {
-    filteredTools = getFilteredTools();
-    const startIndex = 0;
-    const endIndex = currentPage * itemsPerPage;
-    const toolsToShow = filteredTools.slice(startIndex, endIndex);
-    
-    console.log('Rendering tools:', {
-        category: currentCategory,
-        searchQuery: searchQuery,
-        totalFiltered: filteredTools.length,
-        showing: toolsToShow.length
+    if (!toolsGrid) return;
+
+    toolsGrid.innerHTML = '';
+
+    // Filter tools based on category and search query
+    let filteredTools = tools.filter(tool => {
+        const matchesCategory = currentCategory === 'all' || tool.category.toLowerCase().includes(currentCategory.toLowerCase()) ||
+            (getToolCategory(tool.id).toLowerCase().includes(currentCategory.toLowerCase()));
+
+        const matchesSearch = tool.name.toLowerCase().includes(searchQuery) ||
+            tool.description.toLowerCase().includes(searchQuery) ||
+            (tool.tags && tool.tags.some(tag => tag.toLowerCase().includes(searchQuery)));
+
+        return matchesCategory && matchesSearch;
     });
-    
-    if (toolsGrid) {
-        toolsGrid.innerHTML = toolsToShow.map(tool => createResourceCard(tool)).join('');
-        addCardEventListeners(toolsGrid);
+
+    // Check if tools array is empty and we need to populate it
+    if (tools.length === 0) {
+        populateToolsFromDatabase();
+        // Re-run filter
+        filteredTools = tools.filter(tool => {
+            const matchesCategory = currentCategory === 'all' || tool.category.toLowerCase().includes(currentCategory.toLowerCase()) ||
+                (getToolCategory(tool.id).toLowerCase().includes(currentCategory.toLowerCase()));
+
+            const matchesSearch = tool.name.toLowerCase().includes(searchQuery) ||
+                tool.description.toLowerCase().includes(searchQuery) ||
+                (tool.tags && tool.tags.some(tag => tag.toLowerCase().includes(searchQuery)));
+
+            return matchesCategory && matchesSearch;
+        });
     }
-    
-    // Update load more button
+
+    if (filteredTools.length === 0) {
+        toolsGrid.innerHTML = `
+            <div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                <i class="fas fa-search" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <p>No tools found matching your criteria.</p>
+                <button class="btn btn-outline" onclick="clearSearch()" style="margin-top: 1rem;">Clear Search</button>
+            </div>
+        `;
+        if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        return;
+    }
+
+    // Pagination logic
+    const startIndex = 0;
+    const endIndex = currentPage * toolsPerLoad;
+    const toolsToShow = filteredTools.slice(startIndex, endIndex);
+
+    toolsToShow.forEach(tool => {
+        const card = document.createElement('a');
+        card.href = '#';
+        card.className = 'tool-card-minimal';
+        card.dataset.tool = tool.id;
+
+        // Define tool icon based on tool ID or category if missing
+        let iconClass = tool.logo;
+        if (!iconClass || iconClass.length < 5) iconClass = getIconForTool(tool.id);
+
+        // Check if it's an emoji logo
+        const isEmoji = iconClass && !iconClass.startsWith('fa');
+
+        const iconHtml = isEmoji
+            ? `<span style="font-size: 1.25rem;">${iconClass}</span>`
+            : `<i class="${iconClass}"></i>`;
+
+        card.innerHTML = `
+            <div class="tool-card-icon-small">
+                ${iconHtml}
+            </div>
+            <div class="tool-card-content">
+                <h4>${tool.name}</h4>
+                <p>${tool.description}</p>
+            </div>
+        `;
+
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            openInternalTool(tool.id);
+        });
+
+        toolsGrid.appendChild(card);
+    });
+
+    // Show/Hide Load More button
     if (loadMoreBtn) {
-        loadMoreBtn.style.display = endIndex >= filteredTools.length ? 'none' : 'block';
+        loadMoreBtn.style.display = endIndex < filteredTools.length ? 'block' : 'none';
+
+        // Update button text to show count
+        const remaining = filteredTools.length - endIndex;
+        if (remaining > 0) {
+            loadMoreBtn.textContent = `Load More (${remaining})`;
+        }
     }
-    
-    // Also populate category-specific grids
-    populateCategoryGrids();
 }
 
 function populateCategoryGrids() {
-    // Get all category grids
-    const categoryGrids = {
-        authentication: document.getElementById('authentication-grid'),
-        ai: document.getElementById('ai-grid'),
-        productivity: document.getElementById('productivity-grid'),
-        database: document.getElementById('database-grid'),
-        ui: document.getElementById('ui-grid'),
-        testing: document.getElementById('testing-grid'),
-        hosting: document.getElementById('hosting-grid'),
-        analytics: document.getElementById('analytics-grid'),
-        finance: document.getElementById('finance-grid'),
-        json: document.getElementById('json-grid')
-    };
-    
-    // Populate each category grid with its tools
-    Object.entries(categoryGrids).forEach(([category, grid]) => {
-        if (grid) {
-            const categoryTools = toolsDatabase[category] || [];
-            if (categoryTools.length > 0) {
-                grid.innerHTML = categoryTools.map(tool => createResourceCard(tool)).join('');
-                addCardEventListeners(grid);
-            } else {
-                grid.innerHTML = '<p class="no-tools">No tools available in this category yet.</p>';
-            }
-        }
-    });
+    // Obsolete in new minimalist design - we use a single filtered grid
+    return;
 }
 
 function toggleCategorySections(selectedCategory) {
-    const allCategorySections = document.querySelectorAll('.category-section');
-    
-    allCategorySections.forEach(section => {
-        if (selectedCategory === 'all') {
-            // Show all sections when "All" is selected
-            section.style.display = 'block';
-        } else {
-            // Show only the selected category section
-            if (section.id === selectedCategory) {
-                section.style.display = 'block';
-            } else {
-                section.style.display = 'none';
-            }
-        }
-    });
+    // Obsolete in new minimalist design
+    return;
 }
 
 function showRelevantCategorySections(searchQuery) {
-    const allCategorySections = document.querySelectorAll('.category-section');
-    
-    allCategorySections.forEach(section => {
-        const sectionId = section.id;
-        const categoryTools = toolsDatabase[sectionId] || [];
-        
-        // Check if any tools in this category match the search query
-        const hasMatchingTools = categoryTools.some(tool => 
-            tool.name.toLowerCase().includes(searchQuery) ||
-            tool.description.toLowerCase().includes(searchQuery) ||
-            tool.tags.some(tag => tag.toLowerCase().includes(searchQuery))
-        );
-        
-        // Show section if it has matching tools
-        section.style.display = hasMatchingTools ? 'block' : 'none';
-    });
+    // Obsolete in new minimalist design
+    return;
 }
 
 function showAllCategorySections() {
-    const allCategorySections = document.querySelectorAll('.category-section');
-    allCategorySections.forEach(section => {
-        section.style.display = 'block';
-    });
+    // Obsolete in new minimalist design
+    return;
 }
 
 function loadMoreTools() {
@@ -1742,7 +1736,7 @@ function createResourceCard(tool) {
     const statsHtml = tool.stats ? Object.entries(tool.stats)
         .map(([key, value]) => `<span>${key}: ${value}</span>`)
         .join('') : '';
-    
+
     return `
         <div class="resource-card" data-tool="${tool.name}" data-type="${tool.type}" data-url="${tool.url}">
             <div class="resource-header">
@@ -1771,11 +1765,11 @@ function addCardEventListeners(container) {
     container.querySelectorAll('.resource-card').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.target.closest('.resource-link')) return;
-            
+
             const toolName = card.dataset.tool;
             const toolType = card.dataset.type;
             const toolUrl = card.dataset.url;
-            
+
             if (toolType === 'internal') {
                 const toolId = toolUrl.replace('#', '').replace('-tool', '');
                 openInternalTool(toolId);
@@ -1783,6 +1777,52 @@ function addCardEventListeners(container) {
                 window.open(toolUrl, '_blank', 'noopener');
             }
         });
+    });
+}
+
+// ===== RENDER FEATURED TOOLS (Key Tools Grid) =====
+function renderFeaturedTools() {
+    const keyToolsGrid = document.getElementById('key-tools-grid');
+    if (!keyToolsGrid) return;
+
+    keyToolsGrid.innerHTML = '';
+
+    // Define the specific tools we want to highlight in the hero section
+    const featuredIds = ['json', 'base64', 'jwt', 'url'];
+
+    featuredIds.forEach(id => {
+        // Find tool in database first
+        let tool = tools.find(t => t.id === id);
+
+        // Fallback data if tools array isn't populated yet or tool not found
+        if (!tool) {
+            if (id === 'json') tool = { id: 'json', name: 'JSON Validator', description: 'Validate, beautify and minify JSON data.', logo: 'fas fa-code' };
+            else if (id === 'base64') tool = { id: 'base64', name: 'Base64 Converter', description: 'Encode and decode Base64 strings instantly.', logo: 'fas fa-exchange-alt' };
+            else if (id === 'jwt') tool = { id: 'jwt', name: 'JWT Verifier', description: 'Decode and verify JWT tokens and signatures.', logo: 'fas fa-shield-alt' };
+            else if (id === 'url') tool = { id: 'url', name: 'URL Encoder', description: 'Encode and decode URLs safely for web use.', logo: 'fas fa-link' };
+        }
+
+        if (tool) {
+            const card = document.createElement('a');
+            card.href = '#';
+            card.className = 'key-tool-card';
+            card.dataset.tool = tool.id;
+
+            card.innerHTML = `
+                <div class="key-tool-icon">
+                    <i class="${tool.logo}"></i>
+                </div>
+                <h3>${tool.name}</h3>
+                <p>${tool.description}</p>
+            `;
+
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                openInternalTool(tool.id);
+            });
+
+            keyToolsGrid.appendChild(card);
+        }
     });
 }
 
@@ -1886,14 +1926,14 @@ function openInternalTool(toolId) {
             content: createLoremIpsumInterface()
         }
     };
-    
+
     const config = toolConfigs[toolId];
     if (config) {
         openModal(config.title, config.content);
-        
+
         // Update URL for the specific tool
         updateURLForTool(toolId);
-        
+
         // Initialize tool functionality
         initializeToolFunctionality(toolId);
     }
@@ -2237,7 +2277,7 @@ function createJSONToolInterface() {
 
 // ===== TOOL FUNCTIONALITY =====
 function initializeToolFunctionality(toolId) {
-    switch(toolId) {
+    switch (toolId) {
         case 'jwt':
             initializeJWTTool();
             break;
@@ -2320,33 +2360,33 @@ function initializeJWTTool() {
     const jwtHeader = document.getElementById('jwt-header');
     const jwtPayload = document.getElementById('jwt-payload');
     const jwtSignature = document.getElementById('jwt-signature');
-    
+
     jwtDecode.addEventListener('click', () => {
         const token = jwtInput.value.trim();
         if (!token) {
             showNotification('Please enter a JWT token', 'error');
             return;
         }
-        
+
         try {
             const parts = token.split('.');
             if (parts.length !== 3) {
                 throw new Error('Invalid JWT format');
             }
-            
+
             const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
             const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-            
+
             jwtHeader.textContent = JSON.stringify(header, null, 2);
             jwtPayload.textContent = JSON.stringify(payload, null, 2);
             jwtSignature.innerHTML = '<div class="signature-info">⚠️ Signature verification requires the secret key</div>';
-            
+
             showNotification('JWT token decoded successfully', 'success');
         } catch (error) {
             showNotification('Invalid JWT token format', 'error');
         }
     });
-    
+
     jwtClear.addEventListener('click', () => {
         jwtInput.value = '';
         jwtHeader.textContent = '';
@@ -2362,14 +2402,14 @@ function initializeBase64Tool() {
     const base64Decode = document.getElementById('base64-decode');
     const base64Clear = document.getElementById('base64-clear');
     const base64Copy = document.getElementById('base64-copy');
-    
+
     base64Encode.addEventListener('click', () => {
         const input = base64Input.value;
         if (!input) {
             showNotification('Please enter text to encode', 'error');
             return;
         }
-        
+
         try {
             base64Output.value = btoa(unescape(encodeURIComponent(input)));
             showNotification('Text encoded to Base64', 'success');
@@ -2377,14 +2417,14 @@ function initializeBase64Tool() {
             showNotification('Encoding failed', 'error');
         }
     });
-    
+
     base64Decode.addEventListener('click', () => {
         const input = base64Input.value;
         if (!input) {
             showNotification('Please enter Base64 to decode', 'error');
             return;
         }
-        
+
         try {
             base64Output.value = decodeURIComponent(escape(atob(input)));
             showNotification('Base64 decoded successfully', 'success');
@@ -2392,12 +2432,12 @@ function initializeBase64Tool() {
             showNotification('Invalid Base64 format', 'error');
         }
     });
-    
+
     base64Clear.addEventListener('click', () => {
         base64Input.value = '';
         base64Output.value = '';
     });
-    
+
     base64Copy.addEventListener('click', () => {
         copyToClipboard(base64Output.value);
     });
@@ -2410,25 +2450,25 @@ function initializeURLTool() {
     const urlDecode = document.getElementById('url-decode');
     const urlClear = document.getElementById('url-clear');
     const urlCopy = document.getElementById('url-copy');
-    
+
     urlEncode.addEventListener('click', () => {
         const input = urlInput.value;
         if (!input) {
             showNotification('Please enter text to encode', 'error');
             return;
         }
-        
+
         urlOutput.value = encodeURIComponent(input);
         showNotification('Text URL encoded', 'success');
     });
-    
+
     urlDecode.addEventListener('click', () => {
         const input = urlInput.value;
         if (!input) {
             showNotification('Please enter URL to decode', 'error');
             return;
         }
-        
+
         try {
             urlOutput.value = decodeURIComponent(input);
             showNotification('URL decoded successfully', 'success');
@@ -2436,12 +2476,12 @@ function initializeURLTool() {
             showNotification('Invalid URL encoding', 'error');
         }
     });
-    
+
     urlClear.addEventListener('click', () => {
         urlInput.value = '';
         urlOutput.value = '';
     });
-    
+
     urlCopy.addEventListener('click', () => {
         copyToClipboard(urlOutput.value);
     });
@@ -2455,13 +2495,13 @@ function initializeOIDCTool() {
     const oidcCopyUrl = document.getElementById('oidc-copy-url');
     const oidcOpenUrl = document.getElementById('oidc-open-url');
     const redirectUriInput = document.getElementById('oidc-redirect-uri');
-    
+
     // Make redirect URI clickable to copy
     redirectUriInput.addEventListener('click', () => {
         copyToClipboard('oidc-redirect-uri');
         showNotification('Redirect URI copied! Configure this in your OIDC provider.', 'success');
     });
-    
+
     // Provider preset buttons
     document.querySelectorAll('.provider-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -2469,26 +2509,26 @@ function initializeOIDCTool() {
             loadProviderPreset(provider);
         });
     });
-    
+
     oidcDiscover.addEventListener('click', async () => {
         const discoveryUrl = document.getElementById('oidc-discovery').value;
         if (!discoveryUrl) {
             showNotification('Please enter discovery endpoint', 'error');
             return;
         }
-        
+
         oidcDiscover.disabled = true;
         oidcDiscover.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Discovering...';
-        
+
         try {
             const response = await fetch(discoveryUrl);
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            
+
             const data = await response.json();
             document.getElementById('oidc-discovery-results').textContent = JSON.stringify(data, null, 2);
-            
+
             // Store the discovery data for the callback page
             const configToStore = {
                 discovery_url: discoveryUrl,
@@ -2499,7 +2539,7 @@ function initializeOIDCTool() {
                 client_id: document.getElementById('oidc-client-id').value
             };
             sessionStorage.setItem('oidc_config', JSON.stringify(configToStore));
-            
+
             showNotification('Discovery successful! Provider configuration loaded.', 'success');
         } catch (error) {
             console.error('Discovery error:', error);
@@ -2509,21 +2549,21 @@ function initializeOIDCTool() {
             oidcDiscover.innerHTML = '<i class="fas fa-search"></i> Discover Endpoints';
         }
     });
-    
+
     oidcGenerateAuthUrl.addEventListener('click', () => {
         const clientId = document.getElementById('oidc-client-id').value;
         const redirectUri = document.getElementById('oidc-redirect-uri').value;
         const scope = document.getElementById('oidc-scope').value;
         const responseType = document.getElementById('oidc-response-type').value;
         const discoveryResults = document.getElementById('oidc-discovery-results').textContent;
-        
+
         if (!clientId || !redirectUri) {
             showNotification('Please fill in Client ID and Redirect URI', 'error');
             return;
         }
-        
+
         let authorizationEndpoint;
-        
+
         // Try to get authorization endpoint from discovery results
         if (discoveryResults) {
             try {
@@ -2533,7 +2573,7 @@ function initializeOIDCTool() {
                 console.error('Error parsing discovery results:', e);
             }
         }
-        
+
         // Fallback to manual construction if no discovery endpoint found
         if (!authorizationEndpoint) {
             const discoveryUrl = document.getElementById('oidc-discovery').value;
@@ -2544,48 +2584,48 @@ function initializeOIDCTool() {
             const baseUrl = new URL(discoveryUrl).origin;
             authorizationEndpoint = `${baseUrl}/oauth/authorize`;
         }
-        
+
         const authUrl = new URL(authorizationEndpoint);
         authUrl.searchParams.set('client_id', clientId);
         authUrl.searchParams.set('redirect_uri', redirectUri);
         authUrl.searchParams.set('scope', scope || 'openid profile email');
         authUrl.searchParams.set('response_type', responseType);
-        
+
         const state = generateRandomState();
         authUrl.searchParams.set('state', state);
-        
+
         // Store state for validation
         sessionStorage.setItem('oidc_state', state);
-        
+
         const authUrlString = authUrl.toString();
         document.getElementById('oidc-auth-url').value = authUrlString;
-        
+
         // Show additional buttons
         oidcOpenUrl.style.display = 'inline-block';
         oidcTestFlow.style.display = 'inline-block';
-        
+
         showNotification('Authorization URL generated successfully!', 'success');
     });
-    
+
     oidcTestFlow.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
         if (!authUrl) {
             showNotification('Please generate an authorization URL first', 'error');
             return;
         }
-        
+
         // Open the auth URL in a new window/tab
         window.open(authUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
         showNotification('Opened authorization URL in new window. Complete the login flow!', 'info');
     });
-    
+
     oidcOpenUrl.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
         if (authUrl) {
             window.open(authUrl, '_blank');
         }
     });
-    
+
     oidcClear.addEventListener('click', () => {
         document.getElementById('oidc-discovery').value = '';
         document.getElementById('oidc-client-id').value = '';
@@ -2594,18 +2634,18 @@ function initializeOIDCTool() {
         document.getElementById('oidc-response-type').value = 'code';
         document.getElementById('oidc-discovery-results').textContent = '';
         document.getElementById('oidc-auth-url').value = '';
-        
+
         // Hide additional buttons
         oidcOpenUrl.style.display = 'none';
         oidcTestFlow.style.display = 'none';
-        
+
         // Clear session storage
         sessionStorage.removeItem('oidc_config');
         sessionStorage.removeItem('oidc_state');
-        
+
         showNotification('OIDC configuration cleared', 'success');
     });
-    
+
     oidcCopyUrl.addEventListener('click', () => {
         const authUrl = document.getElementById('oidc-auth-url').value;
         if (authUrl) {
@@ -2626,7 +2666,7 @@ function initializeHashTool() {
     const hashGenerate = document.getElementById('hash-generate');
     const hashClear = document.getElementById('hash-clear');
     const hashOutputs = document.getElementById('hash-outputs');
-    
+
     // Handle file input change
     hashFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -2636,7 +2676,7 @@ function initializeHashTool() {
             hashInput.placeholder = `File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
         }
     });
-    
+
     // Handle text input change
     hashInput.addEventListener('input', () => {
         if (hashInput.value.trim()) {
@@ -2645,31 +2685,31 @@ function initializeHashTool() {
             hashInput.placeholder = 'Enter text to hash...';
         }
     });
-    
+
     hashGenerate.addEventListener('click', async () => {
         const input = hashInput.value.trim();
         const file = hashFile.files[0];
-        
+
         if (!input && !file) {
             showNotification('Please enter text or select a file to hash', 'error');
             return;
         }
-        
+
         const selectedHashes = Array.from(document.querySelectorAll('.hash-checkboxes input:checked'))
             .map(checkbox => checkbox.value);
-        
+
         if (selectedHashes.length === 0) {
             showNotification('Please select at least one hash type', 'error');
             return;
         }
-        
+
         hashGenerate.disabled = true;
         hashGenerate.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-        
+
         try {
             // Get selected output format
             const outputFormat = document.querySelector('input[name="checksum-format"]:checked').value;
-            
+
             let results;
             if (file) {
                 hashGenerate.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing file...';
@@ -2688,7 +2728,7 @@ function initializeHashTool() {
             hashGenerate.innerHTML = '<i class="fas fa-hashtag"></i> Generate Hashes';
         }
     });
-    
+
     hashClear.addEventListener('click', () => {
         hashInput.value = '';
         hashFile.value = '';
@@ -2696,7 +2736,7 @@ function initializeHashTool() {
         hashOutputs.innerHTML = '';
         document.getElementById('verification-result').innerHTML = '';
     });
-    
+
     // Add checksum verification functionality
     const checksumInput = document.getElementById('checksum-input');
     if (checksumInput) {
@@ -2717,7 +2757,7 @@ function initializeJSONTool() {
     const jsonOriginal = document.getElementById('json-original');
     const jsonProcessed = document.getElementById('json-processed');
     const jsonValidationResults = document.getElementById('json-validation-results');
-    
+
     // Validate JSON
     jsonValidate.addEventListener('click', () => {
         const input = jsonInput.value.trim();
@@ -2725,12 +2765,12 @@ function initializeJSONTool() {
             showNotification('Please enter JSON to validate', 'error');
             return;
         }
-        
+
         try {
             const parsed = JSON.parse(input);
             jsonOriginal.textContent = input;
             jsonProcessed.textContent = beautifyJSON(parsed);
-            
+
             jsonValidationResults.innerHTML = `
                 <div class="validation-success">
                     <i class="fas fa-check-circle"></i>
@@ -2743,16 +2783,16 @@ function initializeJSONTool() {
                     <p><strong>Formatting:</strong> Automatically beautified for readability</p>
                 </div>
             `;
-            
+
             showNotification('JSON validation successful', 'success');
         } catch (error) {
             jsonOriginal.textContent = input;
             jsonProcessed.textContent = '';
-            
+
             // Try to provide more helpful error information
             let errorDetails = error.message;
             let lineNumber = getJSONErrorLine(input, error.message);
-            
+
             // Common error patterns and suggestions
             if (error.message.includes('Unexpected token')) {
                 errorDetails = `${error.message}. Check for missing quotes, commas, or brackets.`;
@@ -2761,7 +2801,7 @@ function initializeJSONTool() {
             } else if (error.message.includes('Unexpected number')) {
                 errorDetails = `${error.message}. Check for invalid number format.`;
             }
-            
+
             jsonValidationResults.innerHTML = `
                 <div class="validation-error">
                     <i class="fas fa-exclamation-circle"></i>
@@ -2773,11 +2813,11 @@ function initializeJSONTool() {
                     <p><strong>Tip:</strong> Use the "Beautify JSON" button only with valid JSON. Fix syntax errors first.</p>
                 </div>
             `;
-            
+
             showNotification('JSON validation failed', 'error');
         }
     });
-    
+
     // Beautify JSON
     jsonBeautify.addEventListener('click', () => {
         const input = jsonInput.value.trim();
@@ -2785,14 +2825,14 @@ function initializeJSONTool() {
             showNotification('Please enter JSON to beautify', 'error');
             return;
         }
-        
+
         try {
             const parsed = JSON.parse(input);
             const beautified = beautifyJSON(parsed);
-            
+
             jsonOriginal.textContent = input;
             jsonProcessed.textContent = beautified;
-            
+
             jsonValidationResults.innerHTML = `
                 <div class="validation-success">
                     <i class="fas fa-check-circle"></i>
@@ -2804,7 +2844,7 @@ function initializeJSONTool() {
                     <p><strong>Formatting:</strong> Consistent 2-space indentation applied</p>
                 </div>
             `;
-            
+
             showNotification('JSON beautified successfully', 'success');
         } catch (error) {
             // Show the error in the validation results
@@ -2819,10 +2859,10 @@ function initializeJSONTool() {
                     <p><strong>Tip:</strong> Fix JSON syntax errors first, then use the beautify function.</p>
                 </div>
             `;
-            showNotification('Invalid JSON - cannot beautify', 'error');
+            showNotification('Invalid JSON - cannot minify', 'error');
         }
     });
-    
+
     // Minify JSON
     jsonMinify.addEventListener('click', () => {
         const input = jsonInput.value.trim();
@@ -2830,14 +2870,14 @@ function initializeJSONTool() {
             showNotification('Please enter JSON to minify', 'error');
             return;
         }
-        
+
         try {
             const parsed = JSON.parse(input);
             const minified = JSON.stringify(parsed);
-            
+
             jsonOriginal.textContent = input;
             jsonProcessed.textContent = minified;
-            
+
             jsonValidationResults.innerHTML = `
                 <div class="validation-success">
                     <i class="fas fa-check-circle"></i>
@@ -2849,7 +2889,7 @@ function initializeJSONTool() {
                     <p><strong>Space Saved:</strong> ${input.length - minified.length} characters</p>
                 </div>
             `;
-            
+
             showNotification('JSON minified successfully', 'success');
         } catch (error) {
             // Show the error in the validation results
@@ -2867,7 +2907,7 @@ function initializeJSONTool() {
             showNotification('Invalid JSON - cannot minify', 'error');
         }
     });
-    
+
     // Clear JSON
     jsonClear.addEventListener('click', () => {
         jsonInput.value = '';
@@ -2875,7 +2915,7 @@ function initializeJSONTool() {
         jsonProcessed.textContent = '';
         jsonValidationResults.innerHTML = '';
     });
-    
+
     // Copy JSON
     jsonCopy.addEventListener('click', () => {
         const processed = jsonProcessed.textContent;
@@ -2889,7 +2929,7 @@ function initializeJSONTool() {
             showNotification('No JSON to copy', 'error');
         }
     });
-    
+
     // Download JSON
     jsonDownload.addEventListener('click', () => {
         const processed = jsonProcessed.textContent;
@@ -2924,49 +2964,49 @@ function getJSONErrorLine(input, errorMessage) {
 // Robust JSON beautification function
 function beautifyJSON(obj, indent = 2, maxDepth = 100) {
     const seen = new WeakSet();
-    
+
     function beautify(value, currentIndent = 0, depth = 0) {
         if (depth > maxDepth) {
             return '"[Max depth exceeded]"';
         }
-        
+
         if (value === null) return 'null';
         if (typeof value === 'undefined') return 'undefined';
         if (typeof value === 'string') return `"${value.replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t')}"`;
         if (typeof value === 'number') return value.toString();
         if (typeof value === 'boolean') return value.toString();
-        
+
         if (typeof value === 'object') {
             if (seen.has(value)) {
                 return '"[Circular reference]"';
             }
             seen.add(value);
-            
+
             if (Array.isArray(value)) {
                 if (value.length === 0) return '[]';
-                
-                const items = value.map(item => 
+
+                const items = value.map(item =>
                     ' '.repeat(currentIndent + indent) + beautify(item, currentIndent + indent, depth + 1)
                 );
-                
+
                 return `[\n${items.join(',\n')}\n${' '.repeat(currentIndent)}]`;
             } else {
                 const keys = Object.keys(value);
                 if (keys.length === 0) return '{}';
-                
+
                 const items = keys.map(key => {
                     const formattedKey = `"${key}": `;
                     const formattedValue = beautify(value[key], currentIndent + indent, depth + 1);
                     return ' '.repeat(currentIndent + indent) + formattedKey + formattedValue;
                 });
-                
+
                 return `{\n${items.join(',\n')}\n${' '.repeat(currentIndent)}}`;
             }
         }
-        
+
         return String(value);
     }
-    
+
     return beautify(obj, 0, 0);
 }
 
@@ -3126,7 +3166,7 @@ function initializePDFMergerTool() {
 
 async function generateHashes(input, hashTypes, outputFormat = 'hex') {
     const results = {};
-    
+
     for (const hashType of hashTypes) {
         try {
             let hash;
@@ -3156,7 +3196,7 @@ async function generateHashes(input, hashTypes, outputFormat = 'hex') {
                     hash = await generateRIPEMD160(input);
                     break;
             }
-            
+
             // Convert to requested format
             results[hashType] = convertHashFormat(hash, outputFormat);
         } catch (error) {
@@ -3164,22 +3204,22 @@ async function generateHashes(input, hashTypes, outputFormat = 'hex') {
             results[hashType] = 'Error generating hash';
         }
     }
-    
+
     return results;
 }
 
 async function generateFileHashes(file, hashTypes, outputFormat = 'hex') {
     const results = {};
-    
+
     // Check file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
         throw new Error('File size exceeds 10MB limit');
     }
-    
+
     // Read file as ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-    
+
     for (const hashType of hashTypes) {
         try {
             let hash;
@@ -3209,7 +3249,7 @@ async function generateFileHashes(file, hashTypes, outputFormat = 'hex') {
                     hash = CryptoJS.RIPEMD160(CryptoJS.lib.WordArray.create(uint8Array)).toString();
                     break;
             }
-            
+
             // Convert to requested format
             results[hashType] = convertHashFormat(hash, outputFormat);
         } catch (error) {
@@ -3217,8 +3257,8 @@ async function generateFileHashes(file, hashTypes, outputFormat = 'hex') {
             results[hashType] = 'Error generating hash';
         }
     }
-    
-        return results;
+
+    return results;
 }
 
 function convertHashFormat(hash, format) {
@@ -3247,20 +3287,20 @@ function verifyChecksum() {
     const expectedChecksum = document.getElementById('checksum-input').value.trim();
     const hashOutputs = document.getElementById('hash-outputs');
     const verificationResult = document.getElementById('verification-result');
-    
+
     if (!expectedChecksum || !hashOutputs.children.length) {
         verificationResult.innerHTML = '';
         return;
     }
-    
+
     // Get all generated hashes
     const generatedHashes = Array.from(hashOutputs.querySelectorAll('.hash-value')).map(el => el.textContent);
-    
+
     // Check for matches
-    const matches = generatedHashes.filter(hash => 
+    const matches = generatedHashes.filter(hash =>
         hash.toLowerCase() === expectedChecksum.toLowerCase()
     );
-    
+
     if (matches.length > 0) {
         verificationResult.innerHTML = `
             <div class="verification-success">
@@ -3281,7 +3321,7 @@ function verifyChecksum() {
 function displayHashResults(results, fileInfo = null) {
     const hashOutputs = document.getElementById('hash-outputs');
     let html = '';
-    
+
     // Add file info if available
     if (fileInfo) {
         html += `
@@ -3294,7 +3334,7 @@ function displayHashResults(results, fileInfo = null) {
             </div>
         `;
     }
-    
+
     for (const [hashType, hashValue] of Object.entries(results)) {
         const displayName = hashType.replace('_', '-').toUpperCase();
         html += `
@@ -3309,9 +3349,9 @@ function displayHashResults(results, fileInfo = null) {
             </div>
         `;
     }
-    
+
     hashOutputs.innerHTML = html;
-    
+
     // Add copy functionality
     hashOutputs.querySelectorAll('.copy-hash-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -3323,7 +3363,7 @@ function displayHashResults(results, fileInfo = null) {
             });
         });
     });
-    
+
     // Auto-verify checksum if one is entered
     const checksumInput = document.getElementById('checksum-input');
     if (checksumInput && checksumInput.value.trim()) {
@@ -3412,7 +3452,7 @@ async function generateRIPEMD160(input) {
 function loadProviderPreset(provider) {
     const discoveryInput = document.getElementById('oidc-discovery');
     const clientIdInput = document.getElementById('oidc-client-id');
-    
+
     const presets = {
         auth0: {
             discovery: 'https://YOUR_DOMAIN.auth0.com/.well-known/openid_configuration',
@@ -3431,7 +3471,7 @@ function loadProviderPreset(provider) {
             placeholder: 'Replace YOUR_DOMAIN with your Okta domain'
         }
     };
-    
+
     const preset = presets[provider];
     if (preset) {
         discoveryInput.value = preset.discovery;
@@ -3446,7 +3486,7 @@ function openModal(title, content) {
     modalBody.innerHTML = content;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
+
     // Scroll to modal smoothly
     setTimeout(() => {
         modal.scrollIntoView({
@@ -3459,7 +3499,7 @@ function openModal(title, content) {
 function closeModal() {
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
-    
+
     // Restore original URL when modal is closed
     if (window.history.state && window.history.state.tool) {
         window.history.pushState({}, '', '/');
@@ -3471,32 +3511,49 @@ function closeModal() {
 // ===== THEME HANDLING =====
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    setTheme(savedTheme);
 }
 
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    let newTheme = 'light';
+
+    if (currentTheme === 'light') {
+        newTheme = 'dark';
+    } else if (currentTheme === 'dark') {
+        newTheme = 'grey';
+    } else {
+        newTheme = 'light';
+    }
+
+    setTheme(newTheme);
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    updateThemeIcon(theme);
 }
 
 function updateThemeIcon(theme) {
     const icon = themeToggle.querySelector('i');
-    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    if (theme === 'dark') {
+        icon.className = 'fas fa-sun';
+    } else if (theme === 'grey') {
+        icon.className = 'fas fa-adjust';
+    } else {
+        icon.className = 'fas fa-moon';
+    }
 }
 
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const contentArea = document.querySelector('.content-area');
-    
+
     if (sidebar && contentArea) {
         sidebar.classList.toggle('sidebar-hidden');
         contentArea.classList.toggle('content-full-width');
-        
+
         // Update toggle button icon
         const icon = sidebarToggle.querySelector('i');
         if (sidebar.classList.contains('sidebar-hidden')) {
@@ -3517,7 +3574,7 @@ function copyToClipboard(elementId) {
     if (element) {
         element.select();
         element.setSelectionRange(0, 99999);
-        
+
         navigator.clipboard.writeText(element.value).then(() => {
             // Success handled by caller
         }).catch(() => {
@@ -3534,7 +3591,7 @@ function showNotification(message, type = 'info') {
         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
         <span>${message}</span>
     `;
-    
+
     // Add styles if not exists
     if (!document.querySelector('#notification-styles')) {
         const styles = document.createElement('style');
@@ -3565,9 +3622,9 @@ function showNotification(message, type = 'info') {
         `;
         document.head.appendChild(styles);
     }
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 3000);
@@ -3578,7 +3635,7 @@ function handleKeyboard(e) {
     if (e.key === 'Escape' && modal.classList.contains('active')) {
         closeModal();
     }
-    
+
     // Ctrl/Cmd + K to focus search
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
@@ -3662,28 +3719,28 @@ function initializeLoanCalculatorTool() {
     const calculateBtn = document.getElementById('loan-calculate');
     const clearBtn = document.getElementById('loan-clear');
     const results = document.getElementById('loan-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const amount = parseFloat(loanAmount.value);
         const rate = parseFloat(loanRate.value) / 100 / 12;
         const term = parseFloat(loanTerm.value) * 12;
-        
+
         if (!amount || !loanRate.value || !loanTerm.value) {
             showNotification('Please fill in all fields', 'error');
             return;
         }
-        
+
         const monthlyPayment = (amount * rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1);
         const totalAmount = monthlyPayment * term;
         const totalInterest = totalAmount - amount;
-        
+
         document.getElementById('loan-monthly-payment').textContent = '$' + monthlyPayment.toFixed(2);
         document.getElementById('loan-total-interest').textContent = '$' + totalInterest.toFixed(2);
         document.getElementById('loan-total-amount').textContent = '$' + totalAmount.toFixed(2);
         results.style.display = 'block';
         showNotification('Loan calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         loanAmount.value = '';
         loanRate.value = '';
@@ -3747,30 +3804,30 @@ function initializeMortgageCalculatorTool() {
     const calculateBtn = document.getElementById('mortgage-calculate');
     const clearBtn = document.getElementById('mortgage-clear');
     const results = document.getElementById('mortgage-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const price = parseFloat(homePrice.value);
         const down = parseFloat(downPayment.value) || 0;
         const rate = parseFloat(interestRate.value) / 100 / 12;
         const term = parseFloat(loanTerm.value) * 12;
-        
+
         if (!price || !interestRate.value || !loanTerm.value) {
             showNotification('Please fill in required fields', 'error');
             return;
         }
-        
+
         const loanAmount = price - down;
         const monthlyPayment = (loanAmount * rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1);
         const totalAmount = monthlyPayment * term;
         const totalInterest = totalAmount - loanAmount;
-        
+
         document.getElementById('mortgage-loan-amount').textContent = '$' + loanAmount.toFixed(2);
         document.getElementById('mortgage-monthly-payment').textContent = '$' + monthlyPayment.toFixed(2);
         document.getElementById('mortgage-total-interest').textContent = '$' + totalInterest.toFixed(2);
         results.style.display = 'block';
         showNotification('Mortgage calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         homePrice.value = '';
         downPayment.value = '';
@@ -3827,20 +3884,20 @@ function initializeBMICalculatorTool() {
     const calculateBtn = document.getElementById('bmi-calculate');
     const clearBtn = document.getElementById('bmi-clear');
     const results = document.getElementById('bmi-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const w = parseFloat(weight.value);
         const ft = parseFloat(heightFt.value) || 0;
         const inches = parseFloat(heightIn.value) || 0;
-        
+
         if (!w || (!ft && !inches)) {
             showNotification('Please enter your weight and height', 'error');
             return;
         }
-        
+
         const totalInches = (ft * 12) + inches;
         const bmi = (w / (totalInches * totalInches)) * 703;
-        
+
         let category, interpretation;
         if (bmi < 18.5) {
             category = 'Underweight';
@@ -3855,14 +3912,14 @@ function initializeBMICalculatorTool() {
             category = 'Obese';
             interpretation = 'Consider consulting a healthcare provider for weight management.';
         }
-        
+
         document.getElementById('bmi-value').textContent = bmi.toFixed(1);
         document.getElementById('bmi-category').textContent = category;
         document.getElementById('bmi-interpretation').textContent = interpretation;
         results.style.display = 'block';
         showNotification('BMI calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         weight.value = '';
         heightFt.value = '';
@@ -3945,23 +4002,23 @@ function initializeCalorieCalculatorTool() {
     const calculateBtn = document.getElementById('cal-calculate');
     const clearBtn = document.getElementById('cal-clear');
     const results = document.getElementById('cal-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const a = parseFloat(age.value);
         const g = gender.value;
         const w = parseFloat(weight.value);
         const h = parseFloat(height.value);
         const activityLevel = parseFloat(activity.value);
-        
+
         if (!a || !g || !w || !h) {
             showNotification('Please fill in all fields', 'error');
             return;
         }
-        
+
         // Convert to metric
         const weightKg = w * 0.453592;
         const heightCm = h * 2.54;
-        
+
         // Harris-Benedict Equation
         let bmr;
         if (g === 'male') {
@@ -3969,9 +4026,9 @@ function initializeCalorieCalculatorTool() {
         } else {
             bmr = 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * a);
         }
-        
+
         const tdee = bmr * activityLevel;
-        
+
         document.getElementById('cal-maintain').textContent = Math.round(tdee) + ' calories/day';
         document.getElementById('cal-loss-mild').textContent = Math.round(tdee - 250) + ' calories/day';
         document.getElementById('cal-loss').textContent = Math.round(tdee - 500) + ' calories/day';
@@ -3979,7 +4036,7 @@ function initializeCalorieCalculatorTool() {
         results.style.display = 'block';
         showNotification('Calorie needs calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         age.value = '';
         gender.value = '';
@@ -4044,35 +4101,35 @@ function initializeCompoundInterestCalculatorTool() {
     const calculateBtn = document.getElementById('ci-calculate');
     const clearBtn = document.getElementById('ci-clear');
     const results = document.getElementById('ci-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const p = parseFloat(principal.value) || 0;
         const pmt = parseFloat(contribution.value) || 0;
         const r = parseFloat(rate.value) / 100 / 12;
         const n = parseFloat(years.value) * 12;
-        
+
         if ((!p && !pmt) || !rate.value || !years.value) {
             showNotification('Please fill in the required fields', 'error');
             return;
         }
-        
+
         // Future value of principal
         const fvPrincipal = p * Math.pow(1 + r, n);
-        
+
         // Future value of monthly contributions
         const fvContributions = pmt * ((Math.pow(1 + r, n) - 1) / r);
-        
+
         const futureValue = fvPrincipal + fvContributions;
         const totalContributions = p + (pmt * n);
         const interestEarned = futureValue - totalContributions;
-        
+
         document.getElementById('ci-future-value').textContent = '$' + futureValue.toFixed(2);
         document.getElementById('ci-contributions').textContent = '$' + totalContributions.toFixed(2);
         document.getElementById('ci-interest').textContent = '$' + interestEarned.toFixed(2);
         results.style.display = 'block';
         showNotification('Investment growth calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         principal.value = '';
         contribution.value = '';
@@ -4126,31 +4183,31 @@ function initializeAgeCalculatorTool() {
     const calculateBtn = document.getElementById('age-calculate');
     const clearBtn = document.getElementById('age-clear');
     const results = document.getElementById('age-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const birth = new Date(birthDate.value);
-        
+
         if (!birthDate.value) {
             showNotification('Please enter your birth date', 'error');
             return;
         }
-        
+
         const now = new Date();
         const diff = now - birth;
-        
+
         const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
         const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44));
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor(diff / (1000 * 60 * 60));
-        
+
         const ageYears = now.getFullYear() - birth.getFullYear();
         const ageMonths = now.getMonth() - birth.getMonth();
         const ageDays = now.getDate() - birth.getDate();
-        
+
         let displayYears = ageYears;
         let displayMonths = ageMonths;
         let displayDays = ageDays;
-        
+
         if (displayDays < 0) {
             displayMonths--;
             displayDays += 30;
@@ -4159,7 +4216,7 @@ function initializeAgeCalculatorTool() {
             displayYears--;
             displayMonths += 12;
         }
-        
+
         document.getElementById('age-years').textContent = `${displayYears} years, ${displayMonths} months, ${displayDays} days`;
         document.getElementById('age-months').textContent = months.toLocaleString() + ' months';
         document.getElementById('age-days').textContent = days.toLocaleString() + ' days';
@@ -4167,7 +4224,7 @@ function initializeAgeCalculatorTool() {
         results.style.display = 'block';
         showNotification('Age calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         birthDate.value = '';
         results.style.display = 'none';
@@ -4224,28 +4281,28 @@ function initializeTipCalculatorTool() {
     const calculateBtn = document.getElementById('tip-calculate');
     const clearBtn = document.getElementById('tip-clear');
     const results = document.getElementById('tip-results');
-    
+
     calculateBtn.addEventListener('click', () => {
         const bill = parseFloat(billAmount.value);
         const percent = parseFloat(tipPercent.value);
         const people = parseInt(numPeople.value) || 1;
-        
+
         if (!bill || !percent) {
             showNotification('Please enter bill amount and tip percentage', 'error');
             return;
         }
-        
+
         const tipAmount = bill * (percent / 100);
         const total = bill + tipAmount;
         const perPerson = total / people;
-        
+
         document.getElementById('tip-amount').textContent = '$' + tipAmount.toFixed(2);
         document.getElementById('tip-total').textContent = '$' + total.toFixed(2);
         document.getElementById('tip-per-person').textContent = '$' + perPerson.toFixed(2);
         results.style.display = 'block';
         showNotification('Tip calculated successfully', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         billAmount.value = '';
         tipPercent.value = '18';
@@ -4303,17 +4360,17 @@ function createWordCounterInterface() {
 function initializeWordCounterTool() {
     const textArea = document.getElementById('word-text');
     const clearBtn = document.getElementById('word-clear');
-    
+
     function updateStats() {
         const text = textArea.value;
-        
+
         const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
         const chars = text.length;
         const charsNoSpace = text.replace(/\s/g, '').length;
         const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
         const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0).length;
         const readingTime = Math.ceil(words / 200);
-        
+
         document.getElementById('word-count').textContent = words;
         document.getElementById('char-count').textContent = chars;
         document.getElementById('char-no-space').textContent = charsNoSpace;
@@ -4321,9 +4378,9 @@ function initializeWordCounterTool() {
         document.getElementById('paragraph-count').textContent = paragraphs;
         document.getElementById('reading-time').textContent = readingTime + ' min';
     }
-    
+
     textArea.addEventListener('input', updateStats);
-    
+
     clearBtn.addEventListener('click', () => {
         textArea.value = '';
         updateStats();
@@ -4377,48 +4434,48 @@ function initializePasswordGeneratorTool() {
     const generateBtn = document.getElementById('pass-generate');
     const copyBtn = document.getElementById('pass-copy');
     const output = document.getElementById('pass-output');
-    
+
     function generatePassword() {
         const len = parseInt(length.value);
         let chars = '';
-        
+
         if (uppercase.checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         if (lowercase.checked) chars += 'abcdefghijklmnopqrstuvwxyz';
         if (numbers.checked) chars += '0123456789';
         if (symbols.checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-        
+
         if (chars.length === 0) {
             showNotification('Please select at least one character type', 'error');
             return;
         }
-        
+
         let password = '';
         const array = new Uint32Array(len);
         crypto.getRandomValues(array);
-        
+
         for (let i = 0; i < len; i++) {
             password += chars[array[i] % chars.length];
         }
-        
+
         output.value = password;
         showNotification('Password generated successfully', 'success');
     }
-    
+
     generateBtn.addEventListener('click', generatePassword);
-    
+
     copyBtn.addEventListener('click', () => {
         if (!output.value) {
             showNotification('Please generate a password first', 'error');
             return;
         }
-        
+
         navigator.clipboard.writeText(output.value).then(() => {
             showNotification('Password copied to clipboard', 'success');
         }).catch(() => {
             showNotification('Failed to copy password', 'error');
         });
     });
-    
+
     // Generate password on load
     generatePassword();
 }
@@ -4460,25 +4517,25 @@ function initializeQRGeneratorTool() {
     const clearBtn = document.getElementById('qr-clear');
     const output = document.getElementById('qr-output');
     const canvas = document.getElementById('qr-canvas');
-    
+
     generateBtn.addEventListener('click', () => {
         const text = textInput.value.trim();
-        
+
         if (!text) {
             showNotification('Please enter text or URL', 'error');
             return;
         }
-        
+
         // Simple placeholder - in production, use QRCode.js library
         const ctx = canvas.getContext('2d');
         canvas.width = 256;
         canvas.height = 256;
-        
+
         // Draw a simple pattern as placeholder
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, 256, 256);
         ctx.fillStyle = 'black';
-        
+
         // Draw simple QR-like pattern
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
@@ -4487,30 +4544,30 @@ function initializeQRGeneratorTool() {
                 }
             }
         }
-        
+
         ctx.font = '12px Arial';
         ctx.fillStyle = 'blue';
         ctx.textAlign = 'center';
         ctx.fillText('QR Code Placeholder', 128, 128);
         ctx.fillText('Include QRCode.js for real QR codes', 128, 145);
-        
+
         output.style.display = 'block';
         showNotification('QR code generated (placeholder)', 'info');
     });
-    
+
     downloadBtn.addEventListener('click', () => {
         if (output.style.display === 'none') {
             showNotification('Please generate a QR code first', 'error');
             return;
         }
-        
+
         const link = document.createElement('a');
         link.download = 'qrcode.png';
         link.href = canvas.toDataURL();
         link.click();
         showNotification('QR code downloaded', 'success');
     });
-    
+
     clearBtn.addEventListener('click', () => {
         textInput.value = '';
         output.style.display = 'none';
@@ -5074,7 +5131,7 @@ function initializeImageConverterTool() {
         // Show quality control for JPEG and WebP
         qualityControl.style.display =
             (formatSelect.value === 'image/jpeg' || formatSelect.value === 'image/webp')
-            ? 'block' : 'none';
+                ? 'block' : 'none';
     });
 
     fileInput.addEventListener('change', (e) => {
