@@ -261,130 +261,543 @@
             </div>
             
             <div class="nav-menu">
-                <div class="nav-links desktop-only">
-                    <a href="#featured" class="nav-link">Featured</a>
-                    <a href="#tools" class="nav-link">All Tools</a>
-                    <a href="blog.html" class="nav-link">Blog</a>
+                <div class="nav-search">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search tools..." class="search-input">
                 </div>
-
+                
                 <div class="nav-actions">
-                    <button class="nav-btn theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
+                    <a href="blog.html" class="nav-btn">Blog</a>
+                    <button class="nav-btn" id="theme-toggle">
                         <i class="fas fa-moon"></i>
                     </button>
-                    <!-- Mobile Menu Toggle -->
-                    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Menu">
-                        <i class="fas fa-bars"></i>
-                    </button>
                 </div>
             </div>
+            
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="sidebar-toggle" id="sidebar-toggle">
+                <i class="fas fa-th-large"></i>
+            </button>
         </div>
     </nav>
-    
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
-    <div class="mobile-menu" id="mobile-menu">
-        <div class="mobile-menu-header">
-            <h3>Menu</h3>
-            <button class="close-menu" id="close-menu"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="mobile-nav-links">
-            <a href="#featured" class="mobile-nav-link">Featured</a>
-            <a href="#tools" class="mobile-nav-link">All Tools</a>
-            <a href="blog.html" class="mobile-nav-link">Blog</a>
-        </div>
-    </div>
 
     <!-- Main Content -->
-    <main class="main-content minimalist-layout">
-        
-        <!-- Hero Section -->
-        <section class="hero-minimal">
-            <div class="container">
-                <div class="hero-content">
-                    <h1 class="hero-title">Developer Tools, <br><span class="text-gradient">Simplified.</span></h1>
-                    <p class="hero-subtitle">Essential utilities for modern developers. Open source, privacy-focused, and free forever.</p>
+    <main class="main-content">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Tools</h2>
+                <div class="sidebar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="sidebar-search" placeholder="Search tools...">
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h4>Quick Tools</h4>
+                    <ul class="nav-list">
+                        <!-- Developer Tools - TOP PRIORITY (Restore Traffic) -->
+                        <li><a href="#" class="nav-link" data-tool="json">
+                            <i class="fas fa-code"></i>
+                            <span>JSON Validator</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="base64">
+                            <i class="fas fa-code"></i>
+                            <span>Base64 Encoder</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="jwt">
+                            <i class="fas fa-key"></i>
+                            <span>JWT Verifier</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="url">
+                            <i class="fas fa-link"></i>
+                            <span>URL Encoder</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="hash">
+                            <i class="fas fa-lock"></i>
+                            <span>Hash Generator</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="oidc">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>OIDC Tester</span>
+                        </a></li>
+
+                        <!-- Divider -->
+                        <li style="border-top: 1px solid #e0e0e0; margin: 0.5rem 0;"></li>
+
+                        <!-- Phase 2 Tools -->
+                        <li><a href="#" class="nav-link" data-tool="pdf-merger">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF Merger</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="pdf-splitter">
+                            <i class="fas fa-scissors"></i>
+                            <span>PDF Splitter</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="image-compressor">
+                            <i class="fas fa-image"></i>
+                            <span>Image Compressor</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="image-resizer">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                            <span>Image Resizer</span>
+                        </a></li>
+
+                        <!-- Divider -->
+                        <li style="border-top: 1px solid #e0e0e0; margin: 0.5rem 0;"></li>
+
+                        <!-- Popular Calculators -->
+                        <li><a href="#" class="nav-link" data-tool="loan-calculator">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Loan Calculator</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="bmi-calculator">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>BMI Calculator</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-tool="word-counter">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Word Counter</span>
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h4>Categories</h4>
+                    <ul class="nav-list">
+                        <li><a href="#" class="nav-link" data-category="all">
+                            <i class="fas fa-th-large"></i>
+                            <span>All Tools</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="calculators">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calculators</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="productivity">
+                            <i class="fas fa-rocket"></i>
+                            <span>Productivity</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="authentication">
+                            <i class="fas fa-lock"></i>
+                            <span>Authentication</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="json">
+                            <i class="fas fa-code"></i>
+                            <span>JSON Tools</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="ai">
+                            <i class="fas fa-robot"></i>
+                            <span>AI & ML</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="database">
+                            <i class="fas fa-database"></i>
+                            <span>Database</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="ui">
+                            <i class="fas fa-palette"></i>
+                            <span>UI/UX</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="testing">
+                            <i class="fas fa-vial"></i>
+                            <span>Testing</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="hosting">
+                            <i class="fas fa-server"></i>
+                            <span>Hosting</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="analytics">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Analytics</span>
+                        </a></li>
+                        <li><a href="#" class="nav-link" data-category="finance">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Finance</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <h1 class="hero-title">Free Online Developer Tools, Calculators & Utilities | Base64 Encode/Decode, JSON Validator, JWT Verifier, Loan Calculator, BMI</h1>
+                    <p class="hero-subtitle">All-in-one platform with professional developer tools: Base64 encode/decode, JSON validator, JWT verification, URL encoder, hash generator, plus loan & mortgage calculators, BMI & calorie calculators, word counter, password generator, PDF tools, image tools, and 80+ tools. No signup required!</p>
                     
-                    <!-- Centered Search -->
-                    <div class="hero-search-wrapper">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="hero-search-input" placeholder="Search for tools (e.g., JSON, Base64, JWT)..." class="hero-search-input" autocomplete="off">
+                    <!-- Social Media Buttons -->
+                    <div class="social-media-buttons">
+                        <a href="https://youtube.com/@techhubweekly?si=HpI1mgloDKs-wj_8" target="_blank" rel="noopener noreferrer" class="social-btn youtube-btn">
+                            <div class="social-icon">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+                            <div class="social-content">
+                                <span class="social-title">TechHub Weekly</span>
+                                <span class="social-subtitle">Subscribe on YouTube</span>
+                            </div>
+                        </a>
+                        
+                        <a href="https://www.instagram.com/devhub.news?igsh=MTBkanVsZGU2bW9kZg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-btn instagram-btn">
+                            <div class="social-icon">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <div class="social-content">
+                                <span class="social-title">DevHub News</span>
+                                <span class="social-subtitle">Follow on Instagram</span>
+                            </div>
+                        </a>
+                        
+                        <a href="https://hostinger.com?REFERRALCODE=GCJACHINTO0F" target="_blank" rel="noopener noreferrer" class="social-btn hostinger-btn">
+                            <div class="social-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="social-content">
+                                <span class="social-title">Hostinger</span>
+                                <span class="social-subtitle">Web Hosting & Domains</span>
+                            </div>
+                        </a>
+                    </div>
+
+
+                    <!-- Developer Tools (TOP PRIORITY - Restore Traffic) -->
+                    <h2 style="text-align: center; margin: 2rem 0 1rem; font-size: 1.8rem; color: var(--text-primary);">👨‍💻 Developer Tools</h2>
+                    <div class="quick-tools">
+                        <div class="tool-card quick-tool" data-tool="json">
+                            <div class="tool-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>JSON Validator & Beautifier</h3>
+                                <p>Validate JSON syntax, format, and beautify JSON with proper indentation</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="base64">
+                            <div class="tool-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Base64 Encode Decode Tool</h3>
+                                <p>Free online Base64 encode and Base64 decode tool - convert text to Base64 and vice versa instantly</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="url">
+                            <div class="tool-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>URL Encode Decode Tool</h3>
+                                <p>Free online URL encode and URL decode tool - encode URLs and special characters instantly</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="hash">
+                            <div class="tool-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Hash Generator Tool</h3>
+                                <p>Generate MD5, SHA-256, SHA-512 hashes and more for data integrity and security</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="jwt">
+                            <div class="tool-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>JWT Token Verifier</h3>
+                                <p>Decode and verify JWT tokens to inspect headers, payloads, and signatures</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="oidc">
+                            <div class="tool-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>OIDC Tester</h3>
+                                <p>Test OpenID Connect workflows and debug authentication flows</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2 Tools - PDF, Image, Text -->
+                    <h2 style="text-align: center; margin: 2rem 0 1rem; font-size: 1.8rem; color: var(--text-primary);">🛠️ PDF, Image & Text Tools</h2>
+                    <div class="quick-tools">
+                        <div class="tool-card quick-tool" data-tool="pdf-merger">
+                            <div class="tool-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>PDF Merger</h3>
+                                <p>Combine multiple PDF files into one document instantly - all processed in your browser</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="pdf-splitter">
+                            <div class="tool-icon">
+                                <i class="fas fa-scissors"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>PDF Splitter</h3>
+                                <p>Split PDF files into separate pages or extract specific page ranges securely</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="image-compressor">
+                            <div class="tool-icon">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Image Compressor</h3>
+                                <p>Compress images to reduce file size while maintaining quality - supports JPG, PNG, WebP</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="image-resizer">
+                            <div class="tool-icon">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Image Resizer</h3>
+                                <p>Resize images to specific dimensions - maintain aspect ratio or set custom sizes</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="image-converter">
+                            <div class="tool-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Image Format Converter</h3>
+                                <p>Convert images between JPG, PNG, and WebP formats with quality control</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="text-case">
+                            <div class="tool-icon">
+                                <i class="fas fa-font"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Text Case Converter</h3>
+                                <p>Convert text between uppercase, lowercase, title case, camelCase, and more</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="text-diff">
+                            <div class="tool-icon">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Text Difference Checker</h3>
+                                <p>Compare two texts and see differences highlighted with detailed statistics</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="lorem-ipsum">
+                            <div class="tool-icon">
+                                <i class="fas fa-paragraph"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Lorem Ipsum Generator</h3>
+                                <p>Generate placeholder text for designs and mockups with customizable options</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Popular Calculators & Tools -->
+                    <h2 style="text-align: center; margin: 3rem 0 1rem; font-size: 1.8rem; color: var(--text-primary);">💎 Most Popular Tools</h2>
+                    <div class="quick-tools">
+                        <!-- Financial Calculators -->
+                        <div class="tool-card quick-tool" data-tool="loan-calculator">
+                            <div class="tool-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Loan Calculator</h3>
+                                <p>Calculate monthly loan payments, total interest, and amortization schedule instantly</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="mortgage-calculator">
+                            <div class="tool-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Mortgage Calculator</h3>
+                                <p>Calculate mortgage payments with down payment, rates, and taxes included</p>
+                            </div>
+                        </div>
+
+                        <!-- Health Calculators -->
+                        <div class="tool-card quick-tool" data-tool="bmi-calculator">
+                            <div class="tool-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>BMI Calculator</h3>
+                                <p>Calculate your Body Mass Index and get health insights instantly</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="calorie-calculator">
+                            <div class="tool-icon">
+                                <i class="fas fa-apple-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Calorie Calculator</h3>
+                                <p>Calculate daily calorie needs based on your goals and activity level</p>
+                            </div>
+                        </div>
+
+                        <!-- Productivity Tools -->
+                        <div class="tool-card quick-tool" data-tool="word-counter">
+                            <div class="tool-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Word Counter</h3>
+                                <p>Count words, characters, sentences, and reading time in real-time</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-card quick-tool" data-tool="password-generator">
+                            <div class="tool-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Password Generator</h3>
+                                <p>Generate strong, secure, random passwords instantly</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Key Tools Grid (Prominent) -->
-                <div class="key-tools-grid">
-                    <!-- JSON Validator -->
-                    <a href="#" class="key-tool-card" data-tool="json">
-                        <div class="key-tool-icon" style="background: linear-gradient(135deg, #FF6B6B, #EE5253);">
+        <!-- Blog Preview Section -->
+        <section class="blog-preview">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Developer Blog & Tutorials</h2>
+                    <p>Expert guides, tutorials, and insights for modern developers</p>
+                </div>
+                
+                <div class="blog-preview-grid">
+                    <article class="blog-preview-card">
+                        <div class="blog-preview-image">
                             <i class="fas fa-code"></i>
                         </div>
-                        <div class="key-tool-info">
-                            <h3>JSON Validator</h3>
-                            <p>Validate & Format</p>
+                        <div class="blog-preview-content">
+                            <div class="blog-preview-meta">
+                                <span class="blog-preview-category">Tutorial</span>
+                                <span class="blog-preview-date">Jan 15, 2025</span>
+                            </div>
+                            <h3 class="blog-preview-title">
+                                <a href="blog/base64-encoding-complete-guide.html">Complete Guide to Base64 Encoding</a>
+                            </h3>
+                            <p class="blog-preview-excerpt">Master Base64 encoding with this comprehensive guide. Learn the fundamentals, use cases, and implementation in multiple languages.</p>
                         </div>
-                    </a>
-
-                    <!-- Base64 -->
-                    <a href="#" class="key-tool-card" data-tool="base64">
-                        <div class="key-tool-icon" style="background: linear-gradient(135deg, #4834d4, #686de0);">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <div class="key-tool-info">
-                            <h3>Base64 Converter</h3>
-                            <p>Encode & Decode</p>
-                        </div>
-                    </a>
-
-                    <!-- JWT -->
-                    <a href="#" class="key-tool-card" data-tool="jwt">
-                        <div class="key-tool-icon" style="background: linear-gradient(135deg, #f0932b, #ffbe76);">
+                    </article>
+                    
+                    <article class="blog-preview-card">
+                        <div class="blog-preview-image">
                             <i class="fas fa-key"></i>
                         </div>
-                        <div class="key-tool-info">
-                            <h3>JWT Verifier</h3>
-                            <p>Debug Tokens</p>
+                        <div class="blog-preview-content">
+                            <div class="blog-preview-meta">
+                                <span class="blog-preview-category">Security</span>
+                                <span class="blog-preview-date">Jan 12, 2025</span>
+                            </div>
+                            <h3 class="blog-preview-title">
+                                <a href="blog.html">JWT Token Security Best Practices</a>
+                            </h3>
+                            <p class="blog-preview-excerpt">Learn essential JWT security practices including token validation, secure storage, and common vulnerabilities to avoid.</p>
                         </div>
-                    </a>
-
-                    <!-- URL Encoder -->
-                    <a href="#" class="key-tool-card" data-tool="url">
-                        <div class="key-tool-icon" style="background: linear-gradient(135deg, #6ab04c, #badc58);">
-                            <i class="fas fa-link"></i>
+                    </article>
+                    
+                    <article class="blog-preview-card">
+                        <div class="blog-preview-image">
+                            <i class="fas fa-shield-alt"></i>
                         </div>
-                        <div class="key-tool-info">
-                            <h3>URL Encoder</h3>
-                            <p>Escape & Unescape</p>
+                        <div class="blog-preview-content">
+                            <div class="blog-preview-meta">
+                                <span class="blog-preview-category">Guide</span>
+                                <span class="blog-preview-date">Jan 10, 2025</span>
+                            </div>
+                            <h3 class="blog-preview-title">
+                                <a href="blog.html">OIDC Authentication Implementation</a>
+                            </h3>
+                            <p class="blog-preview-excerpt">Implement OpenID Connect authentication in your applications. Learn about OIDC flows and integration with identity providers.</p>
                         </div>
-                    </a>
+                    </article>
+                </div>
+                
+                <div class="blog-preview-cta">
+                    <a href="blog.html" class="btn btn-primary">View All Blog Posts</a>
                 </div>
             </div>
         </section>
 
-        <!-- Secondary Tools Section (Searchable & Usable) -->
-        <section class="all-tools-section" id="tools">
+        <!-- SEO Content Section -->
+        <section class="seo-content">
             <div class="container">
-                <div class="section-tabs">
-                    <button class="tab-btn active" data-category="all">All Tools</button>
-                    <button class="tab-btn" data-category="productivity">Productivity</button>
-                    <button class="tab-btn" data-category="development">Development</button>
-                    <button class="tab-btn" data-category="design">Design</button>
-                </div>
-
-                <div class="tools-grid-minimal" id="tools-grid">
-                    <!-- Tools populated by JS -->
+                <div class="seo-content-wrapper">
+                    <h2>Complete Dev Tools Portal</h2>
+                    <h3>Base64 Encode/Decode, URL Encode/Decode, OIDC Testing, JSON Validator</h3>
+                    <p>DevHub is your ultimate <strong>dev portal</strong> for <strong>dev tools</strong> including free online <strong>Base64 encode</strong> and <strong>Base64 decode</strong>, <strong>URL encode</strong> and <strong>URL decode</strong>, <strong>OIDC playground</strong> testing, <strong>OIDC testing</strong> tools, <strong>JSON validator</strong>, and <strong>JSON beautifier</strong>. Our curated collection includes 60+ essential developer tools for modern software development.</p>
+                    
+                    <h3>Why Choose DevHub for Developer Tools?</h3>
+                    <ul class="seo-benefits">
+                        <li><strong>Free Online Tools:</strong> All <strong>dev tools</strong> are completely free with no signup required</li>
+                        <li><strong>Instant Access:</strong> Use <strong>Base64 encode</strong>, <strong>Base64 decode</strong>, <strong>URL encode</strong>, <strong>URL decode</strong>, <strong>OIDC testing</strong>, <strong>JSON validator</strong>, and <strong>JSON beautifier</strong> tools immediately</li>
+                        <li><strong>60+ Curated Tools:</strong> Hand-picked best <strong>dev tools</strong> across 10 categories</li>
+                        <li><strong>Professional Dev Portal:</strong> Enterprise-grade <strong>dev portal</strong> for all your development needs</li>
+                        <li><strong>Mobile Optimized:</strong> Perfect experience on all devices</li>
+                    </ul>
+                    
+                    <h3>Popular Developer Tool Categories</h3>
+                    <p>Explore our comprehensive collection of <strong>developer tools</strong> organized by category. From <strong>authentication tools</strong> like JWT verification to <strong>productivity tools</strong> like Base64 encode decode, find everything you need for modern software development.</p>
                 </div>
             </div>
         </section>
 
-        <!-- SEO Content (Kept for ranking, but styled minimally) -->
-        <section class="seo-content-minimal">
+
+
+        <!-- Featured Tools -->
+        <section class="featured" id="featured">
             <div class="container">
-                <div class="seo-text-wrapper">
-                    <h2>Complete Developer Toolkit</h2>
-                    <p>DevHub provides a comprehensive suite of free, client-side tools for developers. From <strong>JSON validation</strong> and <strong>JWT debugging</strong> to <strong>Base64 encoding</strong>, everything runs in your browser for maximum privacy and speed.</p>
+                <div class="section-header">
+                    <h2>Featured Tools</h2>
+                    <p>Most popular and trending developer resources</p>
+                </div>
+                
+                <div class="tools-grid" id="featured-grid">
+                    <!-- Featured tools will be populated by JavaScript -->
                 </div>
             </div>
         </section>
+
+        <!-- Tools Collection -->
+        <section class="tools-collection" id="tools">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="collection-title">All Tools</h2>
+                    <p id="collection-subtitle">Discover amazing developer tools and resources</p>
+                </div>
+                
+                <div class="tools-grid" id="tools-grid">
+                    <!-- Tools will be populated by JavaScript -->
+                </div>
+                
+                <div class="load-more">
+                    <button class="btn btn-outline" id="load-more-btn">Load More</button>
+                </div>
             </div>
         </section>
 
