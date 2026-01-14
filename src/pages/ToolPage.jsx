@@ -67,6 +67,43 @@ export default function ToolPage() {
             <Helmet>
                 <title>{`${tool.name} - Free Online Tool | DevHub`}</title>
                 <meta name="description" content={tool.description} />
+                <meta name="keywords" content={tool.tags ? tool.tags.join(', ') + ', developer tools, free tools' : 'developer tools, free tools'} />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href={`https://devhub360.com${tool.url}`} />
+
+                {/* Open Graph */}
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`https://devhub360.com${tool.url}`} />
+                <meta property="og:title" content={`${tool.name} - Free Online Tool | DevHub`} />
+                <meta property="og:description" content={tool.description} />
+                <meta property="og:image" content="https://devhub360.com/favicon-192x192.png" />
+                <meta property="og:site_name" content="DevHub" />
+
+                {/* Twitter */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:url" content={`https://devhub360.com${tool.url}`} />
+                <meta name="twitter:title" content={`${tool.name} - Free Online Tool | DevHub`} />
+                <meta name="twitter:description" content={tool.description} />
+                <meta name="twitter:image" content="https://devhub360.com/favicon-192x192.png" />
+
+                {/* JSON-LD */}
+                <script type="application/ld+json">
+                    {`
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "SoftwareApplication",
+                            "name": "${tool.name}",
+                            "description": "${tool.description}",
+                            "applicationCategory": "DeveloperApplication",
+                            "operatingSystem": "Web Browser",
+                            "offers": {
+                                "@type": "Offer",
+                                "price": "0",
+                                "priceCurrency": "USD"
+                            }
+                        }
+                    `}
+                </script>
             </Helmet>
 
             <div className="max-w-6xl mx-auto">

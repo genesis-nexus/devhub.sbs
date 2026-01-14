@@ -32,8 +32,44 @@ export default function Home() {
     return (
         <>
             <Helmet>
-                <title>DevHub - 100+ Free Developer Tools</title>
-                <meta name="description" content="Free online developer tools including JSON Validator, JWT Verifier, Base64 Encoder, and more. Open source and privacy-focused." />
+                <title>DevHub - Free Developer Tools, Calculators & Utilities</title>
+                <meta name="description" content="DevHub: The ultimate free developer toolkit. Base64, JSON validator, JWT debugger, QR code generator, and 50+ essential tools for modern engineering. No signup required." />
+                <meta name="keywords" content="devhub, developer tools, base64 encode, json validator, jwt verification, qr code generator, url encode, hash generator, free online tools, productivity tools" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://devhub360.com/" />
+
+                {/* Open Graph */}
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://devhub360.com/" />
+                <meta property="og:title" content="DevHub - Free Developer Tools, JSON Validator, JWT Verifier" />
+                <meta property="og:description" content="Free online Base64 encode/decode, JSON validator, JWT verification, URL encoder, hash generator, plus calculators and 50+ tools for developers." />
+                <meta property="og:image" content="https://devhub360.com/favicon-192x192.png" />
+                <meta property="og:site_name" content="DevHub" />
+
+                {/* Twitter */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:url" content="https://devhub360.com/" />
+                <meta name="twitter:title" content="DevHub - Free Developer Tools, JSON Validator, JWT Verifier" />
+                <meta name="twitter:description" content="Free online Base64 encode/decode, JSON validator, JWT verification, URL encoder, hash generator, plus calculators and 50+ tools for developers." />
+                <meta name="twitter:image" content="https://devhub360.com/favicon-192x192.png" />
+
+                {/* JSON-LD */}
+                <script type="application/ld+json">
+                    {`
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "WebSite",
+                            "name": "DevHub",
+                            "url": "https://devhub360.com",
+                            "description": "DevHub: The ultimate free developer toolkit. Base64, JSON validator, JWT debugger, and 50+ essential tools.",
+                            "potentialAction": {
+                                "@type": "SearchAction",
+                                "target": "https://devhub360.com/?search={search_term_string}",
+                                "query-input": "required name=search_term_string"
+                            }
+                        }
+                    `}
+                </script>
             </Helmet>
 
             <section className="text-center py-12 mb-12 bg-gradient-to-b from-[var(--bg-secondary)] to-[var(--bg-primary)] rounded-3xl border border-[var(--border-color)]">

@@ -203,10 +203,10 @@ print_summary() {
     
     if [ "$1" == "remote" ]; then
         echo "  Deployed to:     ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
-        echo "  URL:             https://devhub.sbs"
+        echo "  URL:             https://devhub360.com"
     else
         echo "  Deployed to:     /var/www/devhub.sbs/docs"
-        echo "  URL:             http://localhost or https://devhub.sbs"
+        echo "  URL:             http://localhost or https://devhub360.com"
     fi
     echo ""
     echo "=============================================="
