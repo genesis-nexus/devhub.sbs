@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
@@ -28,8 +28,18 @@ export default function MainLayout() {
                     <div className="max-w-7xl mx-auto min-h-full">
                         <Outlet />
                     </div>
-                    <footer className="mt-12 py-6 text-center text-[var(--text-muted)] text-sm border-t border-[var(--border-color)]">
-                        &copy; {new Date().getFullYear()} DevHub. Built for developers.
+                    <footer className="mt-12 py-8 border-t border-[var(--border-color)]">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="text-[var(--text-muted)] text-sm">
+                                &copy; {new Date().getFullYear()} DevHub. Built for developers.
+                            </div>
+                            <div className="flex gap-6 text-sm text-[var(--text-secondary)]">
+                                <Link to="/about" className="hover:text-[var(--accent-primary)] transition-colors">About</Link>
+                                <Link to="/privacy" className="hover:text-[var(--accent-primary)] transition-colors">Privacy</Link>
+                                <Link to="/terms" className="hover:text-[var(--accent-primary)] transition-colors">Terms</Link>
+                                <Link to="/contact" className="hover:text-[var(--accent-primary)] transition-colors">Contact</Link>
+                            </div>
+                        </div>
                     </footer>
                 </main>
             </div>

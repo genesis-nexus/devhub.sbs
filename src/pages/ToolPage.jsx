@@ -1,7 +1,9 @@
 import React, { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import ReactMarkdown from 'react-markdown';
 import { getToolByPath } from '../data/tools';
+import { toolContent } from '../data/toolContent';
 
 // Dynamic imports for tools
 const JsonValidator = React.lazy(() => import('../tools/JsonValidator'));
@@ -22,6 +24,7 @@ const UnitConverter = React.lazy(() => import('../tools/UnitConverter'));
 export default function ToolPage() {
     const { toolId } = useParams();
     const tool = getToolByPath(`/tool/${toolId}`);
+    const richContent = toolContent[toolId];
 
     if (!tool) {
         return (
@@ -119,22 +122,30 @@ export default function ToolPage() {
                 </div>
 
                 <section className="mt-12 pt-8 border-t border-[var(--border-color)]">
-                    <h3 className="text-xl font-bold mb-4">About this Tool</h3>
-                    <div className="prose dark:prose-invert max-w-none text-[var(--text-secondary)]">
-                        <p>
-                            {tool.name} is a free online utility that allows you to {tool.description.toLowerCase()}
-                            It runs entirely in your browser, ensuring your data remains private and secure.
-                        </p>
-                        {tool.tags && (
-                            <div className="flex gap-2 mt-4">
-                                {tool.tags.map(tag => (
-                                    <span key={tag} className="px-2 py-1 bg-[var(--bg-tertiary)] rounded-md text-sm text-[var(--text-secondary)]">
-                                        {tag}
-                                    </span>
-                                ))}
+                    {richContent ? (
+                        <div className="prose dark:prose-invert max-w-none text-[var(--text-secondary)]">
+                            <ReactMarkdown>{richContent.content}</ReactMarkdown>
+                        </div>
+                    ) : (
+                        <>
+                            <h3 className="text-xl font-bold mb-4">About this Tool</h3>
+                            <div className="prose dark:prose-invert max-w-none text-[var(--text-secondary)]">
+                                <p>
+                                    {tool.name} is a free online utility that allows you to {tool.description.toLowerCase()}
+                                    It runs entirely in your browser, ensuring your data remains private and secure.
+                                </p>
+                                {tool.tags && (
+                                    <div className="flex gap-2 mt-4">
+                                        {tool.tags.map(tag => (
+                                            <span key={tag} className="px-2 py-1 bg-[var(--bg-tertiary)] rounded-md text-sm text-[var(--text-secondary)]">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        </>
+                    )}
                 </section>
             </div>
         </>
