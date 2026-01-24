@@ -1,9 +1,11 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
+import { Star } from 'lucide-react';
 import { getToolByPath } from '../data/tools';
 import { toolContent } from '../data/toolContent';
+import { usePreferences } from '../contexts/PreferencesContext';
 
 // Dynamic imports for tools
 const JsonValidator = React.lazy(() => import('../tools/JsonValidator'));
@@ -25,6 +27,15 @@ export default function ToolPage() {
     const { toolId } = useParams();
     const tool = getToolByPath(`/tool/${toolId}`);
     const richContent = toolContent[toolId];
+    const { toggleFavorite, isFavorite, addToRecents } = usePreferences();
+    const favorited = tool ? isFavorite(toolId) : false;
+
+    // Track recent usage when visiting a tool
+    useEffect(() => {
+        if (tool && tool.type === 'internal') {
+            addToRecents(toolId);
+        }
+    }, [toolId, tool, addToRecents]);
 
     if (!tool) {
         return (
@@ -110,9 +121,27 @@ export default function ToolPage() {
             </Helmet>
 
             <div className="max-w-6xl mx-auto">
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold mb-2">{tool.name}</h1>
-                    <p className="text-[var(--text-secondary)]">{tool.description}</p>
+                <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2">{tool.name}</h1>
+                        <p className="text-[var(--text-secondary)]">{tool.description}</p>
+                    </div>
+                    {tool.type === 'internal' && (
+                        <button
+                            onClick={() => toggleFavorite(toolId)}
+                            className="flex-shrink-0 p-2 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors"
+                            aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
+                            title={favorited ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                            <Star
+                                size={24}
+                                className={favorited
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-[var(--text-muted)] hover:text-yellow-400'
+                                }
+                            />
+                        </button>
+                    )}
                 </div>
 
                 <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl p-6 shadow-sm">

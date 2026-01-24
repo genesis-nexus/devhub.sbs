@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { toolsDatabase } from '../data/tools';
+import { Clock, Star } from 'lucide-react';
+import { toolsDatabase, getToolByPath } from '../data/tools';
 import ToolCard from '../components/ui/ToolCard';
+import TipOfTheDay from '../components/TipOfTheDay';
 import { Helmet } from 'react-helmet-async';
+import { usePreferences } from '../contexts/PreferencesContext';
 
 // Quick access tools - prioritized list
 const quickTools = [
@@ -23,6 +26,18 @@ const quickTools = [
 ];
 
 export default function Home() {
+    const { favorites, recents } = usePreferences();
+
+    // Resolve recents to full tool data
+    const recentTools = recents
+        .map(toolId => getToolByPath(`/tool/${toolId}`))
+        .filter(Boolean);
+
+    // Resolve favorites to full tool data
+    const favoritedTools = favorites
+        .map(toolId => getToolByPath(`/tool/${toolId}`))
+        .filter(Boolean);
+
     // Extract all featured tools across categories
     const featuredTools = Object.values(toolsDatabase)
         .flat()
@@ -81,6 +96,9 @@ export default function Home() {
                 </p>
             </section>
 
+            {/* Tip of the Day */}
+            <TipOfTheDay />
+
             {/* Quick Tools Section */}
             <section className="mb-16">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -100,6 +118,41 @@ export default function Home() {
                     ))}
                 </div>
             </section>
+
+            {/* Recently Used Section */}
+            {recentTools.length > 0 && (
+                <section className="mb-16">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <Clock size={24} className="text-[var(--accent-primary)]" /> Recently Used
+                    </h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        {recentTools.map((tool, index) => (
+                            <Link
+                                key={`recent-${index}`}
+                                to={tool.url}
+                                className="flex flex-col items-center p-4 bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] rounded-xl border border-[var(--border-color)] transition-all hover:shadow-lg hover:-translate-y-1"
+                            >
+                                <span className="text-3xl mb-2">{tool.logo}</span>
+                                <span className="text-sm font-medium text-center">{tool.name}</span>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Your Favorites Section */}
+            {favoritedTools.length > 0 && (
+                <section className="mb-16">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <Star size={24} className="text-yellow-400 fill-yellow-400" /> Your Favorites
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {favoritedTools.map((tool, index) => (
+                            <ToolCard key={`favorite-${index}`} tool={tool} />
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* Featured Section */}
             <section className="mb-16">

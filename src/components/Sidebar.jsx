@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Search, ChevronDown, ChevronRight, Hash, X, Zap } from 'lucide-react';
-import { toolsDatabase } from '../data/tools';
+import { Search, ChevronDown, ChevronRight, Hash, X, Zap, Star } from 'lucide-react';
+import { toolsDatabase, getToolByPath } from '../data/tools';
+import { usePreferences } from '../contexts/PreferencesContext';
 import clsx from 'clsx';
 
 // Quick access tools - same as Home page
@@ -25,9 +26,21 @@ const quickTools = [
 export default function Sidebar({ isOpen, onClose }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedCategories, setExpandedCategories] = useState({
+        favorites: true,
         quickTools: true,
         ...Object.keys(toolsDatabase).reduce((acc, key) => ({ ...acc, [key]: false }), {})
     });
+    const { favorites } = usePreferences();
+
+    // Resolve favorites to full tool data
+    const favoritedTools = useMemo(() => {
+        return favorites
+            .map(toolId => {
+                const tool = getToolByPath(`/tool/${toolId}`);
+                return tool ? { ...tool, toolId } : null;
+            })
+            .filter(Boolean);
+    }, [favorites]);
 
     const toggleCategory = (category) => {
         setExpandedCategories(prev => ({
@@ -111,6 +124,42 @@ export default function Sidebar({ isOpen, onClose }) {
                         Blog
                     </NavLink>
                 </nav>
+
+                {/* Favorites Section */}
+                {favoritedTools.length > 0 && (
+                    <div className="space-y-1">
+                        <button
+                            onClick={() => toggleCategory('favorites')}
+                            className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-yellow-500 uppercase tracking-wider hover:text-yellow-400 transition-colors"
+                        >
+                            <span className="flex items-center gap-1">
+                                <Star size={12} className="fill-current" /> Your Favorites
+                            </span>
+                            {expandedCategories.favorites ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                        </button>
+
+                        {expandedCategories.favorites && (
+                            <div className="space-y-1 pl-1">
+                                {favoritedTools.map((tool) => (
+                                    <NavLink
+                                        key={tool.url}
+                                        to={tool.url}
+                                        className={({ isActive }) => clsx(
+                                            "group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                                            isActive
+                                                ? "bg-yellow-500/10 text-yellow-500"
+                                                : "text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
+                                        )}
+                                        onClick={() => onClose && window.innerWidth < 1024 && onClose()}
+                                    >
+                                        <span className="mr-2 opacity-70 group-hover:opacity-100 transition-opacity">{tool.logo}</span>
+                                        <span className="truncate">{tool.name}</span>
+                                    </NavLink>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Quick Tools Section */}
                 {filteredQuickTools.length > 0 && (
